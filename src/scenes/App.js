@@ -20,7 +20,7 @@ const routes = {
     component: Ambapo
   },
   '/squid': {
-    title: 'Squid',
+    title: 'Squid Reporting Service',
     component: Squid
   }
 };

@@ -5,3 +5,25 @@ body {
   height: '100%';
   width: '100%';
 }
+.progress-bar{
+  position: relative;
+  height: 10px;
+  width: 350px;
+  border-radius: 50px;
+  border: 1px solid #333;
+}
+
+.filler{
+  background: #1DA598;
+  height: 100%;
+  border-radius: inherit;
+  transition: width .2s ease-in;
+}
+
+input[type=file] {
+  padding:5px; 
+  border:1px solid #333; 
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  width: 350px;
+}
