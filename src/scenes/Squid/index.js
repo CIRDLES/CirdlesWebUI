@@ -30,12 +30,16 @@ class SquidPage extends Component {
     this.handleUpload = this.handleUpload.bind(this);
     this.handleNormalizeSBMChange = this.handleNormalizeSBMChange.bind(this);
     this.handleRatioCalculationMethodChange = this.handleRatioCalculationMethodChange.bind(this);
-    
+    this.handlePreferredIndexIsotopeChange = this.handlePreferredIndexIsotopeChange.bind(this);
+
     this.state = {
       selectedPrawnFile: null,
       selectedTaskFile: null,
-      normalizeSBM: "yes",
-      ratioCalculationMethod: "spot",
+      refMatFilter: "",
+      concRefMatFilter: "",
+      normalizeSBM: "true",
+      ratioCalculationMethod: "false",
+      preferredIndexIsotope: "204",
       loaded: 0
     };
   }
@@ -54,47 +58,69 @@ class SquidPage extends Component {
     });
   }
 
-  handleUpload() {
-    const data = new FormData();
-    data.append("prawnFile", this.state.selectedPrawnFile);
-    data.append("taskFile", this.state.selectedTaskFile);
 
-    axios
-      .post(
-        endpoint,
-        data,
-        {
-          responseType: "blob",
-          onUploadProgress: ProgressEvent => {
-            this.setState({
-              loaded: (ProgressEvent.loaded / ProgressEvent.total) * 100,
-            });
-          }
-        },
-      )
-      .then(response => {
-        FileDownload(response.data, "squid-reports.zip", "application/zip"),
-          {
-            onDownloadProgress: ProgressEvent => {
-              this.setState({
-                loaded: (ProgressEvent.loaded / ProgressEvent.total) * 100,
-              });
-            }
-          }
-      });
+  handleRefMatFilterChange(event) {
+    this.setState({ refMatFilter: event.target.value })
+  }
+
+  handleConcRefMatFilterChange(event) {
+    this.setState({ concRefMatFilter: event.target.value })
   }
 
   handleNormalizeSBMChange(changeEvent) {
     this.setState({
-      normalizeSBM:  changeEvent.target.value
+      normalizeSBM: changeEvent.target.value
     });
   };
 
   handleRatioCalculationMethodChange(changeEvent) {
     this.setState({
-      ratioCalculationMethod:  changeEvent.target.value
+      ratioCalculationMethod: changeEvent.target.value
     });
   };
+
+  handlePreferredIndexIsotopeChange(changeEvent) {
+    this.setState({
+      preferredIndexIsotope: changeEvent.target.value
+    });
+  };
+
+  handleUpload() {
+    const data = new FormData();
+    if ((this.state.selectedPrawnFile != null) && (this.state.selectedTaskFile != null)) {
+      data.append("prawnFile", this.state.selectedPrawnFile);
+      data.append("taskFile", this.state.selectedTaskFile);
+      data.append("useSBM", this.state.normalizeSBM);
+      data.append("userLinFits", this.state.ratioCalculationMethod);
+      data.append("refMatFilter", this.state.refMatFilter);
+      data.append("concRefMatFilter", this.state.concRefMatFilter);
+
+      axios
+        .post(
+          endpoint,
+          data,
+          {
+            responseType: "blob",
+            onUploadProgress: ProgressEvent => {
+              this.setState({
+                loaded: (ProgressEvent.loaded / ProgressEvent.total) * 100,
+              });
+            }
+          },
+        )
+        .then(response => {
+          FileDownload(response.data, "squid-reports.zip", "application/zip"),
+            {
+              onDownloadProgress: ProgressEvent => {
+                this.setState({
+                  loaded: (ProgressEvent.loaded / ProgressEvent.total) * 100,
+                });
+              }
+            }
+        });
+    }
+  }
+
 
   render() {
     return (
@@ -105,21 +131,34 @@ class SquidPage extends Component {
           <input type="file" name="" id="" onChange={this.handleselectedPrawnFile} />
         </div>
         <div>
-          Choose Squid2.* Task xls file:
+          Choose Squid2.* Task xls file:&nbsp;
           <span> </span>
           <input type="file" name="" id="" onChange={this.handleselectedTaskFile} />
         </div>
 
         <div>
           <br></br>
+          Enter Reference Material Sample Name Filter:
+          <span> </span>
+          <input type="text" name="title" value={this.state.refMatFilter}
+            onChange={this.handleRefMatFilterChange.bind(this)} />
+        </div>
+        <div>
+          <br></br>
+          Enter Concentration Reference Material Sample Name Filter:
+          <span> </span>
+          <input type="text" name="title" value={this.state.title}
+            onChange={this.handleConcRefMatFilterChange.bind(this)} />
+        </div>
+        <div>
+          <br></br>
           <label>Normalise Ion Counts for SBM? </label>
           <label>
             <input
               type="radio"
-              value="yes"
-              checked={this.state.normalizeSBM === "yes"}
+              value="true"
+              checked={this.state.normalizeSBM === "true"}
               onChange={this.handleNormalizeSBMChange}
-              className="form-check-input"
             />
             Yes
           </label>
@@ -127,10 +166,9 @@ class SquidPage extends Component {
           <label>
             <input
               type="radio"
-              value="no"
-              checked={this.state.normalizeSBM === "no"}
+              value="false"
+              checked={this.state.normalizeSBM === "false"}
               onChange={this.handleNormalizeSBMChange}
-              className="form-check-input"
             />
             No
           </label>
@@ -141,10 +179,9 @@ class SquidPage extends Component {
           <label>
             <input
               type="radio"
-              value="linear"
-              checked={this.state.ratioCalculationMethod === "linear"}
+              value="true"
+              checked={this.state.ratioCalculationMethod === "true"}
               onChange={this.handleRatioCalculationMethodChange}
-              className="form-check-input"
             />
             Linear regression to burn mid-time
           </label>
@@ -152,16 +189,50 @@ class SquidPage extends Component {
           <label>
             <input
               type="radio"
-              value="spot"
-              checked={this.state.ratioCalculationMethod === "spot"}
+              value="false"
+              checked={this.state.ratioCalculationMethod === "false"}
               onChange={this.handleRatioCalculationMethodChange}
-              className="form-check-input"
             />
             Spot average (time-invariant)
           </label>
         </div>
         <div>
-          <button onClick={this.handleUpload}>Upload</button>
+          <br></br>
+          <label>Preferred Index Isotope: </label>
+          <label>
+            <input
+              type="radio"
+              value="204"
+              checked={this.state.preferredIndexIsotope === "204"}
+              onChange={this.handlePreferredIndexIsotopeChange}
+            />
+            204Pb
+          </label>
+          <span> </span>
+          <label>
+            <input
+              type="radio"
+              value="207"
+              checked={this.state.preferredIndexIsotope === "207"}
+              onChange={this.handlePreferredIndexIsotopeChange}
+            />
+            207Pb
+          </label>
+          <span> </span>
+          <label>
+            <input
+              type="radio"
+              value="208"
+              checked={this.state.preferredIndexIsotope === "208"}
+              onChange={this.handlePreferredIndexIsotopeChange}
+            />
+            208Pb
+          </label>
+        </div>
+        <div>
+          <br></br>
+          <button class="btn success" onClick={this.handleUpload}>
+            Click here to Upload for processing ... wait for returned results</button>
         </div>
         <h3> Upload progress:</h3>
         <ProgressBar loaded={this.state.loaded} />
