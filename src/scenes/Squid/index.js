@@ -39,7 +39,7 @@ class SquidPage extends Component {
       concRefMatFilter: "",
       normalizeSBM: "true",
       ratioCalculationMethod: "false",
-      preferredIndexIsotope: "204",
+      preferredIndexIsotope: "PB_204",
       loaded: 0
     };
   }
@@ -94,6 +94,7 @@ class SquidPage extends Component {
       data.append("userLinFits", this.state.ratioCalculationMethod);
       data.append("refMatFilter", this.state.refMatFilter);
       data.append("concRefMatFilter", this.state.concRefMatFilter);
+      data.append("prefIndexIso", this.state.preferredIndexIsotope);
 
       axios
         .post(
@@ -202,8 +203,8 @@ class SquidPage extends Component {
           <label>
             <input
               type="radio"
-              value="204"
-              checked={this.state.preferredIndexIsotope === "204"}
+              value="PB_204"
+              checked={this.state.preferredIndexIsotope === "PB_204"}
               onChange={this.handlePreferredIndexIsotopeChange}
             />
             204Pb
@@ -212,8 +213,8 @@ class SquidPage extends Component {
           <label>
             <input
               type="radio"
-              value="207"
-              checked={this.state.preferredIndexIsotope === "207"}
+              value="PB_207"
+              checked={this.state.preferredIndexIsotope === "PB_207"}
               onChange={this.handlePreferredIndexIsotopeChange}
             />
             207Pb
@@ -222,8 +223,8 @@ class SquidPage extends Component {
           <label>
             <input
               type="radio"
-              value="208"
-              checked={this.state.preferredIndexIsotope === "208"}
+              value="PB_208"
+              checked={this.state.preferredIndexIsotope === "PB_208"}
               onChange={this.handlePreferredIndexIsotopeChange}
             />
             208Pb
@@ -231,11 +232,16 @@ class SquidPage extends Component {
         </div>
         <div>
           <br></br>
-          <button class="btn success" onClick={this.handleUpload}>
+          Note: parameter models are currently GA defaults (see Squid app).
+        </div>
+        <div>
+          <br></br>
+          <button className="btn success" onClick={this.handleUpload}>
             Click here to Upload for processing ... wait for returned results</button>
         </div>
         <h3> Upload progress:</h3>
         <ProgressBar loaded={this.state.loaded} />
+
       </div>
     );
   }

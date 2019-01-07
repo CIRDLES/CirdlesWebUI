@@ -8,13 +8,13 @@ body {
 .progress-bar{
   position: relative;
   height: 10px;
-  width: 350px;
+  width: 550px;
   border-radius: 50px;
   border: 1px solid #333;
 }
 
 .filler{
-  background: #1DA598;
+  background: blue;
   height: 100%;
   border-radius: inherit;
   transition: width .2s ease-in;
@@ -45,11 +45,11 @@ input[type=text] {
 
 /* Green */
 .success {
-  border-color: #4CAF50;
-  color: green;
+  border-color: blue;
+  color: blue;
 }
 
 .success:hover {
-  background-color: #4CAF50;
+  background-color: blue;
   color: white;
 }
