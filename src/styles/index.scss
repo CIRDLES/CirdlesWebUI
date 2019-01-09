@@ -5,6 +5,22 @@ body {
   height: '100%';
   width: '100%';
 }
+.center-div
+{
+  position: absolute;
+  margin: auto;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 25;
+  width: 575px;
+  height: 575px;
+  //background-color: #ccc;
+  border: 1px solid #333;
+  border-radius: 10px;
+  padding:20px;
+}
+
 .progress-bar{
   position: relative;
   height: 10px;

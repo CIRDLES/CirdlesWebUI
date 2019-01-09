@@ -9,6 +9,7 @@ import axios from "axios";
 
 const endpoint = "http://cirdles.cs.cofc.edu/Services/squidReporting";
 const FileDownload = require("downloadjs");
+// checkout https://www.npmjs.com/package/rn-fetch-blob for soultion involving progress etc
 
 const ProgressBar = (props) => {
   return (
@@ -125,7 +126,12 @@ class SquidPage extends Component {
 
   render() {
     return (
-      <div>
+      <div className="center-div">
+        <div>
+          Visit us on Github:&nbsp;
+          <a href="https://github.com/CIRDLES/Squid" target="_blank">Squid repository </a>
+          <br></br><br></br>
+        </div>
         <div>
           Choose zipped Prawn xml file:
           <span> </span>
@@ -237,7 +243,7 @@ class SquidPage extends Component {
         <div>
           <br></br>
           <button className="btn success" onClick={this.handleUpload}>
-            Click here to Upload for processing ... wait for returned results</button>
+            Click here to Upload data for processing ... wait for returned results</button>
         </div>
         <h3> Upload progress:</h3>
         <ProgressBar loaded={this.state.loaded} />
