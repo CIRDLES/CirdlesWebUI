@@ -1,3 +1,7 @@
+*{
+  --squidColor: #3a4c88;
+}
+
 body {
   margin: 0;
   padding: 0;
@@ -15,9 +19,9 @@ body {
   left: 25;
   width: 575px;
   height: 500px;
-  //background-color: #ccc;
-  border: 1px solid #333;
-  border-radius: 10px;
+  background-color: #cfd8dc;
+  border: 5px solid #3a4c88;
+  border-radius: 20px;
   padding:20px;
 }
 
@@ -26,11 +30,12 @@ body {
   height: 10px;
   width: 550px;
   border-radius: 50px;
-  border: 1px solid #333;
+  border: 1px solid #3a4c88;
+  margin: 10px;
 }
 
 .filler{
-  background: blue;
+  background: #3a4c88;
   height: 100%;
   border-radius: inherit;
   transition: width .2s ease-in;
@@ -38,7 +43,7 @@ body {
 
 input[type=file] {
   padding:5px; 
-  border:1px solid #333; 
+  border:1px solid #3a4c88; 
   -webkit-border-radius: 5px;
   border-radius: 5px;
   width: 350px;
@@ -46,26 +51,29 @@ input[type=file] {
 
 input[type=text] {
   padding:5px; 
-  border:1px solid #333;
+  border:1px solid #3a4c88;
   width: 100px; 
 }
 
 .btn {
-  border: 2px solid black;
+  border: 2px solid #3a4c88;
   background-color: white;
-  color: black;
+  color: 3a4c88;
   padding: 14px 28px;
   font-size: 16px;
   cursor: pointer;
+  position: relative;
+  margin-left: 2%;
+  margin-right: 2%
 }
 
 /* Green */
-.success {
-  border-color: blue;
-  color: blue;
+.upload {
+  border-color: #3a4c88;
+  color: #3a4c88;
 }
 
-.success:hover {
-  background-color: blue;
+.upload:hover {
+  background-color: #3a4c88;
   color: white;
 }

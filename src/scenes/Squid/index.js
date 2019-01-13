@@ -118,7 +118,8 @@ class SquidPage extends Component {
                   loaded: (ProgressEvent.loaded / ProgressEvent.total) * 100,
                 });
               }
-            }
+            },
+            this.setState({loaded: 0})
         });
     }
   }
@@ -242,7 +243,7 @@ class SquidPage extends Component {
         </div>
         <div>
           <br></br>
-          <button className="btn success" onClick={this.handleUpload}>
+          <button className="btn upload" onClick={this.handleUpload}>
             Click here to Upload data for processing ... wait for returned results</button>
         </div>
         <h3> Upload progress:</h3>
