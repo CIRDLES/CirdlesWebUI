@@ -22,6 +22,10 @@ const routes = {
   '/squid': {
     title: 'Squid Ink: Squid\'s Reporting Service (Beta)',
     component: Squid
+  },
+  '/topsoil': {
+    title: '(Under Construction)',
+    component: Topsoil
   }
 };
 
