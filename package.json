@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "downloadjs": "^1.4.7",
     "radium": "^0.22.0",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",

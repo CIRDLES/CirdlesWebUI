@@ -1,0 +1,28 @@
+
+#page-container {
+  display: grid;
+  grid-template-columns: 50% 50%;
+  height: 100%;
+  overflow: hidden;
+  background-color: green;
+  grid-gap: 10px 10px;
+}
+
+#upload-container {
+  grid-column: 1;
+  grid-row: 1;
+  background-color: goldenrod;
+}
+
+#table-container {
+  grid-column: 1;
+  grid-row: 2;
+  background-color: pink;
+}
+
+#plot-container {
+  grid-column: 2;
+  grid-row-start: 1;
+  grid-row-end: 3;
+  background-color: aqua;
+}
