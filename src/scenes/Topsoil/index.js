@@ -10,8 +10,12 @@ class TopsoilPage extends Component {
 
     this.state = {
       selectedTableFile: null,
+      template: "DEFAULT",
       dataTable: null
     };
+
+    this.handleChangeTableFile = this.handleChangeTableFile.bind(this);
+    this.handleChangeTemplate = this.handleChangeTemplate.bind(this);
   }
 
   handleChangeTableFile(event) {
@@ -20,10 +24,18 @@ class TopsoilPage extends Component {
     });
   }
 
+  handleChangeTemplate(event) {
+    this.setState({
+      template: event.target.value
+    });
+  }
+
   handleFileSubmission() {
-    const data = new FormData();
-    if (this.state.selectedTableFile !== null) {
-      data.append("tableFile", this.state.selectedTableFile);
+    const data = new FormData(),
+          { selectedTableFile, template } = this.state;
+    if (selectedTableFile !== null && template !== null) {
+      data.append("tableFile", tableFile);
+      data.append("template", template);
 
       axios
         .post(
@@ -48,7 +60,13 @@ class TopsoilPage extends Component {
     return (
       <div id="page-container">
         <div id="upload-container">
-          Select a table file (.csv, .tsv): <input type="file" name="tableFile" onChange={this.handleChangeTableFile.bind(this)}></input>
+          Select a table file (.csv, .tsv): <input type="file" name="tableFile" onChange={this.handleChangeTableFile}></input>
+          <br />
+          Data Template:
+          <select name="template" value={this.state.template} onChange={this.handleChangeTemplate}>
+            <option value="DEFAULT">Default</option>
+            <option value="SQUID_3">Squid 3</option>
+          </select>
           <br />
           <button onClick={this.handleFileSubmission.bind(this)}>Submit</button>
         </div>
