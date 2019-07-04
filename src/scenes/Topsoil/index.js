@@ -34,7 +34,7 @@ class TopsoilPage extends Component {
     const data = new FormData(),
           { selectedTableFile, template } = this.state;
     if (selectedTableFile !== null && template !== null) {
-      data.append("tableFile", tableFile);
+      data.append("tableFile", selectedTableFile);
       data.append("template", template);
 
       axios
