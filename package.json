@@ -19,6 +19,7 @@
     "react-inlinesvg": "^0.7.5",
     "react-redux": "^5.0.6",
     "react-router-dom": "^4.2.2",
+    "react-tabulator": "^0.9.1",
     "react-transition-group": "1.x",
     "redux": "^3.7.2",
     "redux-form": "^7.2.0",
