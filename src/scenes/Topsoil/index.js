@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { TOPSOIL_ENDPOINT } from "constants";
 import axios from "axios";
-import ReactTabulator from "react-tabulator";
+import { React15Tabulator } from "react-tabulator";
 import "../../styles/topsoil.scss";
 
 class TopsoilPage extends Component {
@@ -81,10 +81,10 @@ class TopsoilPage extends Component {
           <button onClick={this.handleFileSubmission.bind(this)}>Submit</button>
         </div>
         <div id="table-container">
-          <ReactTabulator
+          <React15Tabulator
             ref={ref => this.tabulator = ref}
-            columns={columns}
-            data={rows}
+            columns={columns || []}
+            data={rows || []}
             cellEdited={cell => console.log("cellEdited", cell)}
             dataEdited={newData => console.log("dataEdited", newData)}
           />
