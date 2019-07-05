@@ -1,7 +1,9 @@
+@import "../../node_modules/tabulator-tables/dist/css/tabulator.min.css";
 
 #page-container {
   display: grid;
   grid-template-columns: 50% 50%;
+  grid-template-rows: auto 1fr;
   height: 100%;
   overflow: hidden;
   background-color: green;
@@ -11,6 +13,10 @@
 #upload-container {
   grid-column: 1;
   grid-row: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
   background-color: goldenrod;
 }
 
