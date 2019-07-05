@@ -2,9 +2,7 @@ import React, { Component } from "react";
 import { TOPSOIL_ENDPOINT } from "constants";
 import axios from "axios";
 import Tabulator from "tabulator-tables";
-import "tabulator-tables"
 import "../../styles/topsoil.scss";
-import { timingSafeEqual } from "crypto";
 
 // const Tabulator = require("tabulator-tables");
 
@@ -41,6 +39,7 @@ class TopsoilPage extends Component {
 
   componentDidMount() {
     this.tabulator = new Tabulator("#tabulator", {
+      layout: "fitDataFill",
       reactiveData: true,
       data: this.state.rows,
       columns: this.state.columns
@@ -48,8 +47,11 @@ class TopsoilPage extends Component {
   }
   
   componentDidUpdate() {
-    this.tabulator.setData(this.state.data);
     this.tabulator.setColumns(this.state.columns);
+    this.tabulator.setData(this.state.data)
+      .catch(error => {
+        console.error(error);
+      });
   }
 
   handleChangeTableFile(event) {
@@ -85,7 +87,7 @@ class TopsoilPage extends Component {
           this.setState({ rows, columns });
         })
         .catch(error => {
-          console.log(error);
+          console.error(error);
         });
     }
   }
