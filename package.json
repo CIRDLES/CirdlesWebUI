@@ -25,6 +25,7 @@
     "redux-form": "^7.2.0",
     "redux-persist": "^5.9.1",
     "redux-thunk": "^2.2.0",
+    "sortablejs": "^1.10.0-rc3",
     "tabulator-tables": "^4.2.7"
   },
   "devDependencies": {

@@ -1,25 +1,55 @@
+// @flow
 import React, { Component } from "react";
 import { TOPSOIL_ENDPOINT } from "constants";
 import axios from "axios";
 import Tabulator from "tabulator-tables";
 import "../../styles/topsoil.scss";
 
-// const Tabulator = require("tabulator-tables");
+const labelColumn = {
+  title: "Label",
+  field: "title",
+  width: 150
+};
 
-const testData = [
-  { label: "row1", selected: true, x: 29.165688743, y: 0.712165893, sigma_x: 0.22165688743, sigma_y: 0.00452165893, rho: 0.918191745 },
-  { label: "row2", selected: true, x: 29.031535970, y: 0.714916493, sigma_x: 0.26031535970, sigma_y: 0.004916493, rho: 0.714916493 }
-];
+const selectedColumn = {
+  title: "Selected",
+  field: "selected",
+  editor: true,
+  formatter: "tickCross"
+};
 
-const testColumns = [
-  { title: "Label", field: "label", editor: "input" },
-  { title: "Selected", field: "selected", editor: true, formatter: "tickCross" },
-  { title: "X", field: "x", editor: "input" },
-  { title: "σX", field: "sigma_x", editor: "input" },
-  { title: "Y", field: "y", editor: "input" },
-  { title: "σY", field: "sigma_y", editor: "input" },
-  { title: "Corr Coef", field: "rho", editor: "input" }
-]
+const numberEditor = function (cell, onRendered, success, cancel, editorParams) {
+  let editor = document.createElement("input");
+
+  editor.setAttribute("type", "string");
+
+  //create and style input
+  editor.style.padding = "3px";
+  editor.style.width = "100%";
+  editor.style.boxSizing = "border-box";
+
+  editor.value = cell.getValue();
+
+  //set focus on the select box when the editor is selected (timeout allows for editor to be added to DOM)
+  onRendered(() => {
+    editor.focus();
+    editor.style.css = "100%";
+  });
+
+  const confirmFunc = () => {
+    const value = editor.value;
+    if (isNaN(value)) {
+      cancel();
+    } else {
+      success(+value);
+    }
+  }
+
+  // editor.addEventListener("change", successFunc);
+  editor.addEventListener("blur", confirmFunc);
+
+  return editor;
+};
 
 class TopsoilPage extends Component {
 
@@ -41,14 +71,19 @@ class TopsoilPage extends Component {
     this.tabulator = new Tabulator("#tabulator", {
       layout: "fitDataFill",
       reactiveData: true,
+      dataTree: true,
       data: this.state.rows,
       columns: this.state.columns
     });
+    
   }
   
   componentDidUpdate() {
     this.tabulator.setColumns(this.state.columns);
-    this.tabulator.setData(this.state.data)
+    this.tabulator.setData(this.state.rows)
+      .then(data => {
+        console.log(data);
+      })
       .catch(error => {
         console.error(error);
       });
@@ -80,10 +115,9 @@ class TopsoilPage extends Component {
         )
         .then(response => {
           const rows = response.data.data,
-                columns = response.data.columns.map(col => {
-                  col.editor = "input";
-                  return col;
-                });
+                columns = response.data.columns;
+          this.addEditorToLeafColumns(columns);
+          columns.unshift(labelColumn, selectedColumn);
           this.setState({ rows, columns });
         })
         .catch(error => {
@@ -120,6 +154,17 @@ class TopsoilPage extends Component {
       </div>
     );
   }
+
+  addEditorToLeafColumns(columns) {
+    columns.forEach(col => {
+      if (col.columns) {
+        this.addEditorToLeafColumns(col.columns);
+        return;
+      }
+      col.editor = numberEditor;
+    });
+  }
+
 }
 
 export default TopsoilPage;

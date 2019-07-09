@@ -1,13 +1,16 @@
 @import "../../node_modules/tabulator-tables/dist/css/tabulator.min.css";
 
+$background: #cfd8dc;
+
 #page-container {
   display: grid;
   grid-template-columns: 50% 50%;
   grid-template-rows: auto 1fr;
   height: 100%;
   overflow: hidden;
-  background-color: green;
-  grid-gap: 10px 10px;
+  grid-gap: 1px 1px;
+  background-color: black;
+  border: 1px solid black;
 }
 
 #upload-container {
@@ -17,18 +20,19 @@
   flex-direction: column;
   align-items: center;
   padding: 20px;
-  background-color: goldenrod;
+  background-color: $background;
 }
 
 #table-container {
   grid-column: 1;
   grid-row: 2;
-  background-color: pink;
+  overflow: auto;
+  background-color: $background;
 }
 
 #plot-container {
   grid-column: 2;
   grid-row-start: 1;
   grid-row-end: 3;
-  background-color: aqua;
+  background-color: $background;
 }

@@ -3,7 +3,7 @@ var path = require('path');
 
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-const endpoints = ['', 'squid', 'ambapo'];
+const endpoints = ['', 'squid', 'ambapo', 'topsoil'];
 const HtmlWebpackPluginList = [];
 for (let endpoint of endpoints) {
   const HtmlWebpackPluginEndpoint = new HtmlWebpackPlugin({
