@@ -1,6 +1,6 @@
 // @flow
 import React, { Component } from "react";
-import * as Topsoil from "../../../../libs/topsoil";
+import * as Topsoil from "topsoil-js";
 
 type Props = {
   data: {}[],

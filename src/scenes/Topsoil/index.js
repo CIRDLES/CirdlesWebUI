@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { TOPSOIL_ENDPOINT } from "../../constants";
+import { TOPSOIL_ENDPOINT, TOPSOIL } from "../../constants";
 import axios from "axios";
 import "tabulator-tables";
 import Modal from "react-modal";
@@ -10,7 +10,6 @@ import {
   VariableChooser
 } from "./components";
 // import * as Topsoil from "topsoil-js/dist/topsoil";
-import "tabulator-tables/dist/css/tabulator.min.css"
 import "../../styles/topsoil/topsoil.scss";
 
 Modal.setAppElement("#root");
