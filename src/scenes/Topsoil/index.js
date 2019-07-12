@@ -1,92 +1,65 @@
-// @flow
 import React, { Component } from "react";
-import { TOPSOIL_ENDPOINT } from "constants";
+import { TOPSOIL_ENDPOINT } from "../../constants";
 import axios from "axios";
-import Tabulator from "tabulator-tables";
-import "../../styles/topsoil.scss";
+import "tabulator-tables";
+import Modal from "react-modal";
+import Split from "react-split";
+import {
+  UploadForm,
+  DataTable,
+  VariableChooser
+} from "./components";
+// import * as Topsoil from "topsoil-js/dist/topsoil";
+import "tabulator-tables/dist/css/tabulator.min.css"
+import "../../styles/topsoil/topsoil.scss";
 
-const labelColumn = {
-  title: "Label",
-  field: "title",
-  width: 150
-};
+Modal.setAppElement("#root");
 
-const selectedColumn = {
-  title: "Selected",
-  field: "selected",
-  editor: true,
-  formatter: "tickCross"
-};
-
-const numberEditor = function (cell, onRendered, success, cancel, editorParams) {
-  let editor = document.createElement("input");
-
-  editor.setAttribute("type", "string");
-
-  //create and style input
-  editor.style.padding = "3px";
-  editor.style.width = "100%";
-  editor.style.boxSizing = "border-box";
-
-  editor.value = cell.getValue();
-
-  //set focus on the select box when the editor is selected (timeout allows for editor to be added to DOM)
-  onRendered(() => {
-    editor.focus();
-    editor.style.css = "100%";
-  });
-
-  const confirmFunc = () => {
-    const value = editor.value;
-    if (isNaN(value)) {
-      cancel();
-    } else {
-      success(+value);
-    }
+const modalStyles = {
+  content: {
+    top: "50%",
+    left: "50%",
+    right: "auto",
+    bottom: "auto",
+    marginRight: "-50%",
+    transform: "translate(-50%, -50%)"
   }
-
-  // editor.addEventListener("change", successFunc);
-  editor.addEventListener("blur", confirmFunc);
-
-  return editor;
 };
 
 class TopsoilPage extends Component {
-
   constructor(props) {
     super(props);
 
     this.state = {
       selectedTableFile: null,
       template: "DEFAULT",
-      rows: [],
-      columns: []
+      table: {
+        rows: [],
+        columns: [],
+        variables: {}
+      },
+      plot: {
+        data: null,
+        options: null
+      },
+      varChooserIsOpen: false,
+      uploadFormIsOpen: false
     };
+
+    this.plot = null;
+
+    this.handleOpenVarChooser = this.handleOpenVarChooser.bind(this);
+    this.handleSubmitVarChooser = this.handleSubmitVarChooser.bind(this);
+    this.handleCloseVarChooser = this.handleCloseVarChooser.bind(this);
+
+    this.handleOpenUploadForm = this.handleOpenUploadForm.bind(this);
+    this.handleSubmitUploadForm = this.handleSubmitUploadForm.bind(this);
+    this.handleCloseUploadForm = this.handleCloseUploadForm.bind(this);
 
     this.handleChangeTableFile = this.handleChangeTableFile.bind(this);
     this.handleChangeTemplate = this.handleChangeTemplate.bind(this);
-  }
 
-  componentDidMount() {
-    this.tabulator = new Tabulator("#tabulator", {
-      layout: "fitDataFill",
-      reactiveData: true,
-      dataTree: true,
-      data: this.state.rows,
-      columns: this.state.columns
-    });
-    
-  }
-  
-  componentDidUpdate() {
-    this.tabulator.setColumns(this.state.columns);
-    this.tabulator.setData(this.state.rows)
-      .then(data => {
-        console.log(data);
-      })
-      .catch(error => {
-        console.error(error);
-      });
+    this.handleGeneratePlot = this.handleGeneratePlot.bind(this);
   }
 
   handleChangeTableFile(event) {
@@ -101,55 +74,192 @@ class TopsoilPage extends Component {
     });
   }
 
-  handleFileSubmission() {
+  handleOpenVarChooser() {
+    this.setState({ varChooserIsOpen: true });
+  }
+
+  handleSubmitVarChooser(event) {
+    event.preventDefault();
+    const e = event.nativeEvent,
+      variables = {};
+
+    let i = 0,
+      target = e.target[i];
+    while (target !== undefined && target.type === "select-one") {
+      if (target.value !== "") variables[target.value] = target.name;
+      target = e.target[++i];
+    }
+
+    const table = { ...this.state.table };
+    table.variables = variables;
+
+    const plot = { ...this.state.plot };
+    plot.data = table.rows.map(row => {
+      const entry = {};
+      let colName;
+      for (let key in table.variables) {
+        colName = table.variables[key];
+        entry[key] = row[colName];
+      }
+      return entry;
+    });
+
+    this.setState({ table, plot });
+    this.handleCloseVarChooser();
+  }
+
+  handleCloseVarChooser() {
+    this.setState({ varChooserIsOpen: false });
+  }
+
+  handleOpenUploadForm() {
+    this.setState({ uploadFormIsOpen: true });
+  }
+
+  handleSubmitUploadForm() {
     const data = new FormData(),
-          { selectedTableFile, template } = this.state;
+      { selectedTableFile, template } = this.state;
     if (selectedTableFile !== null && template !== null) {
       data.append("tableFile", selectedTableFile);
       data.append("template", template);
 
       axios
-        .post(
-          TOPSOIL_ENDPOINT,
-          data
-        )
+        .post(TOPSOIL_ENDPOINT, data)
         .then(response => {
           const rows = response.data.data,
-                columns = response.data.columns;
-          this.addEditorToLeafColumns(columns);
-          columns.unshift(labelColumn, selectedColumn);
-          this.setState({ rows, columns });
+            columns = response.data.columns;
+          this.setState({
+            table: { rows, columns }
+          });
         })
         .catch(error => {
           console.error(error);
         });
     }
+    this.handleCloseUploadForm();
+  }
+
+  handleCloseUploadForm() {
+    this.setState({ uploadFormIsOpen: false });
+  }
+
+  handleGeneratePlot() {
+    // this.plot = new Topsoil.ScatterPlot("#plot", this.state.plot.data, {
+    //   title: "Hello World",
+    //   uncertainty: 2.0,
+    //   x_axis: this.state.table.variables.x,
+    //   y_axis: this.state.table.variables.y,
+    //   points: true,
+    //   points_fill: "steelblue",
+    //   points_opacity: 1,
+    //   ellipses: true,
+    //   ellipses_fill: "red",
+    //   ellipses_opacity: 1,
+    //   concordia_type: "wetherill",
+    //   concordia_line: true,
+    //   concordia_line_fill: "blue",
+    //   concordia_envelope: true,
+    //   concordia_envelope_fill: "lightgray",
+    //   lambda_235: 9.8485e-10,
+    //   lambda_238: 1.55125e-10,
+    //   R238_235S: 137.88
+    // });
   }
 
   render() {
-    const { template } = this.state;
+    const {
+      template,
+      selectedTableFile,
+      table: { rows, columns, variables }
+    } = this.state;
     return (
       <div id="page-container">
-        <div id="upload-container">
-          <div>
-            Select a table file (.csv, .tsv): <input type="file" name="tableFile" onChange={this.handleChangeTableFile}></input>
-          </div>
-          <br />
-          <div>
-            Data Template:
-            <select name="template" value={template} onChange={this.handleChangeTemplate}>
-              <option value="DEFAULT">Default</option>
-              <option value="SQUID_3">Squid 3</option>
-            </select>
-          </div>
-          <br />
-          <button onClick={this.handleFileSubmission.bind(this)}>Submit</button>
+        <Modal
+          isOpen={this.state.varChooserIsOpen}
+          onRequestClose={this.handleCloseVarChooser}
+          style={modalStyles}
+          contentLabel="Variable Chooser"
+          aria={{
+            labelledby: "var-chooser-heading",
+            describedby: "var-chooser-desc"
+          }}
+        >
+          <h2 id="var-chooser-heading">Variable Chooser</h2>
+          <p id="var-chooser-desc">
+            {" "}
+            Use this form to select which data columns correspond to specific
+            plotting variables.
+          </p>
+          <VariableChooser
+            columns={columns}
+            onSubmit={this.handleSubmitVarChooser}
+          />
+        </Modal>
+
+        <Modal
+          isOpen={this.state.uploadFormIsOpen}
+          onRequestClose={this.handleCloseUploadForm}
+          style={modalStyles}
+          contentLabel="Data Uploader"
+          aria={{
+            labelledby: "upload-form-heading",
+            describedby: "upload-form-desc"
+          }}
+        >
+          <h2 id="upload-form-heading">Data Uploader</h2>
+          <p>Use this form to select a data file to upload.</p>
+          <UploadForm
+            tableFile={selectedTableFile}
+            template={template}
+            onSubmit={this.handleSubmitUploadForm}
+            onChangeTableFile={this.handleChangeTableFile}
+            onChangeTemplate={this.handleChangeTemplate}
+          />
+        </Modal>
+
+        <div id="#toolbar">
+          <button className="toolbar-item" onClick={this.handleOpenUploadForm}>
+            Upload Data
+          </button>
+          <button
+            className="toolbar-item"
+            onClick={this.handleOpenVarChooser}
+            disabled={rows.length === 0}
+          >
+            Choose Variables
+          </button>
+          <button
+            className="toolbar-item"
+            onClick={this.handleGeneratePlot}
+            disabled={!variables || Object.entries(variables).length === 0}
+          >
+            Generate Plot
+          </button>
         </div>
-        <div id="table-container">
-          <div id="tabulator" />
-        </div>
-        <div id="plot-container">
-          <div id="plot" />
+
+        <div style={{ flexGrow: 1, overflow: "auto" }}>
+          <Split
+            sizes={[50, 50]}
+            direction="vertical"
+            // gutterStyle={(dimension, gutterSize, index) => {
+            //   return {
+            //     width: gutterSize,
+            //     backgroundColor: "gray",
+            //     cursor: "grabbing"
+            //   }
+            // }}
+          >
+            <div id="table-container">
+              <DataTable
+                id="data-table"
+                rows={rows || []}
+                columns={columns || []}
+              />
+            </div>
+            <div id="plot-container">
+              <div id="plot" />
+            </div>
+          </Split>
         </div>
       </div>
     );
@@ -164,7 +274,6 @@ class TopsoilPage extends Component {
       col.editor = numberEditor;
     });
   }
-
 }
 
 export default TopsoilPage;
