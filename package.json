@@ -28,7 +28,7 @@
     "redux-thunk": "^2.2.0",
     "sortablejs": "^1.10.0-rc3",
     "tabulator-tables": "^4.2.7",
-    "topsoil-js": "github:marottajb/topsoil-js"
+    "topsoil-js": "github:marottajb/topsoil-js#dfiles"
   },
   "devDependencies": {
     "@types/react": "^16.8.23",

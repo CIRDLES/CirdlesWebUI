@@ -1,9 +1,30 @@
 @import "../../../node_modules/tabulator-tables/dist/css/tabulator.min.css";
 
+.full-size {
+  width: 100%;
+  height: 100%;
+}
+
 .v-center-top {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.h-center-left {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.inline-block {
+  display: inline-block;
+}
+
+.split {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 .split,
@@ -15,20 +36,29 @@
   cursor: "grabbing";
 }
 
+.split,
+.gutter.gutter-horizontal {
+  display: inline-block;
+  // float: left;
+  height: 100%;
+  background-image: url("../../img/vertical-grip.png");
+  background-repeat: no-repeat;
+  background-color: rgb(102, 102, 102);
+  background-position: center;
+  cursor: "grabbing";
+}
+
 #page-container {
   display: flex;
   flex-direction: row;
   align-content: flex-start;
   height: 100%;
-  // overflow: hidden;
 }
 
 #toolbar {
   display: flex;
   flex-direction: column;
-  // align-items: flex-start;
   flex-grow: 0;
-  // padding-right: 10px;
   width: 50px;
   height: 100%;
   background-color: green;
@@ -39,33 +69,58 @@
   margin: 10px 10px 0 0;
 }
 
-#page-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: 50% 50%;
-  flex-grow: 1;
-  height: 100%;
-  overflow: hidden;
-  grid-gap: 1px 1px;
+#info-container {
+  // display: inline-block;
+  float: left;
+  overflow: auto;
+  // width: 25%;
+  // height: 50%;
 }
 
-#left-half {
-  grid-row: 1;
+#info-body {
   display: flex;
-  flex-direction: row;
-  align-content: center;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  overflow: auto;
+  padding: 5px;
+}
+.info-item {
+  margin: 5px;
 }
 
-#right-half {
-  grid-row: 2;
+#logo {
+  background-image: url("../../img/logos/Topsoil.svg");
+  width: 100px;
+  height: 100px;
+}
+
+#blurb {
+  max-width: 300px;
+  text-align: center;
+}
+
+.info-link {
+
 }
 
 #table-container {
-  // width: auto;
-  height: 50%;
+  // height: 50%;
 }
 
 #plot-container {
-  height: 50%;
+  display: inline-block;
+  width: 70%;
+}
+
+#plot {
+  display: inline-block;
+  height: 100%;
   background-color: white;
+}
+
+#plot-panel {
+  display: inline-block;
+  height: 100%;
+  background-color: lightgray;
 }

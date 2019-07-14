@@ -4,12 +4,8 @@ import axios from "axios";
 import "tabulator-tables";
 import Modal from "react-modal";
 import Split from "react-split";
-import {
-  UploadForm,
-  DataTable,
-  VariableChooser
-} from "./components";
-// import * as Topsoil from "topsoil-js/dist/topsoil";
+import { UploadForm, DataTable, VariableChooser } from "./components";
+import * as Topsoil from "topsoil-js";
 import "../../styles/topsoil/topsoil.scss";
 
 Modal.setAppElement("#root");
@@ -105,6 +101,7 @@ class TopsoilPage extends Component {
 
     this.setState({ table, plot });
     this.handleCloseVarChooser();
+    this.handleGeneratePlot();
   }
 
   handleCloseVarChooser() {
@@ -126,9 +123,10 @@ class TopsoilPage extends Component {
         .post(TOPSOIL_ENDPOINT, data)
         .then(response => {
           const rows = response.data.data,
-            columns = response.data.columns;
+            columns = response.data.columns,
+            variables = this.state.table.variables;
           this.setState({
-            table: { rows, columns }
+            table: { rows, columns, variables }
           });
         })
         .catch(error => {
@@ -143,26 +141,26 @@ class TopsoilPage extends Component {
   }
 
   handleGeneratePlot() {
-    // this.plot = new Topsoil.ScatterPlot("#plot", this.state.plot.data, {
-    //   title: "Hello World",
-    //   uncertainty: 2.0,
-    //   x_axis: this.state.table.variables.x,
-    //   y_axis: this.state.table.variables.y,
-    //   points: true,
-    //   points_fill: "steelblue",
-    //   points_opacity: 1,
-    //   ellipses: true,
-    //   ellipses_fill: "red",
-    //   ellipses_opacity: 1,
-    //   concordia_type: "wetherill",
-    //   concordia_line: true,
-    //   concordia_line_fill: "blue",
-    //   concordia_envelope: true,
-    //   concordia_envelope_fill: "lightgray",
-    //   lambda_235: 9.8485e-10,
-    //   lambda_238: 1.55125e-10,
-    //   R238_235S: 137.88
-    // });
+    this.plot = new Topsoil.ScatterPlot("#plot", this.state.plot.data, {
+      title: "Hello World",
+      uncertainty: 2.0,
+      x_axis: this.state.table.variables["x"],
+      y_axis: this.state.table.variables["y"],
+      points: true,
+      points_fill: "steelblue",
+      points_opacity: 1,
+      ellipses: true,
+      ellipses_fill: "red",
+      ellipses_opacity: 1,
+      concordia_type: "wetherill",
+      concordia_line: true,
+      concordia_line_fill: "blue",
+      concordia_envelope: true,
+      concordia_envelope_fill: "lightgray",
+      lambda_235: 9.8485e-10,
+      lambda_238: 1.55125e-10,
+      R238_235S: 137.88
+    });
   }
 
   render() {
@@ -225,38 +223,36 @@ class TopsoilPage extends Component {
             onClick={this.handleOpenVarChooser}
             disabled={rows.length === 0}
           >
-            Choose Variables
-          </button>
-          <button
-            className="toolbar-item"
-            onClick={this.handleGeneratePlot}
-            disabled={!variables || Object.entries(variables).length === 0}
-          >
             Generate Plot
           </button>
         </div>
 
-        <div style={{ flexGrow: 1, overflow: "auto" }}>
-          <Split
-            sizes={[50, 50]}
-            direction="vertical"
-            // gutterStyle={(dimension, gutterSize, index) => {
-            //   return {
-            //     width: gutterSize,
-            //     backgroundColor: "gray",
-            //     cursor: "grabbing"
-            //   }
-            // }}
-          >
+        <div style={{ flexGrow: 1, overflow: "hidden" }}>
+          <Split sizes={[60, 40]} direction="vertical">
+            <Split sizes={[25, 50, 25]} direction="horizontal">
+              <div id="info-container">
+                <div id="info-body">
+                  <div id="logo" className="info-item" />
+                  <p id="blurb" className="info-item">
+                    Topsoil is developed by a rotating team of undergraduates
+                    under the direction of Dr. Jim Bowring at the College of
+                    Charleston in Charleston, SC.
+                  </p>
+                  <a href="" className="info-item">CIRDLES.org</a>
+                  <a href="" className="info-item">GitHub</a>
+                </div>
+              </div>
+              <div id="plot" className="inline-block" />
+              <div id="plot-panel" className="h-split-item" />
+            </Split>
+            
+
             <div id="table-container">
               <DataTable
                 id="data-table"
                 rows={rows || []}
                 columns={columns || []}
               />
-            </div>
-            <div id="plot-container">
-              <div id="plot" />
             </div>
           </Split>
         </div>
