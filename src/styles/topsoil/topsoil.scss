@@ -20,6 +20,9 @@
 .inline-block {
   display: inline-block;
 }
+.float-left {
+  float: left;
+}
 
 .split {
   -webkit-box-sizing: border-box;
@@ -31,7 +34,7 @@
 .gutter.gutter-vertical {
   background-image: url("../../img/horizontal-grip.png");
   background-repeat: no-repeat;
-  background-color: rgb(102, 102, 102);
+  background-color: silver;
   background-position: center;
   cursor: "grabbing";
 }
@@ -43,7 +46,7 @@
   height: 100%;
   background-image: url("../../img/vertical-grip.png");
   background-repeat: no-repeat;
-  background-color: rgb(102, 102, 102);
+  background-color: silver;
   background-position: center;
   cursor: "grabbing";
 }
@@ -56,56 +59,47 @@
 }
 
 #toolbar {
+  position: relative;
   display: flex;
   flex-direction: column;
   flex-grow: 0;
-  width: 50px;
+  padding: 5px;
   height: 100%;
   background-color: green;
 }
 .toolbar-item {
   display: block;
-  width: 80px;
-  margin: 10px 10px 0 0;
+  width: 100px;
+  margin: 5px;
+  text-align: center;
 }
 
-#info-container {
-  // display: inline-block;
-  float: left;
-  overflow: auto;
-  // width: 25%;
-  // height: 50%;
-}
-
-#info-body {
+#toolbar-tail {
+  position: absolute;
+  bottom: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-evenly;
-  overflow: auto;
-  padding: 5px;
-}
-.info-item {
-  margin: 5px;
 }
 
 #logo {
   background-image: url("../../img/logos/Topsoil.svg");
-  width: 100px;
-  height: 100px;
+  width: 80px;
+  height: 80px;
 }
 
-#blurb {
-  max-width: 300px;
-  text-align: center;
-}
-
-.info-link {
-
+#main-container {
+  flex-grow: 1;
+  overflow: hidden;
+  height: 100%;
+  width: 100%;
+  border: 3px solid gray;
 }
 
 #table-container {
-  // height: 50%;
+  // height: 100%;
+  // display: inline-block;
+  float: left;
 }
 
 #plot-container {
@@ -114,13 +108,13 @@
 }
 
 #plot {
-  display: inline-block;
+  // display: inline-block;
   height: 100%;
   background-color: white;
 }
 
 #plot-panel {
-  display: inline-block;
+  // display: inline-block;
   height: 100%;
   background-color: lightgray;
 }

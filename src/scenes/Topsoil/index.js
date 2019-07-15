@@ -5,7 +5,7 @@ import "tabulator-tables";
 import Modal from "react-modal";
 import Split from "react-split";
 import { UploadForm, DataTable, VariableChooser } from "./components";
-import * as Topsoil from "topsoil-js";
+import * as Topsoil from "topsoil-js/dist/topsoil";
 import "../../styles/topsoil/topsoil.scss";
 
 Modal.setAppElement("#root");
@@ -34,8 +34,8 @@ class TopsoilPage extends Component {
         variables: {}
       },
       plot: {
-        data: null,
-        options: null
+        data: [],
+        options: {}
       },
       varChooserIsOpen: false,
       uploadFormIsOpen: false
@@ -96,12 +96,17 @@ class TopsoilPage extends Component {
         colName = table.variables[key];
         entry[key] = row[colName];
       }
+      if ("title" in row) {
+        entry["title"] = row["title"];
+      }
+      if ("selected" in row) {
+        entry["selected"] = row["selected"];
+      }
       return entry;
     });
 
-    this.setState({ table, plot });
+    this.setState({ table, plot }, this.handleGeneratePlot);
     this.handleCloseVarChooser();
-    this.handleGeneratePlot();
   }
 
   handleCloseVarChooser() {
@@ -141,26 +146,31 @@ class TopsoilPage extends Component {
   }
 
   handleGeneratePlot() {
-    this.plot = new Topsoil.ScatterPlot("#plot", this.state.plot.data, {
-      title: "Hello World",
-      uncertainty: 2.0,
-      x_axis: this.state.table.variables["x"],
-      y_axis: this.state.table.variables["y"],
-      points: true,
-      points_fill: "steelblue",
-      points_opacity: 1,
-      ellipses: true,
-      ellipses_fill: "red",
-      ellipses_opacity: 1,
-      concordia_type: "wetherill",
-      concordia_line: true,
-      concordia_line_fill: "blue",
-      concordia_envelope: true,
-      concordia_envelope_fill: "lightgray",
-      lambda_235: 9.8485e-10,
-      lambda_238: 1.55125e-10,
-      R238_235S: 137.88
-    });
+    console.log(this.state.plot.data);
+    this.plot = new Topsoil.ScatterPlot(
+      document.getElementById("plot"),
+      this.state.plot.data,
+      {
+        title: "Hello World",
+        uncertainty: 2.0,
+        x_axis: this.state.table.variables["x"],
+        y_axis: this.state.table.variables["y"],
+        points: true,
+        points_fill: "steelblue",
+        points_opacity: 1,
+        ellipses: true,
+        ellipses_fill: "red",
+        ellipses_opacity: 1,
+        concordia_type: "wetherill",
+        // concordia_line: true,
+        concordia_line_fill: "blue",
+        concordia_envelope: true,
+        concordia_envelope_fill: "lightgray",
+        lambda_235: 9.8485e-10,
+        lambda_238: 1.55125e-10,
+        R238_235S: 137.88
+      }
+    );
   }
 
   render() {
@@ -225,49 +235,34 @@ class TopsoilPage extends Component {
           >
             Generate Plot
           </button>
+
+          <div id="toolbar-tail" className="toolbar-item">
+            <div id="logo" className="toolbar-item" />
+            <a href="http://cirdles.org/projects/topsoil/" className="toolbar-item">CIRDLES.org</a>
+            <a href="https://github.com/CIRDLES/Topsoil" className="toolbar-item">GitHub</a>
+          </div>
         </div>
 
-        <div style={{ flexGrow: 1, overflow: "hidden" }}>
-          <Split sizes={[60, 40]} direction="vertical">
-            <Split sizes={[25, 50, 25]} direction="horizontal">
-              <div id="info-container">
-                <div id="info-body">
-                  <div id="logo" className="info-item" />
-                  <p id="blurb" className="info-item">
-                    Topsoil is developed by a rotating team of undergraduates
-                    under the direction of Dr. Jim Bowring at the College of
-                    Charleston in Charleston, SC.
-                  </p>
-                  <a href="" className="info-item">CIRDLES.org</a>
-                  <a href="" className="info-item">GitHub</a>
-                </div>
-              </div>
-              <div id="plot" className="inline-block" />
-              <div id="plot-panel" className="h-split-item" />
-            </Split>
-            
-
-            <div id="table-container">
+        <div id="main-container">
+          <Split sizes={[50, 50]} direction="horizontal">
+            <div className="float-left full-size">
               <DataTable
                 id="data-table"
                 rows={rows || []}
                 columns={columns || []}
               />
             </div>
+
+            <div className="inline-block">
+              <Split sizes={[65, 35]} direction="vertical">
+                <div id="plot" />
+                <div id="plot-panel" />
+              </Split>
+            </div>
           </Split>
         </div>
       </div>
     );
-  }
-
-  addEditorToLeafColumns(columns) {
-    columns.forEach(col => {
-      if (col.columns) {
-        this.addEditorToLeafColumns(col.columns);
-        return;
-      }
-      col.editor = numberEditor;
-    });
   }
 }
 
