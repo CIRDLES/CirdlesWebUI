@@ -7,47 +7,81 @@ type Props = {
   options: {}
 };
 
-class TopsoilPlot extends Component<Props> {
+type State = {
+  plot: Topsoil.ScatterPlot,
+  root: HTMLElement
+}
+
+class TopsoilPlot extends Component<Props, State> {
+
+  constructor(props) {
+    super(props);
+    this._rootRef = React.createRef();
+  }
+
   componentDidMount() {
-    if (this.props.data) {
-      this.createPlot();
+    let root = this._rootRef.current,
+        plot = null;
+    if (this.shouldCreatePlot()) {
+      plot = createPlot(this);
     }
+    this.setState({root, plot});
   }
 
   componentDidUpdate() {
-    if (! this.props.data) {
-      this.destroyPlot();
+    let { plot, root } = this.state;
+
+    if (this.shouldCreatePlot()) {
+      plot = new Topsoil.ScatterPlot(
+        root,
+        this.props.data,
+        this.props.options
+      );
+      this.setState({ plot });
       return;
     }
 
-    if (this.plot = null) {
-      this.createPlot();
+    if (plot) {
+      if (this.shouldDestroyPlot()) {
+        plot = null;
+        root.innerHTML = "";
+        this.setState({ plot });
+        return;
+      }
+      plot.data = this.props.data;
+      plot.options = this.props.options;
     }
-
-    this.plot.setData(this.props.data);
-    this.plot.setOptions(this.props.options);
   }
 
   render() {
-    return (
-      <div>
-        <div id="#plot" />
-      </div>
-    );
+    return <div id="plot-root" ref={this._rootRef} />;
   }
 
-  createPlot() {
-    this.plot = new Topsoil.ScatterPlot(
-      document.getElementById("plot"),
-      this.props.data,
-      this.props.options
-    );
+  shouldCreatePlot() {
+    return (dataPresent(this.props.data) && ! this.state.plot);
   }
 
-  destroyPlot() {
-    this.plot.root.innerHTML = "";
-    this.plot = null;
+  shouldDestroyPlot() {
+    return (! dataPresent(this.props.data) && this.state.plot);
   }
+  
+}
+
+function dataPresent(arr) {
+  return arr && arr.length > 0;
+}
+
+function createPlot(component) {
+  return new Topsoil.ScatterPlot(
+    component.root,
+    component.props.data,
+    component.props.options
+  );
+}
+
+function destroyPlot(component) {
+  component.plot = null;
+  component.root.innerHTML = "";
 }
 
 export default TopsoilPlot;

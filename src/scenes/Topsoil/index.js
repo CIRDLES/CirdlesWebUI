@@ -4,8 +4,12 @@ import axios from "axios";
 import "tabulator-tables";
 import Modal from "react-modal";
 import Split from "react-split";
-import { UploadForm, DataTable, VariableChooser } from "./components";
-import * as Topsoil from "topsoil-js/dist/topsoil";
+import {
+  UploadForm,
+  DataTable,
+  VariableChooser,
+  TopsoilPlot
+} from "./components";
 import "../../styles/topsoil/topsoil.scss";
 
 Modal.setAppElement("#root");
@@ -21,27 +25,53 @@ const modalStyles = {
   }
 };
 
-class TopsoilPage extends Component {
+const initialState = {
+  selectedTableFile: null,
+  template: "DEFAULT",
+  table: {
+    rows: [],
+    columns: [],
+    variables: {}
+  },
+  plot: {
+    data: [],
+    options: {
+      title: "Hello World",
+      uncertainty: 2.0,
+      x_axis: "X Axis",
+      y_axis: "Y Axis",
+      points: true,
+      points_fill: "steelblue",
+      points_opacity: 1,
+      ellipses: true,
+      ellipses_fill: "red",
+      ellipses_opacity: 1,
+      concordia_type: "wetherill",
+      concordia_line: true,
+      concordia_line_fill: "blue",
+      concordia_envelope: true,
+      concordia_envelope_fill: "lightgray",
+      lambda_235: 9.8485e-10,
+      lambda_238: 1.55125e-10,
+      R238_235S: 137.88
+    }
+  },
+  split : {
+    horizontal: [50, 50],
+    vertical: [35, 65]
+  },
+  varChooserIsOpen: false,
+  uploadFormIsOpen: false
+}
+type State = Readonly<typeof initialState>;
+
+class TopsoilPage extends Component<{}, State> {
   constructor(props) {
     super(props);
 
-    this.state = {
-      selectedTableFile: null,
-      template: "DEFAULT",
-      table: {
-        rows: [],
-        columns: [],
-        variables: {}
-      },
-      plot: {
-        data: [],
-        options: {}
-      },
-      varChooserIsOpen: false,
-      uploadFormIsOpen: false
-    };
+    this.state = initialState;
 
-    this.plot = null;
+    this._plotRef = React.createRef();
 
     this.handleOpenVarChooser = this.handleOpenVarChooser.bind(this);
     this.handleSubmitVarChooser = this.handleSubmitVarChooser.bind(this);
@@ -54,7 +84,17 @@ class TopsoilPage extends Component {
     this.handleChangeTableFile = this.handleChangeTableFile.bind(this);
     this.handleChangeTemplate = this.handleChangeTemplate.bind(this);
 
-    this.handleGeneratePlot = this.handleGeneratePlot.bind(this);
+    this.handleHorizontalSplitSizeChange = this.handleHorizontalSplitSizeChange.bind(this);
+    this.handleVerticalSplitSizeChange = this.handleVerticalSplitSizeChange.bind(this);
+  }
+
+  componentDidMount() {
+    const savedState = JSON.parse(localStorage.getItem("topsoil_state"));
+    if (savedState) this.setState(savedState);
+  }
+
+  componentDidUpdate() {
+    localStorage.setItem("topsoil_state", JSON.stringify(this.state));
   }
 
   handleChangeTableFile(event) {
@@ -88,24 +128,7 @@ class TopsoilPage extends Component {
     const table = { ...this.state.table };
     table.variables = variables;
 
-    const plot = { ...this.state.plot };
-    plot.data = table.rows.map(row => {
-      const entry = {};
-      let colName;
-      for (let key in table.variables) {
-        colName = table.variables[key];
-        entry[key] = row[colName];
-      }
-      if ("title" in row) {
-        entry["title"] = row["title"];
-      }
-      if ("selected" in row) {
-        entry["selected"] = row["selected"];
-      }
-      return entry;
-    });
-
-    this.setState({ table, plot }, this.handleGeneratePlot);
+    this.setState({ table }, this.updatePlotState);
     this.handleCloseVarChooser();
   }
 
@@ -145,32 +168,31 @@ class TopsoilPage extends Component {
     this.setState({ uploadFormIsOpen: false });
   }
 
-  handleGeneratePlot() {
-    console.log(this.state.plot.data);
-    this.plot = new Topsoil.ScatterPlot(
-      document.getElementById("plot"),
-      this.state.plot.data,
-      {
-        title: "Hello World",
-        uncertainty: 2.0,
-        x_axis: this.state.table.variables["x"],
-        y_axis: this.state.table.variables["y"],
-        points: true,
-        points_fill: "steelblue",
-        points_opacity: 1,
-        ellipses: true,
-        ellipses_fill: "red",
-        ellipses_opacity: 1,
-        concordia_type: "wetherill",
-        // concordia_line: true,
-        concordia_line_fill: "blue",
-        concordia_envelope: true,
-        concordia_envelope_fill: "lightgray",
-        lambda_235: 9.8485e-10,
-        lambda_238: 1.55125e-10,
-        R238_235S: 137.88
+  handleRefreshPlot() {
+    if (! this._plotRef.current) return;
+
+    const {
+      current: {
+        state: {
+          plot
+        }
       }
-    );
+    } = this._plotRef;
+    if (plot) plot.update();
+  }
+
+  handleHorizontalSplitSizeChange(sizes) {
+    const split = {...this.state.split};
+    console.log("H sizes", sizes);
+    split.horizontal = sizes;
+    this.setState({ split });
+  }
+
+  handleVerticalSplitSizeChange(sizes) {
+    const split = {...this.state.split};
+    console.log("V sizes", sizes);
+    split.vertical = sizes;
+    this.setState({ split });
   }
 
   render() {
@@ -179,6 +201,7 @@ class TopsoilPage extends Component {
       selectedTableFile,
       table: { rows, columns, variables }
     } = this.state;
+    
     return (
       <div id="page-container">
         <Modal
@@ -238,31 +261,90 @@ class TopsoilPage extends Component {
 
           <div id="toolbar-tail" className="toolbar-item">
             <div id="logo" className="toolbar-item" />
-            <a href="http://cirdles.org/projects/topsoil/" className="toolbar-item">CIRDLES.org</a>
-            <a href="https://github.com/CIRDLES/Topsoil" className="toolbar-item">GitHub</a>
+            <a
+              href="http://cirdles.org/projects/topsoil/"
+              className="toolbar-item"
+            >
+              CIRDLES.org
+            </a>
+            <a
+              href="https://github.com/CIRDLES/Topsoil"
+              className="toolbar-item"
+            >
+              GitHub
+            </a>
           </div>
         </div>
 
         <div id="main-container">
-          <Split sizes={[50, 50]} direction="horizontal">
+          <Split 
+            sizes={this.state.split.horizontal} 
+            direction="horizontal"
+            onDrag={sizes => {
+              this.handleRefreshPlot();
+            }}
+            onDragEnd={this.handleHorizontalSplitSizeChange}
+          >
             <div className="float-left full-size">
               <DataTable
                 id="data-table"
                 rows={rows || []}
                 columns={columns || []}
+                onDataChanged={rows => {
+                  const { table } = this.state;
+                  table.rows = rows;
+                  this.setState.bind(this)({table}, this.updatePlotState.bind(this));
+                }}
               />
             </div>
 
             <div className="inline-block">
-              <Split sizes={[65, 35]} direction="vertical">
-                <div id="plot" />
+              <Split 
+                sizes={this.state.split.vertical} 
+                direction="vertical"
+                onDrag={sizes => {
+                  this.handleRefreshPlot();
+                }}
+                onDragEnd={this.handleVerticalSplitSizeChange}
+              >
                 <div id="plot-panel" />
+                <TopsoilPlot
+                  ref={this._plotRef}
+                  data={this.state.plot.data}
+                  options={this.state.plot.options}
+                />
               </Split>
             </div>
           </Split>
         </div>
       </div>
     );
+  }
+
+  updatePlotState() {
+    if (Object.entries(this.state.table.variables).length === 0) return;
+    const plot = { ...this.state.plot };
+    plot.data = this.calculatePlotData();
+    this.setState({ plot });
+  }
+
+  calculatePlotData() {
+    const { table } = this.state;
+    return table.rows.map(row => {
+      const entry = {};
+      let colName;
+      for (let key in table.variables) {
+        colName = table.variables[key];
+        entry[key] = row[colName];
+      }
+      if ("title" in row) {
+        entry["title"] = row["title"];
+      }
+      if ("selected" in row) {
+        entry["selected"] = row["selected"];
+      }
+      return entry;
+    });
   }
 }
 

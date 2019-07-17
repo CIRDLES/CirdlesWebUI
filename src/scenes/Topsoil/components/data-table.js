@@ -49,7 +49,8 @@ type Props = {
   data: { 
     rows: DataRow[], 
     columns: DataColumn[] 
-  }
+  },
+  onDataChanged: Function
 }
 class DataTable extends Component<Props> {
 
@@ -66,7 +67,8 @@ class DataTable extends Component<Props> {
       data: this.props.rows,
       columns: columns,
       placeholder: "No data loaded.",
-      reactiveData: true
+      reactiveData: true,
+      cellEdited: () => this.props.onDataChanged(this.props.rows)
     });
     
   }
