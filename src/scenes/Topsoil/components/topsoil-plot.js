@@ -1,87 +1,150 @@
 // @flow
 import React, { Component } from "react";
 import * as Topsoil from "topsoil-js";
+import { OptionsContext } from "../options";
+import { svgElementToBlob } from "../../../actions";
+import "../../../styles/topsoil/plot.scss";
 
 type Props = {
-  data: {}[],
-  options: {}
+  plot: {},
+
+  onZoom: Function
 };
 
 type State = {
-  plot: Topsoil.ScatterPlot,
+  instance: Topsoil.ScatterPlot,
   root: HTMLElement
-}
+};
 
 class TopsoilPlot extends Component<Props, State> {
-
   constructor(props) {
     super(props);
+
     this._rootRef = React.createRef();
+
+    this.root = null;
+    this.instance = null;
+    
+    this.handleResetView = this.handleResetView.bind(this);
+    this.handleExportSVG = this.handleExportSVG.bind(this);
+    this.handlePlotZoomed = this.handlePlotZoomed.bind(this);
+    this.handleFitToConcordia = this.handleFitToConcordia.bind(this);
   }
 
   componentDidMount() {
-    let root = this._rootRef.current,
-        plot = null;
+    this.root = this._rootRef.current;
+
     if (this.shouldCreatePlot()) {
-      plot = createPlot(this);
+      this.createPlot();
     }
-    this.setState({root, plot});
   }
 
   componentDidUpdate() {
-    let { plot, root } = this.state;
 
     if (this.shouldCreatePlot()) {
-      plot = new Topsoil.ScatterPlot(
-        root,
-        this.props.data,
-        this.props.options
-      );
-      this.setState({ plot });
+      this.createPlot();
       return;
     }
 
-    if (plot) {
+    if (this.instance) {
       if (this.shouldDestroyPlot()) {
-        plot = null;
-        root.innerHTML = "";
-        this.setState({ plot });
+        this.destroyPlot();
         return;
       }
-      plot.data = this.props.data;
-      plot.options = this.props.options;
+
+      this.instance.data = this.props.plot.data;
+      this.instance.options = this.props.plot.options;
     }
   }
 
+  handleResetView() {
+    if (!this.instance) return;
+    this.instance.resetView();
+  }
+
+  handleExportSVG() {
+    if (!this.instance) return;
+
+    const blob = svgElementToBlob(this.instance.svg.node()),
+      url = URL.createObjectURL(blob),
+      link = document.createElement("a");
+
+    link.href = url;
+    link.download = this.context.title || "download";
+
+    const onClick = () => {
+      setTimeout(() => {
+        URL.revokeObjectURL(url);
+        link.removeEventListener("click", onClick);
+      }, 150);
+    };
+    link.addEventListener("click", onClick);
+    link.click();
+  }
+
+  handlePlotZoomed(plot) {
+    this.props.onZoom(plot);
+  }
+
+  handleFitToConcordia() {
+    console.log(this);
+    if (! this.instance) return;
+    this.instance.snapToConcordia();
+  }
+
   render() {
-    return <div id="plot-root" ref={this._rootRef} />;
+    return (
+      <div className="topsoil-plot-container">
+        <div className="topsoil-plot-button-bar">
+          {this.renderButton("Reset View", this.handleResetView)}
+          {this.renderButton("Download SVG", this.handleExportSVG)}
+          {this.renderButton("Fit to Concordia", this.handleFitToConcordia)}
+        </div>
+        <div ref={this._rootRef} className="topsoil-plot-root" />
+      </div>
+    );
+  }
+
+  renderButton(label, onClick) {
+    return (
+      <button
+        onClick={onClick}
+        disabled={! this.instance}
+      >
+        {label}
+      </button>
+    );
   }
 
   shouldCreatePlot() {
-    return (dataPresent(this.props.data) && ! this.state.plot);
+    return dataPresent(this.props.plot.data) && !this.instance;
+  }
+
+  createPlot() {
+    this.instance = new Topsoil.ScatterPlot(
+      this.root,
+      this.props.plot.data,
+      this.props.plot.options
+    );
+    this.instance.onZoom = this.props.onZoom;
+    this.forceUpdate();
   }
 
   shouldDestroyPlot() {
-    return (! dataPresent(this.props.data) && this.state.plot);
+    return !dataPresent(this.props.plot.data) && this.instance;
   }
-  
+
+  destroyPlot() {
+    this.root.innerHTML = "";
+    this.instance = null;
+    this.forceUpdate();
+  }
 }
+
+TopsoilPlot.contextType = OptionsContext;
 
 function dataPresent(arr) {
   return arr && arr.length > 0;
-}
-
-function createPlot(component) {
-  return new Topsoil.ScatterPlot(
-    component.root,
-    component.props.data,
-    component.props.options
-  );
-}
-
-function destroyPlot(component) {
-  component.plot = null;
-  component.root.innerHTML = "";
 }
 
 export default TopsoilPlot;

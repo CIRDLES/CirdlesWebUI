@@ -51,6 +51,13 @@
   cursor: "grabbing";
 }
 
+#right-split-container {
+  display: inline-block;
+  position: absolute;
+  top: 0;
+  height: calc(100% - 10px);
+}
+
 #page-container {
   display: flex;
   flex-direction: row;
@@ -95,14 +102,11 @@
   border: 3px solid gray;
 }
 
-#plot-root {
-  // display: inline-block;
-  // height: 100%;
-  background-color: white;
+.lambda-form {
+  .lambda-field {
+    margin: 0 10px;
+    width: 125px;
+  }
 }
 
-#plot-panel {
-  // display: inline-block;
-  // height: 100%;
-  background-color: lightgray;
-}
+

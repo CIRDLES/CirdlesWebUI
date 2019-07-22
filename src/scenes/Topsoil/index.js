@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { TOPSOIL_ENDPOINT, TOPSOIL } from "../../constants";
+import { TOPSOIL_ENDPOINT } from "../../constants";
 import axios from "axios";
 import "tabulator-tables";
 import Modal from "react-modal";
@@ -8,8 +8,13 @@ import {
   UploadForm,
   DataTable,
   VariableChooser,
-  TopsoilPlot
+  TopsoilPlot,
+  TopsoilPlotPanel
 } from "./components";
+import { DefaultOptions } from "./constants/defaults";
+import { OptionsProvider } from "./options";
+import { SampleRows, SampleColumns } from "./constants/sample-data";
+import { Option } from "topsoil-js";
 import "../../styles/topsoil/topsoil.scss";
 
 Modal.setAppElement("#root");
@@ -35,34 +40,15 @@ const initialState = {
   },
   plot: {
     data: [],
-    options: {
-      title: "Hello World",
-      uncertainty: 2.0,
-      x_axis: "X Axis",
-      y_axis: "Y Axis",
-      points: true,
-      points_fill: "steelblue",
-      points_opacity: 1,
-      ellipses: true,
-      ellipses_fill: "red",
-      ellipses_opacity: 1,
-      concordia_type: "wetherill",
-      concordia_line: true,
-      concordia_line_fill: "blue",
-      concordia_envelope: true,
-      concordia_envelope_fill: "lightgray",
-      lambda_235: 9.8485e-10,
-      lambda_238: 1.55125e-10,
-      R238_235S: 137.88
-    }
+    options: DefaultOptions
   },
-  split : {
+  split: {
     horizontal: [50, 50],
-    vertical: [35, 65]
+    vertical: [65, 35]
   },
   varChooserIsOpen: false,
   uploadFormIsOpen: false
-}
+};
 type State = Readonly<typeof initialState>;
 
 class TopsoilPage extends Component<{}, State> {
@@ -72,6 +58,8 @@ class TopsoilPage extends Component<{}, State> {
     this.state = initialState;
 
     this._plotRef = React.createRef();
+
+    this.handleLoadSampleData = this.handleLoadSampleData.bind(this);
 
     this.handleOpenVarChooser = this.handleOpenVarChooser.bind(this);
     this.handleSubmitVarChooser = this.handleSubmitVarChooser.bind(this);
@@ -84,8 +72,15 @@ class TopsoilPage extends Component<{}, State> {
     this.handleChangeTableFile = this.handleChangeTableFile.bind(this);
     this.handleChangeTemplate = this.handleChangeTemplate.bind(this);
 
-    this.handleHorizontalSplitSizeChange = this.handleHorizontalSplitSizeChange.bind(this);
-    this.handleVerticalSplitSizeChange = this.handleVerticalSplitSizeChange.bind(this);
+    this.handleHorizontalSplitSizeChange = this.handleHorizontalSplitSizeChange.bind(
+      this
+    );
+    this.handleVerticalSplitSizeChange = this.handleVerticalSplitSizeChange.bind(
+      this
+    );
+
+    this.handlePlotZoomed = this.handlePlotZoomed.bind(this);
+    this.handlePlotOptionChange = this.handlePlotOptionChange.bind(this);
   }
 
   componentDidMount() {
@@ -95,6 +90,13 @@ class TopsoilPage extends Component<{}, State> {
 
   componentDidUpdate() {
     localStorage.setItem("topsoil_state", JSON.stringify(this.state));
+  }
+
+  handleLoadSampleData() {
+    const table = { ...this.state.table.data };
+    table.rows = SampleRows;
+    table.columns = SampleColumns;
+    this.setState({ table });
   }
 
   handleChangeTableFile(event) {
@@ -168,29 +170,44 @@ class TopsoilPage extends Component<{}, State> {
     this.setState({ uploadFormIsOpen: false });
   }
 
+  handlePlotZoomed(plotInstance) {
+    // if (! plotInstance) return;
+    // // console.log(plotInstance);
+    // const plot = {...this.state.plot},
+    //       xDomain = plotInstance.x.scale.domain(),
+    //       yDomain = plotInstance.y.scale.domain();
+    // plot.options[Option.X_AXIS_MIN] = xDomain[0];
+    // plot.options[Option.X_AXIS_MAX] = xDomain[1];
+    // plot.options[Option.Y_AXIS_MIN] = yDomain[0];
+    // plot.options[Option.Y_AXIS_MAX] = yDomain[1];
+    // this.setState({ plot });
+  }
+
   handleRefreshPlot() {
-    if (! this._plotRef.current) return;
+    if (!this._plotRef.current) return;
 
     const {
       current: {
-        state: {
-          plot
-        }
+        instance
       }
     } = this._plotRef;
-    if (plot) plot.update();
+    if (instance) instance.update();
+  }
+
+  handlePlotOptionChange(option, newValue) {
+    const plot = { ...this.state.plot };
+    plot.options[option] = newValue;
+    this.setState({ plot });
   }
 
   handleHorizontalSplitSizeChange(sizes) {
-    const split = {...this.state.split};
-    console.log("H sizes", sizes);
+    const split = { ...this.state.split };
     split.horizontal = sizes;
     this.setState({ split });
   }
 
   handleVerticalSplitSizeChange(sizes) {
-    const split = {...this.state.split};
-    console.log("V sizes", sizes);
+    const split = { ...this.state.split };
     split.vertical = sizes;
     this.setState({ split });
   }
@@ -199,9 +216,10 @@ class TopsoilPage extends Component<{}, State> {
     const {
       template,
       selectedTableFile,
-      table: { rows, columns, variables }
+      table: { rows: tableRows, columns: tableColumns },
+      plot: { data: plotData, options: plotOptions }
     } = this.state;
-    
+
     return (
       <div id="page-container">
         <Modal
@@ -221,7 +239,7 @@ class TopsoilPage extends Component<{}, State> {
             plotting variables.
           </p>
           <VariableChooser
-            columns={columns}
+            columns={tableColumns}
             onSubmit={this.handleSubmitVarChooser}
           />
         </Modal>
@@ -248,13 +266,16 @@ class TopsoilPage extends Component<{}, State> {
         </Modal>
 
         <div id="#toolbar">
+          <button className="toolbar-item" onClick={this.handleLoadSampleData}>
+            Load Sample Data
+          </button>
           <button className="toolbar-item" onClick={this.handleOpenUploadForm}>
             Upload Data
           </button>
           <button
             className="toolbar-item"
             onClick={this.handleOpenVarChooser}
-            disabled={rows.length === 0}
+            disabled={tableRows.length === 0}
           >
             Generate Plot
           </button>
@@ -277,43 +298,49 @@ class TopsoilPage extends Component<{}, State> {
         </div>
 
         <div id="main-container">
-          <Split 
-            sizes={this.state.split.horizontal} 
+          <Split
+            sizes={this.state.split.horizontal}
             direction="horizontal"
             onDrag={sizes => {
               this.handleRefreshPlot();
             }}
             onDragEnd={this.handleHorizontalSplitSizeChange}
+            style={{ position: "relative" }}
           >
-            <div className="float-left full-size">
+            <div className="float-left">
               <DataTable
                 id="data-table"
-                rows={rows || []}
-                columns={columns || []}
+                rows={tableRows || []}
+                columns={tableColumns || []}
                 onDataChanged={rows => {
                   const { table } = this.state;
                   table.rows = rows;
-                  this.setState.bind(this)({table}, this.updatePlotState.bind(this));
+                  this.setState({ table }, this.updatePlotState.bind(this));
                 }}
               />
             </div>
 
-            <div className="inline-block">
-              <Split 
-                sizes={this.state.split.vertical} 
-                direction="vertical"
-                onDrag={sizes => {
-                  this.handleRefreshPlot();
-                }}
-                onDragEnd={this.handleVerticalSplitSizeChange}
-              >
-                <div id="plot-panel" />
-                <TopsoilPlot
-                  ref={this._plotRef}
-                  data={this.state.plot.data}
-                  options={this.state.plot.options}
-                />
-              </Split>
+            <div id="right-split-container">
+              <OptionsProvider value={plotOptions}>
+                <Split
+                  sizes={this.state.split.vertical}
+                  direction="vertical"
+                  onDrag={sizes => {
+                    this.handleRefreshPlot();
+                  }}
+                  onDragEnd={this.handleVerticalSplitSizeChange}
+                >
+                  <TopsoilPlot 
+                    ref={this._plotRef} 
+                    plot={this.state.plot}
+                    onZoom={this.handlePlotZoomed}
+                  />
+                  <TopsoilPlotPanel
+                    plot={this.state.plot}
+                    onOptionChanged={this.handlePlotOptionChange}
+                  />
+                </Split>
+              </OptionsProvider>
             </div>
           </Split>
         </div>

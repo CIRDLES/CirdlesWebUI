@@ -13,6 +13,7 @@
   "dependencies": {
     "axios": "^0.19.0",
     "downloadjs": "^1.4.7",
+    "js-beautify": "^1.10.1",
     "radium": "^0.22.0",
     "react": "^16.8.0",
     "react-dom": "^16.8.0",
@@ -28,7 +29,7 @@
     "redux-thunk": "^2.2.0",
     "sortablejs": "^1.10.0-rc3",
     "tabulator-tables": "^4.2.7",
-    "topsoil-js": "github:marottajb/topsoil-js#test"
+    "topsoil-js": "github:marottajb/topsoil-js"
   },
   "devDependencies": {
     "@types/react": "^16.8.23",

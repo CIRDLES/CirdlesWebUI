@@ -1,0 +1,9 @@
+.subpanel-flex-container {
+  display: inline-flex;
+  flex-flow: column wrap;
+  height: calc(100% - 10px);
+  padding: 5px;
+}
+.subpanel-flex-container > * {
+  margin: 5px;
+}
