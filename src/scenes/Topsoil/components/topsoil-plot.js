@@ -1,14 +1,12 @@
 // @flow
 import React, { Component } from "react";
 import * as Topsoil from "topsoil-js";
-import { OptionsContext } from "../options";
 import { svgElementToBlob } from "../../../actions";
 import "../../../styles/topsoil/plot.scss";
 
 type Props = {
   plot: {},
-
-  onZoom: Function
+  onZoomEnd: Function
 };
 
 type State = {
@@ -27,8 +25,6 @@ class TopsoilPlot extends Component<Props, State> {
     
     this.handleResetView = this.handleResetView.bind(this);
     this.handleExportSVG = this.handleExportSVG.bind(this);
-    this.handlePlotZoomed = this.handlePlotZoomed.bind(this);
-    this.handleFitToConcordia = this.handleFitToConcordia.bind(this);
   }
 
   componentDidMount() {
@@ -82,23 +78,12 @@ class TopsoilPlot extends Component<Props, State> {
     link.click();
   }
 
-  handlePlotZoomed(plot) {
-    this.props.onZoom(plot);
-  }
-
-  handleFitToConcordia() {
-    console.log(this);
-    if (! this.instance) return;
-    this.instance.snapToConcordia();
-  }
-
   render() {
     return (
       <div className="topsoil-plot-container">
         <div className="topsoil-plot-button-bar">
           {this.renderButton("Reset View", this.handleResetView)}
           {this.renderButton("Download SVG", this.handleExportSVG)}
-          {this.renderButton("Fit to Concordia", this.handleFitToConcordia)}
         </div>
         <div ref={this._rootRef} className="topsoil-plot-root" />
       </div>
@@ -126,7 +111,7 @@ class TopsoilPlot extends Component<Props, State> {
       this.props.plot.data,
       this.props.plot.options
     );
-    this.instance.onZoom = this.props.onZoom;
+    this.instance.onZoomEnd = this.props.onZoomEnd;
     this.forceUpdate();
   }
 
@@ -140,8 +125,6 @@ class TopsoilPlot extends Component<Props, State> {
     this.forceUpdate();
   }
 }
-
-TopsoilPlot.contextType = OptionsContext;
 
 function dataPresent(arr) {
   return arr && arr.length > 0;

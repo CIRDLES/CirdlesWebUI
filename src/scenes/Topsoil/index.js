@@ -11,10 +11,9 @@ import {
   TopsoilPlot,
   TopsoilPlotPanel
 } from "./components";
-import { DefaultOptions } from "./constants/defaults";
-import { OptionsProvider } from "./options";
-import { SampleRows, SampleColumns } from "./constants/sample-data";
 import { Option } from "topsoil-js";
+import { DefaultOptions } from "./constants/defaults";
+import { SampleRows, SampleColumns } from "./constants/sample-data";
 import "../../styles/topsoil/topsoil.scss";
 
 Modal.setAppElement("#root");
@@ -80,6 +79,8 @@ class TopsoilPage extends Component<{}, State> {
     );
 
     this.handlePlotZoomed = this.handlePlotZoomed.bind(this);
+    this.handleSetExtents = this.handleSetExtents.bind(this);
+    this.handleFitToConcordia = this.handleFitToConcordia.bind(this);
     this.handlePlotOptionChange = this.handlePlotOptionChange.bind(this);
   }
 
@@ -170,17 +171,27 @@ class TopsoilPage extends Component<{}, State> {
     this.setState({ uploadFormIsOpen: false });
   }
 
-  handlePlotZoomed(plotInstance) {
-    // if (! plotInstance) return;
-    // // console.log(plotInstance);
-    // const plot = {...this.state.plot},
-    //       xDomain = plotInstance.x.scale.domain(),
-    //       yDomain = plotInstance.y.scale.domain();
-    // plot.options[Option.X_AXIS_MIN] = xDomain[0];
-    // plot.options[Option.X_AXIS_MAX] = xDomain[1];
-    // plot.options[Option.Y_AXIS_MIN] = yDomain[0];
-    // plot.options[Option.Y_AXIS_MAX] = yDomain[1];
-    // this.setState({ plot });
+  handlePlotZoomed(xDomain, yDomain) {
+    const plot = {...this.state.plot};
+    plot.options[Option.X_MIN] = xDomain[0];
+    plot.options[Option.X_MAX] = xDomain[1];
+    plot.options[Option.Y_MIN] = yDomain[0];
+    plot.options[Option.Y_MAX] = yDomain[1];
+    this.setState({ plot });
+  }
+
+  handleSetExtents(xMin, xMax, yMin, yMax) {
+    const {
+      current: { instance }
+    } = this._plotRef;
+    if (instance) instance.changeAxisExtents(xMin, xMax, yMin, yMax, true);
+  }
+
+  handleFitToConcordia() {
+    const {
+      current: { instance }
+    } = this._plotRef;
+    if (instance) instance.snapToConcordia();
   }
 
   handleRefreshPlot() {
@@ -217,7 +228,7 @@ class TopsoilPage extends Component<{}, State> {
       template,
       selectedTableFile,
       table: { rows: tableRows, columns: tableColumns },
-      plot: { data: plotData, options: plotOptions }
+      plot
     } = this.state;
 
     return (
@@ -321,26 +332,26 @@ class TopsoilPage extends Component<{}, State> {
             </div>
 
             <div id="right-split-container">
-              <OptionsProvider value={plotOptions}>
-                <Split
-                  sizes={this.state.split.vertical}
-                  direction="vertical"
-                  onDrag={sizes => {
-                    this.handleRefreshPlot();
-                  }}
-                  onDragEnd={this.handleVerticalSplitSizeChange}
-                >
-                  <TopsoilPlot 
-                    ref={this._plotRef} 
-                    plot={this.state.plot}
-                    onZoom={this.handlePlotZoomed}
-                  />
-                  <TopsoilPlotPanel
-                    plot={this.state.plot}
-                    onOptionChanged={this.handlePlotOptionChange}
-                  />
-                </Split>
-              </OptionsProvider>
+              <Split
+                sizes={this.state.split.vertical}
+                direction="vertical"
+                onDrag={sizes => {
+                  this.handleRefreshPlot();
+                }}
+                onDragEnd={this.handleVerticalSplitSizeChange}
+              >
+                <TopsoilPlot 
+                  ref={this._plotRef} 
+                  plot={plot}
+                  onZoomEnd={this.handlePlotZoomed}
+                />
+                <TopsoilPlotPanel
+                  plot={plot}
+                  onOptionChanged={this.handlePlotOptionChange}
+                  onSetExtents={this.handleSetExtents}
+                  fitToWetherillConcordia={this.handleFitToConcordia}
+                />
+              </Split>
             </div>
           </Split>
         </div>

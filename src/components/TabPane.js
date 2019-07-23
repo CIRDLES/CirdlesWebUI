@@ -3,8 +3,7 @@ import React, { Component } from "react";
 import { Tab } from "./Tab";
 
 type Props = {
-  children: [],
-  childProps: {}
+  children: []
 };
 
 type State = {
@@ -26,13 +25,9 @@ export class TabPane extends Component<Props, State> {
     this.setState({ activeTab: tab });
   }
 
-  handleChildUpdate() {
-
-  }
-
   render() {
     const {
-      props: { childProps, children },
+      props: { children },
       state: { activeTab }
     } = this;
 
@@ -52,7 +47,10 @@ export class TabPane extends Component<Props, State> {
           })}
         </ol>
         <div className="tab-content">
-          {activeTab.props.children}
+          {children.map(tab => {
+            if (activeTab.props.label === tab.props.label) return tab.props.children;
+            return undefined;
+          })}
         </div>
       </div>
     );

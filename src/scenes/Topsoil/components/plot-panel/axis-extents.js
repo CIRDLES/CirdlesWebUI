@@ -1,6 +1,5 @@
 // @flow
 import React, { Component } from "react";
-import OptionTextInput from "./option-text-input";
 
 const styles = {
   container: {
@@ -17,15 +16,12 @@ const styles = {
 };
 
 type Props = {
-  axisType: string,
-  axisName: String,
   axisMin: number,
   axisMax: number,
-  onOptionChanged: Function,
   onSetExtents: Function
 };
 
-class AxisForm extends Component<Props> {
+class AxisExtents extends Component<Props> {
   constructor(props) {
     super(props);
 
@@ -35,37 +31,39 @@ class AxisForm extends Component<Props> {
     this.handleSetExtents = this.handleSetExtents.bind(this);
   }
 
+  componentDidUpdate() {
+    // Set the value in the fields if the plot is panned/zoomed
+    this.minField.current.value = this.minField.current.defaultValue;
+    this.maxField.current.value = this.maxField.current.defaultValue;
+  }
+
   handleSetExtents() {
     this.props.onSetExtents(
-      this.minField.current.value,
-      this.maxField.current.value
+      +this.minField.current.value,
+      +this.maxField.current.value
     );
   }
 
   render() {
     const {
-      axisType,
-      axisName,
       axisMin,
-      axisMax,
-      onOptionChanged
+      axisMax
     } = this.props;
 
     return (
       <div style={styles.container}>
-        <OptionTextInput
-          value={axisName}
-          label={axisType}
-          onChange={onOptionChanged}
-        />
         <div style={styles.extentsGroup}>
           <input
+            name="minValue"
+            ref={this.minField}
             style={styles.extentsField}
             type="text"
             defaultValue={axisMin}
           />
           <span> to </span>
           <input
+            name="maxValue"
+            ref={this.maxField}
             style={styles.extentsField}
             type="text"
             defaultValue={axisMax}
@@ -77,4 +75,4 @@ class AxisForm extends Component<Props> {
   }
 }
 
-export default AxisForm;
+export default AxisExtents;
