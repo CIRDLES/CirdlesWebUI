@@ -8,7 +8,7 @@ type Props = {
   onChange: Function
 }
 
-class CheckBox extends Component<Props> {
+export class CheckBox extends Component<Props> {
 
   render() {
     const { label, checked, onChange } = this.props;
@@ -30,4 +30,3 @@ class CheckBox extends Component<Props> {
   }
 }
  
-export default CheckBox;

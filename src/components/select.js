@@ -4,17 +4,18 @@ import { UID } from 'react-uid';
 type Props = {
   label: string,
   value: string,
+  style: {},
   onChange: Function
 }
 
-class Select extends Component<Props> {
+export class Select extends Component<Props> {
 
   render() { 
     const { label, value, onChange } = this.props;
     return (
       <UID name={id => `Select_${id}`}>
         {id => 
-          <div>
+          <div style={this.props.style}>
             <label htmlFor={id}>{label}: </label>
             <select
               id={id}
@@ -30,5 +31,3 @@ class Select extends Component<Props> {
   }
 
 }
- 
-export default Select;

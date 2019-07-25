@@ -27,7 +27,7 @@ class Lambda extends Component<Props> {
   }
 
   render() { 
-    const { label, defaultValue, onSetValue } = this.props;
+    const { label, defaultValue } = this.props;
     return (
       <div>
         <label>{label}:</label>

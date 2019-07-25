@@ -8,7 +8,7 @@ type Props = {
   onChange: Function
 };
 
-class Input extends Component<Props> {
+export class Input extends Component<Props> {
   render() {
     const { label, type, value, onChange } = this.props;
 
@@ -29,5 +29,3 @@ class Input extends Component<Props> {
     );
   }
 }
-
-export default Input;

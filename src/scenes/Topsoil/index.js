@@ -11,7 +11,7 @@ import {
   TopsoilPlot,
   TopsoilPlotPanel
 } from "./components";
-import { Option } from "topsoil-js";
+import { Variable, Option } from "topsoil-js";
 import { DefaultOptions } from "./constants/defaults";
 import { SampleRows, SampleColumns } from "./constants/sample-data";
 import "../../styles/topsoil/topsoil.scss";
@@ -25,6 +25,8 @@ const modalStyles = {
     right: "auto",
     bottom: "auto",
     marginRight: "-50%",
+    maxWidth: "80%",
+    maxHeight: "80%",
     transform: "translate(-50%, -50%)"
   }
 };
@@ -116,18 +118,7 @@ class TopsoilPage extends Component<{}, State> {
     this.setState({ varChooserIsOpen: true });
   }
 
-  handleSubmitVarChooser(event) {
-    event.preventDefault();
-    const e = event.nativeEvent,
-      variables = {};
-
-    let i = 0,
-      target = e.target[i];
-    while (target !== undefined && target.type === "select-one") {
-      if (target.value !== "") variables[target.value] = target.name;
-      target = e.target[++i];
-    }
-
+  handleSubmitVarChooser(variables) {
     const table = { ...this.state.table };
     table.variables = variables;
 
@@ -198,9 +189,7 @@ class TopsoilPage extends Component<{}, State> {
     if (!this._plotRef.current) return;
 
     const {
-      current: {
-        instance
-      }
+      current: { instance }
     } = this._plotRef;
     if (instance) instance.update();
   }
@@ -252,6 +241,7 @@ class TopsoilPage extends Component<{}, State> {
           <VariableChooser
             columns={tableColumns}
             onSubmit={this.handleSubmitVarChooser}
+            variables={this.state.table.variables}
           />
         </Modal>
 
@@ -360,29 +350,54 @@ class TopsoilPage extends Component<{}, State> {
   }
 
   updatePlotState() {
-    if (Object.entries(this.state.table.variables).length === 0) return;
+    const { rows, variables } = this.state.table;
+    if (Object.entries(variables).length === 0) return;
     const plot = { ...this.state.plot };
-    plot.data = this.calculatePlotData();
+    plot.data = this.calculatePlotData(rows, variables);
     this.setState({ plot });
   }
 
-  calculatePlotData() {
-    const { table } = this.state;
-    return table.rows.map(row => {
-      const entry = {};
-      let colName;
-      for (let key in table.variables) {
-        colName = table.variables[key];
-        entry[key] = row[colName];
+  // calculatePlotData() {
+  //   const { table } = this.state;
+  //   return table.rows.map(row => {
+  //     const entry = {};
+  //     let colName;
+  //     for (let key in table.variables) {
+  //       colName = table.variables[key];
+  //       entry[key] = row[colName];
+  //     }
+  //     if (Variable.TITLE in row) {
+  //       entry[Variable.TITLE] = row[Variable.TITLE];
+  //     }
+  //     if (Variable.SELECTED in row) {
+  //       entry[Variable.SELECTED] = row[Variable.SELECTED];
+  //     }
+  //     return entry;
+  //   });
+  // }
+
+  calculatePlotData(rows, variables, rtnval) {
+    rtnval = rtnval || [];
+    rows.forEach(row => {
+      if (row._children) {
+        rtnval.concat(this.calculatePlotData(row._children, variables, rtnval));
+      } else {
+        const entry = {};
+        let colName;
+        for (let v in variables) {
+          colName = variables[v];
+          entry[v] = row[colName];
+        }
+        if (Variable.TITLE in row) {
+          entry[Variable.TITLE] = row[Variable.TITLE];
+        }
+        if (Variable.SELECTED in row) {
+          entry[Variable.SELECTED] = row[Variable.SELECTED];
+        }
+        rtnval.push(entry);
       }
-      if ("title" in row) {
-        entry["title"] = row["title"];
-      }
-      if ("selected" in row) {
-        entry["selected"] = row["selected"];
-      }
-      return entry;
     });
+    return rtnval;
   }
 }
 

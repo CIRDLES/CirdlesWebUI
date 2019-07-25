@@ -9,7 +9,7 @@ type Props = {
   onSelected: Function
 }
 
-class RadioButton extends Component<Props> {
+export class RadioButton extends Component<Props> {
   render() { 
     const {
       label,
@@ -35,5 +35,3 @@ class RadioButton extends Component<Props> {
     );
   }
 }
- 
-export default RadioButton;

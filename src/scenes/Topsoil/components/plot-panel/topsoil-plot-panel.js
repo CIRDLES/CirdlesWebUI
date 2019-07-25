@@ -4,10 +4,7 @@ import { TabPane, Tab } from "../../../../components";
 import { Option } from "topsoil-js";
 import AxisExtents from "./axis-extents";
 import "../../../../styles/topsoil/plot-panel.scss";
-import Input from "./input";
-import Select from "./select";
-import RadioButton from "./radio-button";
-import CheckBox from "./check-box";
+import { Input, Select, RadioButton, CheckBox } from "../../../../components";
 import Lambda from "./lambda";
 
 const styles = {
