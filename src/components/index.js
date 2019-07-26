@@ -6,7 +6,8 @@ export * from './SVGImage';
 export * from './Tab';
 export * from './TabPane';
 
-export * from './input'
-export * from './select'
-export * from './radio-button'
-export * from './check-box'
+export * from './input';
+export * from './select';
+export * from './radio-button';
+export * from './check-box';
+export * from './collapse';

@@ -32,7 +32,7 @@ type Props = {
   onClick: Function
 };
 
-class Collapse extends Component<Props> {
+export class Collapse extends Component<Props> {
 
   render() {
     const { collapsed, label } = this.props;
@@ -43,7 +43,7 @@ class Collapse extends Component<Props> {
           style={styles.labelGroup}
         >
           <span style={styles.icon}>{collapsed ? "+" : "-"}</span>
-          <label>{label}</label>
+          <label style={styles.label}>{label}</label>
         </div>
         <div style={collapsed ? styles.contentCollapsed : styles.content}>
           {this.props.children}
@@ -53,5 +53,3 @@ class Collapse extends Component<Props> {
   }
 
 }
-
-export default Collapse;

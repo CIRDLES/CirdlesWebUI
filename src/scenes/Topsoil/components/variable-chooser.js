@@ -1,20 +1,18 @@
 // @flow
 import React, { Component } from "react";
 import { Variable } from "topsoil-js";
-import { Select } from "../../../components";
-import { UID } from "react-uid";
-import Collapse from "../../../components/collapse";
+import { Select, Collapse } from "../../../components";
 
 const styles = {
   grid: {
     display: "grid",
     gridTemplateColumns: "1fr 15em",
-    width: "100%"
+    width: "100%",
+    height: "100%"
   },
   varList: {
     gridColumn: 1,
     padding: "0.5em",
-    border: "1px solid #ccc",
     overflow: "auto"
   },
   varListItem: {
@@ -30,6 +28,10 @@ const styles = {
   },
   selectionListItem: {
     margin: "0.5em"
+  },
+  errorMessage: {
+    color: "red",
+    marginLeft: "1em"
   }
 }
 
@@ -44,17 +46,26 @@ const numberVariables = [
 type Props = {
   columns: [],
   varMap: {},
+  unctFormat: string,
+  requiredVars: [],
 
   onSubmit: Function
 };
 
-class VariableChooser extends Component<Props> {
+type State = {
+  selections: [],
+  collapse: {},
+  unctFormat: string,
+  errorMessage: string
+}
+
+class VariableChooser extends Component<Props, State> {
   constructor(props) {
     super(props);
 
-    const { variables } = this.props,
+    const { variables, columns, unctFormat } = this.props,
           selections = {};
-    for (let key in this.props.variables) {
+    for (let key in variables) {
       if (variables.hasOwnProperty(key)) {
         selections[variables[key]] = key;
       }
@@ -62,39 +73,60 @@ class VariableChooser extends Component<Props> {
 
     this.state = {
       selections,
-      collapse: getInitialCollapseState(this.props.columns)
+      collapse: getInitialCollapseState(columns),
+      unctFormat,
+      errorMessage: ""
     };
 
     this.handleSelectionChange = this.handleSelectionChange.bind(this);
+    this.handleChangeUnctFormat = this.handleChangeUnctFormat.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   handleSelectionChange(colName, varName) {
     const selections = { ...this.state.selections };
     
+    // If this variable is already selected for a different column, delete that selection
     for (let col in selections) {
       if (selections.hasOwnProperty(col) && selections[col] === varName) {
         delete selections[col];
       }
     }
 
+    // If the new selection for this column is empty, remove it from selections
     if (varName === "") {
       delete selections[colName];
     } else {
       selections[colName] = varName;
     }
+
     this.setState({ selections });
   }
 
+  handleChangeUnctFormat(event) {
+    this.setState({ unctFormat: event.target.value });
+  }
+
   handleSubmit() {
-    const { selections } = this.state,
+    const { selections, unctFormat } = this.state,
           variables = {};
     for (let colName in selections) {
       if (selections.hasOwnProperty(colName)) {
         variables[selections[colName]] = colName;
       }
     }
-    this.props.onSubmit(variables);
+
+    const { requiredVars } = this.props;
+    if (requiredVars) {
+      for (let v of requiredVars) {
+        if (!(v in variables)) {
+          this.setState({ errorMessage: "Missing required variable: " + v })
+          return;
+        }
+      }
+    }
+
+    this.props.onSubmit(variables, unctFormat);
   }
 
   handleToggleCollapse(colName) {
@@ -120,6 +152,11 @@ class VariableChooser extends Component<Props> {
       }
     }
 
+    let errorMessage;
+    if (this.state.submitInvalid) {
+
+    }
+
     return (
       <div>
         <div style={styles.grid}>
@@ -133,11 +170,21 @@ class VariableChooser extends Component<Props> {
             })}
           </div>
           <ul style={styles.selectionList}>
-            {selectionItems}
+            {selectionItems.length === 0 ? "No selections." : selectionItems}
           </ul>
         </div>
         <br />
+        <Select
+          label="Error Format"
+          value={this.state.unctFormat}
+          onChange={this.handleChangeUnctFormat}
+        >
+          <option value="abs">abs</option>
+          <option value="%">%</option>
+        </Select>
+        <br />
         <button onClick={this.handleSubmit}>Submit</button>
+        <span style={styles.errorMessage}>{this.state.errorMessage}</span>
       </div>
     );
   }

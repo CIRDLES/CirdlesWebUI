@@ -1,18 +1,28 @@
 // @flow
 import React, { Component } from 'react';
 import Tabulator from "tabulator-tables";
+import isEqual from "lodash.isequal";
+
+const styles = {
+  loadBackground: {
+    
+  }
+}
 
 const labelColumn = {
   title: "Label",
   field: "title",
-  width: 150
+  width: 150,
+  frozen: true
 };
 
 const selectedColumn = {
   title: "Selected",
   field: "selected",
   editor: true,
-  formatter: "tickCross"
+  formatter: "tickCross",
+  align: "center",
+  frozen: true
 };
 
 const numberEditor = function (cell, onRendered, success, cancel, editorParams) {
@@ -46,61 +56,80 @@ type DataRow = { label: string; selected: boolean; _children?: DataRow[]; }
 type DataColumn = { name: string; field: string; columns?: DataColumn[]; }
 
 type Props = {
-  data: { 
-    rows: DataRow[], 
-    columns: DataColumn[] 
-  },
-  onDataChanged: Function
+  rows: DataRow[], 
+  columns: DataColumn[],
+
+  onCellEdited: Function
 }
 class DataTable extends Component<Props> {
 
-  componentDidMount() {
-    const columns = [...this.props.columns];
-    this.addEditorToLeafColumns(columns);
+  constructor(props) {
+    super(props);
 
+    this.tabulatorRef = React.createRef();
+
+    this.state = {
+      rows: [],
+      columns: []
+    }
+  }
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    const columns = [...nextProps.columns];
+    addEditorToLeafColumns(columns);
     columns.unshift(labelColumn, selectedColumn);
 
-    this.tabulator = new Tabulator("#tabulator", {
+    return {
+      rows: nextProps.rows,
+      columns
+    }
+  }
+
+  componentDidMount() {
+    this.tabulator = new Tabulator(this.tabulatorRef.current, {
       layout: "fitDataFill",
       height: "100%",
       dataTree: true,
-      data: this.props.rows,
-      columns: columns,
+      data: this.state.rows,
+      columns: this.state.columns,
       placeholder: "No data loaded.",
       reactiveData: true,
-      cellEdited: () => this.props.onDataChanged(this.props.rows)
+      cellEdited: this.props.onCellEdited
     });
-    
   }
   
   componentDidUpdate() {
-    const columns = [...this.props.columns];
-    this.addEditorToLeafColumns(columns);
-    columns.unshift(labelColumn, selectedColumn);
+    const { rows, columns } = this.state;
 
-    this.tabulator.setColumns(columns);
-    this.tabulator.setData(this.props.rows)
-      .catch(error => {
-        console.error(error);
-      });
+    // Only reload the tabulator if necessary
+    if (! isEqual(columns, this.tabulator.getColumnDefinitions())) {
+      this.tabulator.setColumns(columns);
+    }
+    // Only reload the tabulator if necessary
+    if (! isEqual(rows, this.tabulator.getData())) {
+      this.tabulator.setData(rows)
+        .catch(error => {
+          console.error(error);
+        });
+    }
   }
 
   render() { 
     return (
-      <div id="tabulator" />
+      <div ref={this.tabulatorRef} />
     );
-  }
-
-  addEditorToLeafColumns(columns) {
-    columns.forEach(col => {
-      if (col.columns) {
-        this.addEditorToLeafColumns(col.columns);
-        return;
-      }
-      col.editor = numberEditor;
-    });
   }
 
 }
  
 export default DataTable;
+
+function addEditorToLeafColumns(columns) {
+  columns.forEach(col => {
+    if (col.columns) {
+      addEditorToLeafColumns(col.columns);
+      return;
+    }
+    col.editor = numberEditor;
+  });
+}

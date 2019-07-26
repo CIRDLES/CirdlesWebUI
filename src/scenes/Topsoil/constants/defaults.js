@@ -1,6 +1,6 @@
 
 export const DefaultOptions = {
-  title: "Hello World",
+  title: "New Plot",
   uncertainty: 2.0,
   isotope_system: "Uranium Lead",
 

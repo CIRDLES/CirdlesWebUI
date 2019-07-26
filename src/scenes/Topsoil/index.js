@@ -18,16 +18,36 @@ import "../../styles/topsoil/topsoil.scss";
 
 Modal.setAppElement("#root");
 
-const modalStyles = {
-  content: {
-    top: "50%",
-    left: "50%",
-    right: "auto",
-    bottom: "auto",
-    marginRight: "-50%",
-    maxWidth: "80%",
-    maxHeight: "80%",
-    transform: "translate(-50%, -50%)"
+const styles = {
+  modal: {
+    content: {
+      top: "50%",
+      left: "50%",
+      right: "auto",
+      bottom: "auto",
+      marginRight: "-50%",
+      maxWidth: "80%",
+      maxHeight: "80%",
+      transform: "translate(-50%, -50%)"
+    }
+  },
+  loadContainer: {
+    position: "absolute",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    fontSize: "3em",
+    backgroundColor: "#cccccccc",
+    backgroundOpacity: 0.5
+  },
+  loadIndicator: {
+    backgroundColor: "#ccc",
+    padding: "0.5em 0.75em"
   }
 };
 
@@ -37,7 +57,8 @@ const initialState = {
   table: {
     rows: [],
     columns: [],
-    variables: {}
+    variables: {},
+    unctFormat: "abs"
   },
   plot: {
     data: [],
@@ -48,7 +69,8 @@ const initialState = {
     vertical: [65, 35]
   },
   varChooserIsOpen: false,
-  uploadFormIsOpen: false
+  uploadFormIsOpen: false,
+  isLoading: false
 };
 type State = Readonly<typeof initialState>;
 
@@ -58,7 +80,8 @@ class TopsoilPage extends Component<{}, State> {
 
     this.state = initialState;
 
-    this._plotRef = React.createRef();
+    this.plotComponent = React.createRef();
+    this.dataTable = React.createRef();
 
     this.handleLoadSampleData = this.handleLoadSampleData.bind(this);
 
@@ -80,6 +103,7 @@ class TopsoilPage extends Component<{}, State> {
       this
     );
 
+    this.handleUpdatePlotState = this.handleUpdatePlotState.bind(this);
     this.handlePlotZoomed = this.handlePlotZoomed.bind(this);
     this.handleSetExtents = this.handleSetExtents.bind(this);
     this.handleFitToConcordia = this.handleFitToConcordia.bind(this);
@@ -96,7 +120,7 @@ class TopsoilPage extends Component<{}, State> {
   }
 
   handleLoadSampleData() {
-    const table = { ...this.state.table.data };
+    const table = { ...this.state.table };
     table.rows = SampleRows;
     table.columns = SampleColumns;
     this.setState({ table });
@@ -118,11 +142,12 @@ class TopsoilPage extends Component<{}, State> {
     this.setState({ varChooserIsOpen: true });
   }
 
-  handleSubmitVarChooser(variables) {
+  handleSubmitVarChooser(variables, unctFormat) {
     const table = { ...this.state.table };
     table.variables = variables;
+    table.unctFormat = unctFormat;
 
-    this.setState({ table }, this.updatePlotState);
+    this.setState({ table }, this.handleUpdatePlotState);
     this.handleCloseVarChooser();
   }
 
@@ -135,21 +160,22 @@ class TopsoilPage extends Component<{}, State> {
   }
 
   handleSubmitUploadForm() {
+    this.setState({ loading: true });
+
     const data = new FormData(),
       { selectedTableFile, template } = this.state;
     if (selectedTableFile !== null && template !== null) {
       data.append("tableFile", selectedTableFile);
       data.append("template", template);
 
+      const table = {...this.state.table};
+
       axios
         .post(TOPSOIL_ENDPOINT, data)
         .then(response => {
-          const rows = response.data.data,
-            columns = response.data.columns,
-            variables = this.state.table.variables;
-          this.setState({
-            table: { rows, columns, variables }
-          });
+          table.rows = response.data.data;
+          table.columns = response.data.columns;
+          this.setState({ table }, this.setState({ loading: false }));
         })
         .catch(error => {
           console.error(error);
@@ -163,7 +189,7 @@ class TopsoilPage extends Component<{}, State> {
   }
 
   handlePlotZoomed(xDomain, yDomain) {
-    const plot = {...this.state.plot};
+    const plot = { ...this.state.plot };
     plot.options[Option.X_MIN] = xDomain[0];
     plot.options[Option.X_MAX] = xDomain[1];
     plot.options[Option.Y_MIN] = yDomain[0];
@@ -174,23 +200,23 @@ class TopsoilPage extends Component<{}, State> {
   handleSetExtents(xMin, xMax, yMin, yMax) {
     const {
       current: { instance }
-    } = this._plotRef;
+    } = this.plotComponent;
     if (instance) instance.changeAxisExtents(xMin, xMax, yMin, yMax, true);
   }
 
   handleFitToConcordia() {
     const {
       current: { instance }
-    } = this._plotRef;
+    } = this.plotComponent;
     if (instance) instance.snapToConcordia();
   }
 
   handleRefreshPlot() {
-    if (!this._plotRef.current) return;
+    if (!this.plotComponent.current) return;
 
     const {
       current: { instance }
-    } = this._plotRef;
+    } = this.plotComponent;
     if (instance) instance.update();
   }
 
@@ -212,20 +238,35 @@ class TopsoilPage extends Component<{}, State> {
     this.setState({ split });
   }
 
+  handleUpdatePlotState() {
+    const { rows, variables, unctFormat } = this.state.table;
+    if (Object.entries(variables).length === 0) return;
+    const plot = { ...this.state.plot };
+    plot.data = calculatePlotData(
+      rows,
+      variables,
+      unctFormat,
+      plot.options.uncertainty
+    );
+    plot.options[Option.X_AXIS] = variables[Variable.X];
+    plot.options[Option.Y_AXIS] = variables[Variable.Y];
+    this.setState({ plot });
+  }
+
   render() {
-    const {
-      template,
-      selectedTableFile,
-      table: { rows: tableRows, columns: tableColumns },
-      plot
-    } = this.state;
+    const { template, selectedTableFile, table, plot } = this.state;
+
+    let loader;
+    if (this.state.loading) {
+      loader = <div style={styles.loadContainer}><span style={styles.loadIndicator}>Loading...</span></div>;
+    }
 
     return (
       <div id="page-container">
         <Modal
           isOpen={this.state.varChooserIsOpen}
           onRequestClose={this.handleCloseVarChooser}
-          style={modalStyles}
+          style={styles.modal}
           contentLabel="Variable Chooser"
           aria={{
             labelledby: "var-chooser-heading",
@@ -239,16 +280,18 @@ class TopsoilPage extends Component<{}, State> {
             plotting variables.
           </p>
           <VariableChooser
-            columns={tableColumns}
+            columns={table.columns}
             onSubmit={this.handleSubmitVarChooser}
             variables={this.state.table.variables}
+            requiredVars={[Variable.X, Variable.Y]}
+            unctFormat={this.state.table.unctFormat}
           />
         </Modal>
 
         <Modal
           isOpen={this.state.uploadFormIsOpen}
           onRequestClose={this.handleCloseUploadForm}
-          style={modalStyles}
+          style={styles.modal}
           contentLabel="Data Uploader"
           aria={{
             labelledby: "upload-form-heading",
@@ -276,7 +319,7 @@ class TopsoilPage extends Component<{}, State> {
           <button
             className="toolbar-item"
             onClick={this.handleOpenVarChooser}
-            disabled={tableRows.length === 0}
+            disabled={table.rows.length === 0}
           >
             Generate Plot
           </button>
@@ -310,14 +353,10 @@ class TopsoilPage extends Component<{}, State> {
           >
             <div className="float-left">
               <DataTable
-                id="data-table"
-                rows={tableRows || []}
-                columns={tableColumns || []}
-                onDataChanged={rows => {
-                  const { table } = this.state;
-                  table.rows = rows;
-                  this.setState({ table }, this.updatePlotState.bind(this));
-                }}
+                ref={this.dataTable}
+                rows={table.rows || []}
+                columns={table.columns || []}
+                onCellEdited={this.handleUpdatePlotState}
               />
             </div>
 
@@ -330,8 +369,8 @@ class TopsoilPage extends Component<{}, State> {
                 }}
                 onDragEnd={this.handleVerticalSplitSizeChange}
               >
-                <TopsoilPlot 
-                  ref={this._plotRef} 
+                <TopsoilPlot
+                  ref={this.plotComponent}
                   plot={plot}
                   onZoomEnd={this.handlePlotZoomed}
                 />
@@ -345,60 +384,44 @@ class TopsoilPage extends Component<{}, State> {
             </div>
           </Split>
         </div>
+        {loader}
       </div>
     );
-  }
-
-  updatePlotState() {
-    const { rows, variables } = this.state.table;
-    if (Object.entries(variables).length === 0) return;
-    const plot = { ...this.state.plot };
-    plot.data = this.calculatePlotData(rows, variables);
-    this.setState({ plot });
-  }
-
-  // calculatePlotData() {
-  //   const { table } = this.state;
-  //   return table.rows.map(row => {
-  //     const entry = {};
-  //     let colName;
-  //     for (let key in table.variables) {
-  //       colName = table.variables[key];
-  //       entry[key] = row[colName];
-  //     }
-  //     if (Variable.TITLE in row) {
-  //       entry[Variable.TITLE] = row[Variable.TITLE];
-  //     }
-  //     if (Variable.SELECTED in row) {
-  //       entry[Variable.SELECTED] = row[Variable.SELECTED];
-  //     }
-  //     return entry;
-  //   });
-  // }
-
-  calculatePlotData(rows, variables, rtnval) {
-    rtnval = rtnval || [];
-    rows.forEach(row => {
-      if (row._children) {
-        rtnval.concat(this.calculatePlotData(row._children, variables, rtnval));
-      } else {
-        const entry = {};
-        let colName;
-        for (let v in variables) {
-          colName = variables[v];
-          entry[v] = row[colName];
-        }
-        if (Variable.TITLE in row) {
-          entry[Variable.TITLE] = row[Variable.TITLE];
-        }
-        if (Variable.SELECTED in row) {
-          entry[Variable.SELECTED] = row[Variable.SELECTED];
-        }
-        rtnval.push(entry);
-      }
-    });
-    return rtnval;
   }
 }
 
 export default TopsoilPage;
+
+function calculatePlotData(rows, variables, unctFormat, multiplier, rtnval) {
+  rtnval = rtnval || [];
+  rows.forEach(row => {
+    if (row._children) {
+      rtnval.concat(calculatePlotData(row._children, variables, rtnval));
+    } else {
+      const entry = {};
+      let colName;
+      for (let v in variables) {
+        colName = variables[v];
+        entry[v] = row[colName];
+      }
+      if (Variable.TITLE in row) {
+        entry[Variable.TITLE] = row[Variable.TITLE];
+      }
+      if (Variable.SELECTED in row) {
+        entry[Variable.SELECTED] = row[Variable.SELECTED];
+      }
+      if (unctFormat === "%") {
+        if (Variable.SIGMA_X in entry) {
+          entry[Variable.SIGMA_X] =
+            entry[Variable.X] * (entry[Variable.SIGMA_X] / 100);
+        }
+        if (Variable.SIGMA_Y in entry) {
+          entry[Variable.SIGMA_Y] =
+            entry[Variable.Y] * (entry[Variable.SIGMA_Y] / 100);
+        }
+      }
+      rtnval.push(entry);
+    }
+  });
+  return rtnval;
+}

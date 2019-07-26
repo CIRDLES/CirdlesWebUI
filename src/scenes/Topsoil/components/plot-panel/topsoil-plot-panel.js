@@ -1,11 +1,10 @@
 // @flow
 import React, { Component } from "react";
-import { TabPane, Tab } from "../../../../components";
 import { Option } from "topsoil-js";
+import { Input, Select, RadioButton, CheckBox, TabPane, Tab } from "../../../../components";
 import AxisExtents from "./axis-extents";
-import "../../../../styles/topsoil/plot-panel.scss";
-import { Input, Select, RadioButton, CheckBox } from "../../../../components";
 import Lambda from "./lambda";
+import "../../../../styles/topsoil/plot-panel.scss";
 
 const styles = {
   optionList: {
@@ -220,6 +219,9 @@ const PlotFeaturesPanel = ({ options, onOptionChanged, fitToWetherillConcordia }
 };
 
 const UPbFeatures = (options, onOptionChanged, fitToWetherillConcordia) => {
+
+  const concordiaType = options[Option.CONCORDIA_TYPE];
+
   return (
     <React.Fragment>
       <div>
@@ -244,14 +246,17 @@ const UPbFeatures = (options, onOptionChanged, fitToWetherillConcordia) => {
             <RadioButton
               label="Wetherill"
               group="concordia-type"
-              selected={options[Option.CONCORDIA_TYPE] === "wetherill"}
+              selected={concordiaType === "wetherill"}
               onSelected={e => {
                 onOptionChanged(Option.CONCORDIA_TYPE, "wetherill");
               }}
             />
             <ul style={styles.optionList}>
               <li>
-                <button onClick={fitToWetherillConcordia}>Fit to Concordia</button>
+                <button 
+                  disabled={options[Option.CONCORDIA_LINE] && concordiaType !== "wetherill"}
+                  onClick={fitToWetherillConcordia}
+                >Fit to Concordia</button>
               </li>
             </ul>
           </li>
