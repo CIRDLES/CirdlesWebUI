@@ -96,7 +96,7 @@ input[type=text] {
   border: solid #888;
   border-width: 1px 1px 0 1px;
   margin-bottom: -1px;
-  padding: 0.5rem 0.75rem;
+  padding: 0.5em 0.75em;
   background-color: #ddd;
 }
 .tab-label.active {
@@ -105,6 +105,6 @@ input[type=text] {
 .tab-content {
   background-color: #eee;
   overflow: auto;
-  height: calc(100% - 2rem);
+  height: calc(100% - 2.5em);
 }
 

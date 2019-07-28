@@ -64,9 +64,8 @@ const styles = {
   mainSplit: {
     position: "relative",
     flexGrow: 1,
-    overflow: "hidden",
     height: "100%",
-    border: "3px solid " + colors.darkGray
+    border: "0.25em solid " + colors.darkGray
   },
   rightSplit: {
     display: "inline-block",
@@ -76,28 +75,45 @@ const styles = {
   },
   tableContainer: {
     float: "left",
-    height: "100%"
+    height: "calc(100% - 2px)"
   },
-  horizontalGutter: {
-    display: "inline-block",
-    width: "10px",
-    height: "100%",
-    backgroundImage: `url(${verticalGrip})`,
-    backgroundRepeat: "no-repeat",
-    backgroundColor: colors.lightGray,
-    backgroundPosition: "center",
-    border: "solid " + colors.darkGray,
-    borderWidth: "0 1px 0 1px"
+  horizontalSplitElement: (dimension, elementSize, gutterSize, index) => {
+    return {
+      // subtract an extra pixel to account for the gutter border
+      width: `calc(${elementSize}% - ${gutterSize + 1}px)`
+    }
   },
-  verticalGutter: {
-    width: "100%",
-    height: "10px",
-    backgroundImage: `url(${horizontalGrip})`,
-    backgroundRepeat: "no-repeat",
-    backgroundColor: colors.lightGray,
-    backgroundPosition: "center",
-    border: "solid " + colors.darkGray,
-    borderWidth: "1px 0 1px 0"
+  horizontalGutter: (dimension, gutterSize, index) => {
+    console.log(gutterSize);
+    return {
+      display: "inline-block",
+      width: `${gutterSize}px`,
+      height: "100%",
+      backgroundImage: `url(${verticalGrip})`,
+      backgroundRepeat: "no-repeat",
+      backgroundColor: colors.lightGray,
+      backgroundPosition: "center",
+      border: "solid " + colors.darkGray,
+      borderWidth: "0 1px 0 1px"
+    }
+  },
+  verticalSplitElement: (dimension, elementSize, gutterSize, index) => {
+    return {
+      // subtract an extra pixel to account for the gutter border
+      height: `calc(${elementSize}% - ${gutterSize + 1}px)`
+    }
+  },
+  verticalGutter: (dimension, gutterSize, index) => {
+    return {
+      width: "100%",
+      height: `${gutterSize}px`,
+      backgroundImage: `url(${horizontalGrip})`,
+      backgroundRepeat: "no-repeat",
+      backgroundColor: colors.lightGray,
+      backgroundPosition: "center",
+      border: "solid " + colors.darkGray,
+      borderWidth: "1px 0 1px 0"
+    }
   }
 };
 
@@ -376,7 +392,9 @@ class TopsoilPage extends Component<{}, State> {
           }}
           onDragEnd={this.handleHorizontalSplitSizeChange}
           style={styles.mainSplit}
-          gutterStyle={() => styles.horizontalGutter}
+          elementStyle={styles.horizontalSplitElement}
+          gutterSize={10}
+          gutterStyle={styles.horizontalGutter}
         >
           <div style={styles.tableContainer}>
             <DataTable
@@ -395,7 +413,9 @@ class TopsoilPage extends Component<{}, State> {
             }}
             onDragEnd={this.handleVerticalSplitSizeChange}
             style={styles.rightSplit}
-            gutterStyle={() => styles.verticalGutter}
+            elementStyle={styles.verticalSplitElement}
+            gutterSize={10}
+            gutterStyle={styles.verticalGutter}
           >
             <TopsoilPlot
               ref={this.plotComponent}
