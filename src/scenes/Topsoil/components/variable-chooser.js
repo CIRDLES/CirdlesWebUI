@@ -193,6 +193,7 @@ class VariableChooser extends Component<Props, State> {
     const { title: colName } = column;
     return (
       <Collapse
+        key={`${colName}-collapse`}
         collapsed={this.state.collapse[colName]}
         label={colName}
         onClick={() => this.handleToggleCollapse(colName)}

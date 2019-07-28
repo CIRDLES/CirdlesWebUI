@@ -11,3 +11,4 @@ export * from './select';
 export * from './radio-button';
 export * from './check-box';
 export * from './collapse';
+export * from './range-slider';

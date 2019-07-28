@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { UID } from "react-uid";
 
 const styles = {
   labelGroup: {
@@ -38,18 +39,22 @@ export class Collapse extends Component<Props> {
   render() {
     const { collapsed, label, onClick, style, children } = this.props;
     return (
-      <div style={style}>
-        <div 
-          onClick={onClick}
-          style={styles.labelGroup}
-        >
-          <span style={styles.icon}>{collapsed ? "+" : "-"}</span>
-          <label style={styles.label}>{label}</label>
-        </div>
-        <div style={collapsed ? styles.contentCollapsed : styles.content}>
-          {children}
-        </div>
-      </div>
+      <UID name={id => `Collapse_${id}`}>
+        {id =>
+          <div style={style}>
+            <div 
+              onClick={onClick}
+              style={styles.labelGroup}
+            >
+              <span style={styles.icon}>{collapsed ? "+" : "-"}</span>
+              <label htmlFor={id} style={styles.label}>{label}</label>
+            </div>
+            <div id={id} style={collapsed ? styles.contentCollapsed : styles.content}>
+              {children}
+            </div>
+          </div>
+        }
+      </UID>
     );
   }
 

@@ -4,6 +4,7 @@ import { Option } from "topsoil-js";
 import { Input, Select, RadioButton, CheckBox, TabPane, Tab } from "../../../../components";
 import AxisExtents from "./axis-extents";
 import Lambda from "./lambda";
+import RangeSlider from "../../../../components/range-slider";
 
 const styles = {
   optionList: {
@@ -169,6 +170,17 @@ const DataOptionsPanel = ({ options, onOptionChanged }) => {
               }
             />
           </li>
+          {/* <li>
+            <RangeSlider
+              label="Opacity"
+              sliderWidth="3.75em"
+              min={0}
+              max={100}
+              value={options[Option.POINTS_OPACITY] * 100}
+              step={5}
+              onChange={e => onOptionChanged(Option.POINTS_OPACITY, e.target.value / 100)}
+            />
+          </li> */}
         </ul>
       </div>
 
@@ -189,6 +201,17 @@ const DataOptionsPanel = ({ options, onOptionChanged }) => {
               }
             />
           </li>
+          {/* <li>
+            <RangeSlider
+              label="Opacity"
+              sliderWidth="3.75em"
+              min={0}
+              max={100}
+              value={options[Option.ELLIPSES_OPACITY] * 100}
+              step={5}
+              onChange={e => onOptionChanged(Option.ELLIPSES_OPACITY, e.target.value / 100)}
+            />
+          </li> */}
         </ul>
       </div>
 
@@ -209,6 +232,17 @@ const DataOptionsPanel = ({ options, onOptionChanged }) => {
               }
             />
           </li>
+          {/* <li>
+            <RangeSlider
+              label="Opacity"
+              sliderWidth="3.75em"
+              min={0}
+              max={100}
+              value={options[Option.UNCTBARS_OPACITY] * 100}
+              step={5}
+              onChange={e => onOptionChanged(Option.UNCTBARS_OPACITY, e.target.value / 100)}
+            />
+          </li> */}
         </ul>
       </div>
     </div>

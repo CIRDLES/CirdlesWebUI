@@ -75,7 +75,8 @@ const styles = {
     height: "100%"
   },
   tableContainer: {
-    float: "left"
+    float: "left",
+    height: "100%"
   },
   horizontalGutter: {
     display: "inline-block",
@@ -423,7 +424,7 @@ function calculatePlotData(rows, variables, unctFormat, rtnval) {
   rtnval = rtnval || [];
   rows.forEach(row => {
     if (row._children) {
-      rtnval.concat(calculatePlotData(row._children, variables, rtnval));
+      rtnval.concat(calculatePlotData(row._children, variables, unctFormat, rtnval));
     } else {
       const entry = {};
       let colName;
