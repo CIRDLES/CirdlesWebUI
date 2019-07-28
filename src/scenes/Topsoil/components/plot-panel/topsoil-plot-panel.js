@@ -219,17 +219,17 @@ const DataOptionsPanel = ({ options, onOptionChanged }) => {
       <div style={styles.controlGroup}>
         <CheckBox
           label="Error Bars"
-          checked={options[Option.UNCTBARS]}
-          onChange={e => onOptionChanged(Option.UNCTBARS, e.target.checked)}
+          checked={options[Option.ERROR_BARS]}
+          onChange={e => onOptionChanged(Option.ERROR_BARS, e.target.checked)}
         />
         <ul style={styles.optionList}>
           <li>
             <Input
               label="Fill"
-              value={options[Option.UNCTBARS_FILL]}
+              value={options[Option.ERROR_BARS_FILL]}
               type="color"
               onChange={e =>
-                onOptionChanged(Option.UNCTBARS_FILL, e.target.value)
+                onOptionChanged(Option.ERROR_BARS_FILL, e.target.value)
               }
             />
           </li>
@@ -239,9 +239,9 @@ const DataOptionsPanel = ({ options, onOptionChanged }) => {
               sliderWidth="3.75em"
               min={0}
               max={100}
-              value={options[Option.UNCTBARS_OPACITY] * 100}
+              value={options[Option.ERROR_BARS_OPACITY] * 100}
               step={5}
-              onChange={e => onOptionChanged(Option.UNCTBARS_OPACITY, e.target.value / 100)}
+              onChange={e => onOptionChanged(Option.ERROR_BARS_OPACITY, e.target.value / 100)}
             />
           </li> */}
         </ul>

@@ -10,3 +10,11 @@
 .tabulator {
   background-color: #aaa;
 }
+
+.draggable {
+  cursor: grab;
+}
+
+.draggable.mouseHold {
+  cursor: grabbing;
+}

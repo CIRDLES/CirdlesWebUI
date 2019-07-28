@@ -1,38 +1,44 @@
+import { Option } from "topsoil-js";
 
-export const DefaultOptions = {
-  title: "New Plot",
-  uncertainty: 2.0,
-  isotope_system: "Uranium Lead",
+const DefaultOptions = {};
+DefaultOptions[Option.TITLE] = "New Plot";
+DefaultOptions[Option.UNCERTAINTY] = 1.0;
+DefaultOptions[Option.ISOTOPE_SYSTEM] = "Uranium Lead";
 
-  x_axis: "X Axis",
-  x_min: 0.0,
-  x_max: 1.0,
-  y_axis: "Y Axis",
-  y_min: 0.0,
-  y_max: 1.0,
+DefaultOptions[Option.X_AXIS] = "X Axis";
+DefaultOptions[Option.X_MIN] = 0.0;
+DefaultOptions[Option.X_MAX] = 1.0;
 
-  points: true,
-  points_fill: "#4682b4",
-  points_opacity: 1,
-  ellipses: true,
-  ellipses_fill: "#ff0000",
-  ellipses_opacity: 1,
-  unctbars: false,
-  unctbars_fill: "#000000",
-  unctbars_opacity: 1,
+DefaultOptions[Option.Y_AXIS] = "Y Axis";
+DefaultOptions[Option.Y_MIN] = 0.0;
+DefaultOptions[Option.Y_MAX] = 1.0;
 
-  concordia_type: "wetherill",
-  concordia_line: true,
-  concordia_line_fill: "#0000ff",
-  concordia_line_opacity: 1,
-  concordia_envelope: true,
-  concordia_envelope_fill: "#D3D3D3",
-  concordia_envelope_opacity: 1,
-  evolution: false,
-  
-  lambda_230: 9.1705E-6,
-  lambda_234: 2.82206E-6,
-  lambda_235: 9.8485e-10,
-  lambda_238: 1.55125e-10,
-  R238_235S: 137.88
-}
+DefaultOptions[Option.POINTS] = true;
+DefaultOptions[Option.POINTS_FILL] = "#4682b4";
+DefaultOptions[Option.POINTS_OPACITY] = 1.0;
+DefaultOptions[Option.ELLIPSES] = true;
+DefaultOptions[Option.ELLIPSES_FILL] = "#ff0000";
+DefaultOptions[Option.ELLIPSES_OPACITY] = 1.0
+DefaultOptions[Option.ERROR_BARS] = false;
+DefaultOptions[Option.ERROR_BARS_FILL] = "#000000";
+DefaultOptions[Option.ERROR_BARS_OPACITY] = 1.0;
+
+DefaultOptions[Option.CONCORDIA_TYPE] = "wetherill";
+DefaultOptions[Option.CONCORDIA_LINE] = true;
+DefaultOptions[Option.CONCORDIA_LINE_FILL] = "#0000ff";
+DefaultOptions[Option.CONCORDIA_LINE_OPACITY] = 1.0;
+DefaultOptions[Option.CONCORDIA_ENVELOPE] = true;
+DefaultOptions[Option.CONCORDIA_ENVELOPE_FILL] = "#d3d3d3";
+DefaultOptions[Option.CONCORDIA_ENVELOPE_OPACITY] = 1.0;
+
+DefaultOptions[Option.EVOLUTION] = false;
+
+DefaultOptions[Option.LAMBDA_230] = 9.1705E-6;
+DefaultOptions[Option.LAMBDA_234] = 2.82206E-6;
+DefaultOptions[Option.LAMBDA_235] = 9.8485e-10;
+DefaultOptions[Option.LAMBDA_238] = 1.55125e-10;
+DefaultOptions[Option.R238_235S] = 137.88;
+
+export {
+  DefaultOptions
+};
