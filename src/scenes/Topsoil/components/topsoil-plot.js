@@ -13,7 +13,7 @@ const styles = {
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
-    // subtract padding and mainSplit border from width
+    // subtract padding from width
     width: "calc(100% - 1em)",
     height: "2em",
     padding: "0.5em",
@@ -25,8 +25,7 @@ const styles = {
     margin: "0.5em"
   },
   root: {
-    // subtract mainSplit border from width
-    width: "calc(100%)",
+    width: "100%",
     // subtract buttonBar from height
     height: "calc(100% - 3em)",
     backgroundColor: colors.white

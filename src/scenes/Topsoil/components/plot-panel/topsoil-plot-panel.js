@@ -18,7 +18,8 @@ const styles = {
   subpanel: {
     display: "inline-flex",
     flexFlow: "column wrap",
-    height: "calc(100% - 0.5em - 10px)",
+    // subtract padding from height
+    height: "calc(100% - 1em)",
     padding: "0.5em"
   },
   controlGroup: {

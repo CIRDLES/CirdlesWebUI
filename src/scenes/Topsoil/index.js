@@ -22,7 +22,6 @@ import "../../styles/topsoil.scss";
 import verticalGrip from "../../img/vertical-grip.png";
 import horizontalGrip from "../../img/horizontal-grip.png";
 
-
 Modal.setAppElement("#root");
 
 const styles = {
@@ -77,43 +76,30 @@ const styles = {
     float: "left",
     height: "calc(100% - 2px)"
   },
-  horizontalSplitElement: (dimension, elementSize, gutterSize, index) => {
-    return {
-      // subtract an extra pixel to account for the gutter border
-      width: `calc(${elementSize}% - ${gutterSize + 1}px)`
-    }
+  splitElement: (dimension, elementSize, gutterSize, index) => {
+    const style = {};
+    style[dimension] = `calc(${elementSize}% - ${gutterSize + 1}px)`;
+    return style;
   },
-  horizontalGutter: (dimension, gutterSize, index) => {
-    console.log(gutterSize);
-    return {
-      display: "inline-block",
-      width: `${gutterSize}px`,
-      height: "100%",
-      backgroundImage: `url(${verticalGrip})`,
+  splitGutter: (dimension, gutterSize, index) => {
+    const style = {
       backgroundRepeat: "no-repeat",
       backgroundColor: colors.lightGray,
       backgroundPosition: "center",
       border: "solid " + colors.darkGray,
-      borderWidth: "0 1px 0 1px"
     }
-  },
-  verticalSplitElement: (dimension, elementSize, gutterSize, index) => {
-    return {
-      // subtract an extra pixel to account for the gutter border
-      height: `calc(${elementSize}% - ${gutterSize + 1}px)`
+    style[dimension] = `${gutterSize}px`;
+    if (dimension === "width") {
+      style.display = "inline-block";
+      style.height = "100%";
+      style.borderWidth = "0 1px 0 1px";
+      style.backgroundImage = `url(${verticalGrip})`
+    } else {
+      style.width = "100%";
+      style.borderWidth = "1px 0 1px 0";
+      style.backgroundImage = `url(${horizontalGrip})`
     }
-  },
-  verticalGutter: (dimension, gutterSize, index) => {
-    return {
-      width: "100%",
-      height: `${gutterSize}px`,
-      backgroundImage: `url(${horizontalGrip})`,
-      backgroundRepeat: "no-repeat",
-      backgroundColor: colors.lightGray,
-      backgroundPosition: "center",
-      border: "solid " + colors.darkGray,
-      borderWidth: "1px 0 1px 0"
-    }
+    return style;
   }
 };
 
@@ -392,9 +378,9 @@ class TopsoilPage extends Component<{}, State> {
           }}
           onDragEnd={this.handleHorizontalSplitSizeChange}
           style={styles.mainSplit}
-          elementStyle={styles.horizontalSplitElement}
+          elementStyle={styles.splitElement}
           gutterSize={10}
-          gutterStyle={styles.horizontalGutter}
+          gutterStyle={styles.splitGutter}
         >
           <div style={styles.tableContainer}>
             <DataTable
@@ -413,9 +399,9 @@ class TopsoilPage extends Component<{}, State> {
             }}
             onDragEnd={this.handleVerticalSplitSizeChange}
             style={styles.rightSplit}
-            elementStyle={styles.verticalSplitElement}
+            elementStyle={styles.splitElement}
             gutterSize={10}
-            gutterStyle={styles.verticalGutter}
+            gutterStyle={styles.splitGutter}
           >
             <TopsoilPlot
               ref={this.plotComponent}
