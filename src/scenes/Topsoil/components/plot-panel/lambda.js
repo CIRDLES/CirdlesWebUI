@@ -1,10 +1,12 @@
 // @flow
 import React, { Component } from 'react';
+import { UID } from 'react-uid';
 
 type Props = {
   label: string,
   defaultValue: number,
-  onSetValue: Function
+  onSetValue: Function,
+  style?: {}
 }
 
 class Lambda extends Component<Props> {
@@ -27,18 +29,23 @@ class Lambda extends Component<Props> {
   }
 
   render() { 
-    const { label, defaultValue } = this.props;
+    const { label, defaultValue, style } = this.props;
     return (
-      <div>
-        <label>{label}:</label>
-        <input
-          ref={this.field}
-          type="text"
-          defaultValue={defaultValue}
-          style={{ margin: "0 0.5em", width: "10em" }}
-        />
-        <button onClick={this.handleSetValue}>Set</button>
-      </div>
+      <UID name={id => `Lambda_${id}`}>
+        {id => 
+          <div style={style}>
+            <label htmlFor={id}>{label}:</label>
+            <input
+              ref={this.field}
+              id={id}
+              type="text"
+              defaultValue={defaultValue}
+              style={{ margin: "0 0.5em", width: "10em" }}
+            />
+            <button onClick={this.handleSetValue}>Set</button>
+          </div>
+        }
+      </UID>
     );
   }
 }

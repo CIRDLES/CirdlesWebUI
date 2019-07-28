@@ -3,12 +3,6 @@ import React, { Component } from 'react';
 import Tabulator from "tabulator-tables";
 import isEqual from "lodash.isequal";
 
-const styles = {
-  loadBackground: {
-    
-  }
-}
-
 const labelColumn = {
   title: "Label",
   field: "title",

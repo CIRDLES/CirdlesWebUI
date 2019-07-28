@@ -4,7 +4,6 @@ import { Option } from "topsoil-js";
 import { Input, Select, RadioButton, CheckBox, TabPane, Tab } from "../../../../components";
 import AxisExtents from "./axis-extents";
 import Lambda from "./lambda";
-import "../../../../styles/topsoil/plot-panel.scss";
 
 const styles = {
   optionList: {
@@ -14,6 +13,15 @@ const styles = {
   optionListLabel: {
     display: "inline-block",
     margin: 0
+  },
+  subpanel: {
+    display: "inline-flex",
+    flexFlow: "column wrap",
+    height: "calc(100% - 0.5em - 10px)",
+    padding: "0.5em"
+  },
+  controlGroup: {
+    margin: "0.5em"
   }
 };
 
@@ -83,14 +91,15 @@ export class TopsoilPlotPanel extends Component<Props> {
 
 const AxisStylingPanel = ({ options, onOptionChanged, onSetExtents }) => {
   return (
-    <div className="subpanel-flex-container">
+    <div style={styles.subpanel}>
       <Input
         value={options[Option.TITLE]}
         label="Title"
         onChange={e => onOptionChanged(Option.TITLE, e.target.value)}
+        style={styles.controlGroup}
       />
 
-      <div>
+      <div style={styles.controlGroup}>
         <Input
           label="X Axis"
           value={options[Option.X_AXIS]}
@@ -103,7 +112,7 @@ const AxisStylingPanel = ({ options, onOptionChanged, onSetExtents }) => {
         />
       </div>
 
-      <div>
+      <div style={styles.controlGroup}>
         <Input
           label="Y Axis"
           value={options[Option.Y_AXIS]}
@@ -121,11 +130,12 @@ const AxisStylingPanel = ({ options, onOptionChanged, onSetExtents }) => {
 
 const DataOptionsPanel = ({ options, onOptionChanged }) => {
   return (
-    <div className="subpanel-flex-container">
+    <div style={styles.subpanel}>
       <Select
         label="Isotope System"
         value={options[Option.ISOTOPE_SYSTEM]}
         onChange={e => onOptionChanged(Option.ISOTOPE_SYSTEM, e.target.value)}
+        style={styles.controlGroup}
       >
         <option value="Generic">Generic</option>
         <option value="Uranium Lead">U-Pb</option>
@@ -136,12 +146,13 @@ const DataOptionsPanel = ({ options, onOptionChanged }) => {
         label="Uncertainty"
         value={options[Option.UNCERTAINTY]}
         onChange={e => onOptionChanged(Option.UNCERTAINTY, e.target.value)}
+        style={styles.controlGroup}
       >
         <option value={1.0}>1σ</option>
         <option value={2.0}>2σ</option>
       </Select>
 
-      <div>
+      <div style={styles.controlGroup}>
         <CheckBox
           label="Points"
           checked={options[Option.POINTS]}
@@ -161,7 +172,7 @@ const DataOptionsPanel = ({ options, onOptionChanged }) => {
         </ul>
       </div>
 
-      <div>
+      <div style={styles.controlGroup}>
         <CheckBox
           label="Error Ellipses"
           checked={options[Option.ELLIPSES]}
@@ -181,7 +192,7 @@ const DataOptionsPanel = ({ options, onOptionChanged }) => {
         </ul>
       </div>
 
-      <div>
+      <div style={styles.controlGroup}>
         <CheckBox
           label="Error Bars"
           checked={options[Option.UNCTBARS]}
@@ -215,7 +226,7 @@ const PlotFeaturesPanel = ({ options, onOptionChanged, fitToWetherillConcordia }
       break;
   }
 
-  return <div className="subpanel-flex-container">{systemControls}</div>;
+  return <div style={styles.subpanel}>{systemControls}</div>;
 };
 
 const UPbFeatures = (options, onOptionChanged, fitToWetherillConcordia) => {
@@ -224,7 +235,7 @@ const UPbFeatures = (options, onOptionChanged, fitToWetherillConcordia) => {
 
   return (
     <React.Fragment>
-      <div>
+      <div style={styles.controlGroup}>
         <CheckBox
           label="Concordia"
           checked={options[Option.CONCORDIA_LINE]}
@@ -299,7 +310,7 @@ const UPbFeatures = (options, onOptionChanged, fitToWetherillConcordia) => {
 const UThFeatures = (options, onOptionChanged) => {
   return (
     <React.Fragment>
-      <div>
+      <div style={styles.controlGroup}>
         <CheckBox
           label="Evolution Matrix"
           checked={options[Option.EVOLUTION]}
@@ -312,26 +323,30 @@ const UThFeatures = (options, onOptionChanged) => {
 
 const ConstantsPanel = ({ options, onOptionChanged }) => {
   return (
-    <div className="subpanel-flex-container">
+    <div style={styles.subpanel}>
       <Lambda
         label="Lambda 230"
         defaultValue={options[Option.LAMBDA_230]}
         onSetValue={newValue => onOptionChanged(Option.LAMBDA_230, newValue)}
+        style={styles.controlGroup}
       />
       <Lambda
         label="Lambda 234"
         defaultValue={options[Option.LAMBDA_234]}
         onSetValue={newValue => onOptionChanged(Option.LAMBDA_234, newValue)}
+        style={styles.controlGroup}
       />
       <Lambda
         label="Lambda 235"
         defaultValue={options[Option.LAMBDA_235]}
         onSetValue={newValue => onOptionChanged(Option.LAMBDA_235, newValue)}
+        style={styles.controlGroup}
       />
       <Lambda
         label="Lambda 238"
         defaultValue={options[Option.LAMBDA_238]}
         onSetValue={newValue => onOptionChanged(Option.LAMBDA_238, newValue)}
+        style={styles.controlGroup}
       />
     </div>
   );

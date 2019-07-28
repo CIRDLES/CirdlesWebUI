@@ -32,7 +32,7 @@ export class TabPane extends Component<Props, State> {
     } = this;
 
     return (
-      <div>
+      <div className="tab-pane">
         <ol className="tab-list">
           {children.map(tab => {
             const { label } = tab.props;

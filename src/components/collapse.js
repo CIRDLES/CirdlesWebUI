@@ -29,24 +29,25 @@ const styles = {
 type Props = {
   collapsed: boolean,
   label: string,
-  onClick: Function
+  onClick: Function,
+  style?: {}
 };
 
 export class Collapse extends Component<Props> {
 
   render() {
-    const { collapsed, label } = this.props;
+    const { collapsed, label, onClick, style, children } = this.props;
     return (
-      <div>
+      <div style={style}>
         <div 
-          onClick={this.props.onClick}
+          onClick={onClick}
           style={styles.labelGroup}
         >
           <span style={styles.icon}>{collapsed ? "+" : "-"}</span>
           <label style={styles.label}>{label}</label>
         </div>
         <div style={collapsed ? styles.contentCollapsed : styles.content}>
-          {this.props.children}
+          {children}
         </div>
       </div>
     );

@@ -6,7 +6,8 @@ type Props = {
   label: string,
   selected: boolean,
   group: string,
-  onSelected: Function
+  onSelected: Function,
+  style?: {}
 }
 
 export class RadioButton extends Component<Props> {
@@ -15,12 +16,13 @@ export class RadioButton extends Component<Props> {
       label,
       selected,
       group,
-      onSelected
+      onSelected,
+      style
     } = this.props;
     return (
       <UID name={id => `RadioButton_${id}`}>
         {id => 
-          <div>
+          <div style={style}>
             <input
               id={id}
               type="radio"

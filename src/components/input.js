@@ -5,17 +5,18 @@ type Props = {
   label: string,
   type?: string,
   value: string,
-  onChange: Function
+  onChange: Function,
+  style?: {}
 };
 
 export class Input extends Component<Props> {
   render() {
-    const { label, type, value, onChange } = this.props;
+    const { label, type, value, onChange, style } = this.props;
 
     return (
       <UID name={id => `Input_${id}`}>
         {id =>
-          <div>
+          <div style={style}>
             <label htmlFor={id}>{label}: </label>
             <input
               id={id}

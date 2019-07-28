@@ -2,7 +2,33 @@
 import React, { Component } from "react";
 import * as Topsoil from "topsoil-js";
 import { svgElementToBlob } from "../../../actions";
-import "../../../styles/topsoil/plot.scss";
+import { colors } from "../../../constants";
+
+const styles = {
+  container: {
+    width: "100%",
+    height: "100%"
+  },
+  buttonBar: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    width: "100%",
+    height: "2em",
+    padding: "0.5em",
+    backgroundColor: colors.lightGray,
+    border: "solid " + colors.darkGray,
+    borderWidth: "0 0 1px 0"
+  },
+  button: {
+    margin: "0.5em"
+  },
+  root: {
+    width: "100%",
+    height: "calc(100% - 3em)",
+    backgroundColor: colors.white
+  }
+}
 
 type Props = {
   plot: {},
@@ -18,9 +44,8 @@ class TopsoilPlot extends Component<Props, State> {
   constructor(props) {
     super(props);
 
-    this._rootRef = React.createRef();
+    this.rootRef = React.createRef();
 
-    this.root = null;
     this.instance = null;
     
     this.handleResetView = this.handleResetView.bind(this);
@@ -28,7 +53,7 @@ class TopsoilPlot extends Component<Props, State> {
   }
 
   componentDidMount() {
-    this.root = this._rootRef.current;
+    // this.root = this.rootRef.current;
 
     if (this.shouldCreatePlot()) {
       this.createPlot();
@@ -80,12 +105,12 @@ class TopsoilPlot extends Component<Props, State> {
 
   render() {
     return (
-      <div className="topsoil-plot-container">
-        <div className="topsoil-plot-button-bar">
+      <div style={styles.container}>
+        <div style={styles.buttonBar}>
           {this.renderButton("Reset View", this.handleResetView)}
           {this.renderButton("Download SVG", this.handleExportSVG)}
         </div>
-        <div ref={this._rootRef} className="topsoil-plot-root" />
+        <div ref={this.rootRef} style={styles.root} />
       </div>
     );
   }
@@ -95,6 +120,7 @@ class TopsoilPlot extends Component<Props, State> {
       <button
         onClick={onClick}
         disabled={! this.instance}
+        style={styles.button}
       >
         {label}
       </button>
@@ -107,7 +133,7 @@ class TopsoilPlot extends Component<Props, State> {
 
   createPlot() {
     this.instance = new Topsoil.ScatterPlot(
-      this.root,
+      this.rootRef.current,
       this.props.plot.data,
       this.props.plot.options
     );
@@ -120,7 +146,7 @@ class TopsoilPlot extends Component<Props, State> {
   }
 
   destroyPlot() {
-    this.root.innerHTML = "";
+    this.rootRef.current.innerHTML = "";
     this.instance = null;
     this.forceUpdate();
   }

@@ -4,7 +4,7 @@ import { UID } from 'react-uid';
 type Props = {
   label: string,
   value: string,
-  style: {},
+  style?: {},
   onChange: Function
 }
 

@@ -14,7 +14,7 @@ export class Tab extends Component<Props> {
 
     let className = "tab-label";
     if (isActive) {
-      className += " tab-label-active";
+      className += " active";
     }
 
     return (

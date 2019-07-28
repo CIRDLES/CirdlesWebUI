@@ -10,6 +10,6 @@ export const colors = {
   white: '#ffffff',
   whiteGray: '#eeeeee',
   lightGray: '#cccccc',
-  mediumGray: '#a0a0a0',
+  mediumGray: '#aaaaaa',
   darkGray: '#505050'
 };

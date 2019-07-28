@@ -4,17 +4,24 @@ import axios from "axios";
 import "tabulator-tables";
 import Modal from "react-modal";
 import Split from "react-split";
+import { Variable, Option } from "topsoil-js";
 import {
   UploadForm,
   DataTable,
   VariableChooser,
+  Toolbar,
   TopsoilPlot,
   TopsoilPlotPanel
 } from "./components";
-import { Variable, Option } from "topsoil-js";
 import { DefaultOptions } from "./constants/defaults";
 import { SampleRows, SampleColumns } from "./constants/sample-data";
-import "../../styles/topsoil/topsoil.scss";
+import { colors } from "../../constants";
+
+import "../../styles/topsoil.scss";
+
+import verticalGrip from "../../img/vertical-grip.png";
+import horizontalGrip from "../../img/horizontal-grip.png";
+
 
 Modal.setAppElement("#root");
 
@@ -42,12 +49,54 @@ const styles = {
     bottom: 0,
     left: 0,
     fontSize: "3em",
-    backgroundColor: "#cccccccc",
+    backgroundColor: colors.lightGray + "cc",
     backgroundOpacity: 0.5
   },
   loadIndicator: {
-    backgroundColor: "#ccc",
+    backgroundColor: colors.lightGray,
     padding: "0.5em 0.75em"
+  },
+  pageContainer: {
+    display: "flex",
+    flexDirection: "row",
+    height: "100%"
+  },
+  mainSplit: {
+    position: "relative",
+    flexGrow: 1,
+    overflow: "hidden",
+    height: "100%",
+    border: "3px solid " + colors.darkGray
+  },
+  rightSplit: {
+    display: "inline-block",
+    position: "absolute",
+    top: 0,
+    height: "100%"
+  },
+  tableContainer: {
+    float: "left"
+  },
+  horizontalGutter: {
+    display: "inline-block",
+    width: "10px",
+    height: "100%",
+    backgroundImage: `url(${verticalGrip})`,
+    backgroundRepeat: "no-repeat",
+    backgroundColor: colors.lightGray,
+    backgroundPosition: "center",
+    border: "solid " + colors.darkGray,
+    borderWidth: "0 1px 0 1px"
+  },
+  verticalGutter: {
+    width: "100%",
+    height: "10px",
+    backgroundImage: `url(${horizontalGrip})`,
+    backgroundRepeat: "no-repeat",
+    backgroundColor: colors.lightGray,
+    backgroundPosition: "center",
+    border: "solid " + colors.darkGray,
+    borderWidth: "1px 0 1px 0"
   }
 };
 
@@ -242,12 +291,7 @@ class TopsoilPage extends Component<{}, State> {
     const { rows, variables, unctFormat } = this.state.table;
     if (Object.entries(variables).length === 0) return;
     const plot = { ...this.state.plot };
-    plot.data = calculatePlotData(
-      rows,
-      variables,
-      unctFormat,
-      plot.options.uncertainty
-    );
+    plot.data = calculatePlotData(rows, variables, unctFormat);
     plot.options[Option.X_AXIS] = variables[Variable.X];
     plot.options[Option.Y_AXIS] = variables[Variable.Y];
     this.setState({ plot });
@@ -262,7 +306,7 @@ class TopsoilPage extends Component<{}, State> {
     }
 
     return (
-      <div id="page-container">
+      <div style={styles.pageContainer}>
         <Modal
           isOpen={this.state.varChooserIsOpen}
           onRequestClose={this.handleCloseVarChooser}
@@ -275,7 +319,6 @@ class TopsoilPage extends Component<{}, State> {
         >
           <h2 id="var-chooser-heading">Variable Chooser</h2>
           <p id="var-chooser-desc">
-            {" "}
             Use this form to select which data columns correspond to specific
             plotting variables.
           </p>
@@ -309,82 +352,66 @@ class TopsoilPage extends Component<{}, State> {
           />
         </Modal>
 
-        <div id="#toolbar">
-          <button className="toolbar-item" onClick={this.handleLoadSampleData}>
+        <Toolbar>
+          <button onClick={this.handleLoadSampleData}>
             Load Sample Data
           </button>
-          <button className="toolbar-item" onClick={this.handleOpenUploadForm}>
+          <button onClick={this.handleOpenUploadForm}>
             Upload Data
           </button>
           <button
-            className="toolbar-item"
             onClick={this.handleOpenVarChooser}
             disabled={table.rows.length === 0}
           >
             Generate Plot
           </button>
+        </Toolbar>
 
-          <div id="toolbar-tail" className="toolbar-item">
-            <div id="logo" className="toolbar-item" />
-            <a
-              href="http://cirdles.org/projects/topsoil/"
-              className="toolbar-item"
-            >
-              CIRDLES.org
-            </a>
-            <a
-              href="https://github.com/CIRDLES/Topsoil"
-              className="toolbar-item"
-            >
-              GitHub
-            </a>
+        <Split
+          sizes={this.state.split.horizontal}
+          direction="horizontal"
+          onDrag={sizes => {
+            this.handleRefreshPlot();
+          }}
+          onDragEnd={this.handleHorizontalSplitSizeChange}
+          style={styles.mainSplit}
+          gutterStyle={() => styles.horizontalGutter}
+        >
+          <div style={styles.tableContainer}>
+            <DataTable
+              ref={this.dataTable}
+              rows={table.rows || []}
+              columns={table.columns || []}
+              onCellEdited={this.handleUpdatePlotState}
+            />
           </div>
-        </div>
 
-        <div id="main-container">
           <Split
-            sizes={this.state.split.horizontal}
-            direction="horizontal"
+            sizes={this.state.split.vertical}
+            direction="vertical"
             onDrag={sizes => {
               this.handleRefreshPlot();
             }}
-            onDragEnd={this.handleHorizontalSplitSizeChange}
-            style={{ position: "relative" }}
+            onDragEnd={this.handleVerticalSplitSizeChange}
+            style={styles.rightSplit}
+            gutterStyle={() => styles.verticalGutter}
           >
-            <div className="float-left">
-              <DataTable
-                ref={this.dataTable}
-                rows={table.rows || []}
-                columns={table.columns || []}
-                onCellEdited={this.handleUpdatePlotState}
-              />
-            </div>
-
-            <div id="right-split-container">
-              <Split
-                sizes={this.state.split.vertical}
-                direction="vertical"
-                onDrag={sizes => {
-                  this.handleRefreshPlot();
-                }}
-                onDragEnd={this.handleVerticalSplitSizeChange}
-              >
-                <TopsoilPlot
-                  ref={this.plotComponent}
-                  plot={plot}
-                  onZoomEnd={this.handlePlotZoomed}
-                />
-                <TopsoilPlotPanel
-                  plot={plot}
-                  onOptionChanged={this.handlePlotOptionChange}
-                  onSetExtents={this.handleSetExtents}
-                  fitToWetherillConcordia={this.handleFitToConcordia}
-                />
-              </Split>
-            </div>
+            <TopsoilPlot
+              ref={this.plotComponent}
+              plot={plot}
+              onZoomEnd={this.handlePlotZoomed}
+            />
+            <TopsoilPlotPanel
+              plot={plot}
+              onOptionChanged={this.handlePlotOptionChange}
+              onSetExtents={this.handleSetExtents}
+              fitToWetherillConcordia={this.handleFitToConcordia}
+            />
           </Split>
-        </div>
+        </Split>
+
         {loader}
+
       </div>
     );
   }
@@ -392,7 +419,7 @@ class TopsoilPage extends Component<{}, State> {
 
 export default TopsoilPage;
 
-function calculatePlotData(rows, variables, unctFormat, multiplier, rtnval) {
+function calculatePlotData(rows, variables, unctFormat, rtnval) {
   rtnval = rtnval || [];
   rows.forEach(row => {
     if (row._children) {
