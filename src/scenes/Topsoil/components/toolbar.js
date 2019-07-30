@@ -62,15 +62,24 @@ export class Toolbar extends Component<Props> {
           <div style={styles.logo} />
           <a
             href="http://cirdles.org/projects/topsoil/"
+            target="_blank"
             style={styles.tailLink}
           >
             CIRDLES.org
           </a>
           <a
             href="https://github.com/CIRDLES/Topsoil"
+            target="_blank"
             style={styles.tailLink}
           >
             GitHub
+          </a>
+          <a
+            href="https://github.com/CIRDLES/CirdlesWebUI/issues/new"
+            target="_blank"
+            style={styles.tailLink}
+          >
+            Report Issue
           </a>
         </div>
       </div>
