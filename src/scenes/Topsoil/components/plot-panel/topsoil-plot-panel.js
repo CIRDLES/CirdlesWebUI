@@ -16,13 +16,13 @@ const styles = {
     margin: 0
   },
   subpanel: {
-    display: "inline-flex",
-    flexFlow: "column wrap",
+    display: "flex",
+    flexFlow: "row wrap",
     // subtract padding from height
-    height: "calc(100% - 1em)",
+    maxHeight: "calc(100% - 1em)",
     padding: "0.5em"
   },
-  controlGroup: {
+  controlBlock: {
     margin: "0.5em"
   }
 };
@@ -31,7 +31,7 @@ type Props = {
   plot: {},
   onOptionChanged: Function,
   onSetExtents: Function,
-  fitToWetherillConcordia: Function
+  snapToWetherillConcordia: Function
 };
 
 export class TopsoilPlotPanel extends Component<Props> {
@@ -59,7 +59,7 @@ export class TopsoilPlotPanel extends Component<Props> {
     const {
       plot: { options },
       onOptionChanged,
-      fitToWetherillConcordia
+      snapToWetherillConcordia
     } = this.props;
     return (
       <TabPane>
@@ -80,7 +80,7 @@ export class TopsoilPlotPanel extends Component<Props> {
           <PlotFeaturesPanel
             options={options}
             onOptionChanged={onOptionChanged}
-            fitToWetherillConcordia={fitToWetherillConcordia}
+            snapToWetherillConcordia={snapToWetherillConcordia}
           />
         </Tab>
         <Tab label="Constants">
@@ -98,10 +98,10 @@ const AxisStylingPanel = ({ options, onOptionChanged, onSetExtents }) => {
         value={options[Option.TITLE]}
         label="Title"
         onChange={e => onOptionChanged(Option.TITLE, e.target.value)}
-        style={styles.controlGroup}
+        style={styles.controlBlock}
       />
 
-      <div style={styles.controlGroup}>
+      <div style={styles.controlBlock}>
         <Input
           label="X Axis"
           value={options[Option.X_AXIS]}
@@ -114,7 +114,7 @@ const AxisStylingPanel = ({ options, onOptionChanged, onSetExtents }) => {
         />
       </div>
 
-      <div style={styles.controlGroup}>
+      <div style={styles.controlBlock}>
         <Input
           label="Y Axis"
           value={options[Option.Y_AXIS]}
@@ -133,28 +133,27 @@ const AxisStylingPanel = ({ options, onOptionChanged, onSetExtents }) => {
 const DataOptionsPanel = ({ options, onOptionChanged }) => {
   return (
     <div style={styles.subpanel}>
-      <Select
-        label="Isotope System"
-        value={options[Option.ISOTOPE_SYSTEM]}
-        onChange={e => onOptionChanged(Option.ISOTOPE_SYSTEM, e.target.value)}
-        style={styles.controlGroup}
-      >
-        <option value="Generic">Generic</option>
-        <option value="Uranium Lead">U-Pb</option>
-        <option value="Uranium Thorium">U-Th</option>
-      </Select>
+      <div style={styles.controlBlock}>
+        <Select
+          label="Isotope System"
+          value={options[Option.ISOTOPE_SYSTEM]}
+          onChange={e => onOptionChanged(Option.ISOTOPE_SYSTEM, e.target.value)}
+        >
+          <option value="Generic">Generic</option>
+          <option value="Uranium Lead">U-Pb</option>
+          <option value="Uranium Thorium">U-Th</option>
+        </Select>
+        <Select
+          label="Uncertainty"
+          value={options[Option.UNCERTAINTY]}
+          onChange={e => onOptionChanged(Option.UNCERTAINTY, e.target.value)}
+        >
+          <option value={1.0}>1σ</option>
+          <option value={2.0}>2σ</option>
+        </Select>
+      </div>
 
-      <Select
-        label="Uncertainty"
-        value={options[Option.UNCERTAINTY]}
-        onChange={e => onOptionChanged(Option.UNCERTAINTY, e.target.value)}
-        style={styles.controlGroup}
-      >
-        <option value={1.0}>1σ</option>
-        <option value={2.0}>2σ</option>
-      </Select>
-
-      <div style={styles.controlGroup}>
+      <div style={styles.controlBlock}>
         <CheckBox
           label="Points"
           checked={options[Option.POINTS]}
@@ -185,7 +184,7 @@ const DataOptionsPanel = ({ options, onOptionChanged }) => {
         </ul>
       </div>
 
-      <div style={styles.controlGroup}>
+      <div style={styles.controlBlock}>
         <CheckBox
           label="Error Ellipses"
           checked={options[Option.ELLIPSES]}
@@ -216,7 +215,7 @@ const DataOptionsPanel = ({ options, onOptionChanged }) => {
         </ul>
       </div>
 
-      <div style={styles.controlGroup}>
+      <div style={styles.controlBlock}>
         <CheckBox
           label="Error Bars"
           checked={options[Option.ERROR_BARS]}
@@ -250,11 +249,11 @@ const DataOptionsPanel = ({ options, onOptionChanged }) => {
   );
 };
 
-const PlotFeaturesPanel = ({ options, onOptionChanged, fitToWetherillConcordia }) => {
+const PlotFeaturesPanel = ({ options, onOptionChanged, snapToWetherillConcordia }) => {
   let systemControls = "";
   switch (options[Option.ISOTOPE_SYSTEM]) {
     case "Uranium Lead":
-      systemControls = UPbFeatures(options, onOptionChanged, fitToWetherillConcordia);
+      systemControls = UPbFeatures(options, onOptionChanged, snapToWetherillConcordia);
       break;
     case "Uranium Thorium":
       systemControls = UThFeatures(options, onOptionChanged);
@@ -264,13 +263,13 @@ const PlotFeaturesPanel = ({ options, onOptionChanged, fitToWetherillConcordia }
   return <div style={styles.subpanel}>{systemControls}</div>;
 };
 
-const UPbFeatures = (options, onOptionChanged, fitToWetherillConcordia) => {
+const UPbFeatures = (options, onOptionChanged, snapToWetherillConcordia) => {
 
   const concordiaType = options[Option.CONCORDIA_TYPE];
 
   return (
     <React.Fragment>
-      <div style={styles.controlGroup}>
+      <div style={styles.controlBlock}>
         <CheckBox
           label="Concordia"
           checked={options[Option.CONCORDIA_LINE]}
@@ -301,8 +300,8 @@ const UPbFeatures = (options, onOptionChanged, fitToWetherillConcordia) => {
               <li>
                 <button 
                   disabled={options[Option.CONCORDIA_LINE] && concordiaType !== "wetherill"}
-                  onClick={fitToWetherillConcordia}
-                >Fit to Concordia</button>
+                  onClick={snapToWetherillConcordia}
+                >Snap to Corners</button>
               </li>
             </ul>
           </li>
@@ -345,7 +344,7 @@ const UPbFeatures = (options, onOptionChanged, fitToWetherillConcordia) => {
 const UThFeatures = (options, onOptionChanged) => {
   return (
     <React.Fragment>
-      <div style={styles.controlGroup}>
+      <div style={styles.controlBlock}>
         <CheckBox
           label="Evolution Matrix"
           checked={options[Option.EVOLUTION]}
@@ -363,25 +362,25 @@ const ConstantsPanel = ({ options, onOptionChanged }) => {
         label="Lambda 230"
         defaultValue={options[Option.LAMBDA_230]}
         onSetValue={newValue => onOptionChanged(Option.LAMBDA_230, newValue)}
-        style={styles.controlGroup}
+        style={styles.controlBlock}
       />
       <Lambda
         label="Lambda 234"
         defaultValue={options[Option.LAMBDA_234]}
         onSetValue={newValue => onOptionChanged(Option.LAMBDA_234, newValue)}
-        style={styles.controlGroup}
+        style={styles.controlBlock}
       />
       <Lambda
         label="Lambda 235"
         defaultValue={options[Option.LAMBDA_235]}
         onSetValue={newValue => onOptionChanged(Option.LAMBDA_235, newValue)}
-        style={styles.controlGroup}
+        style={styles.controlBlock}
       />
       <Lambda
         label="Lambda 238"
         defaultValue={options[Option.LAMBDA_238]}
         onSetValue={newValue => onOptionChanged(Option.LAMBDA_238, newValue)}
-        style={styles.controlGroup}
+        style={styles.controlBlock}
       />
     </div>
   );

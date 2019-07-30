@@ -45,20 +45,33 @@ const numberVariables = [
 
 type Props = {
   columns: [],
+  /** An object in which each key is the name of a variable, and each value is the name of a column. */
   varMap: {},
+  /** The INITIAL format of the error/uncertainty values provided (may be % or abs). */
   unctFormat: string,
+  /** Variables that are required for the submission of the variable chooser. */
   requiredVars: [],
-
+ 
   onSubmit: Function
 };
 
 type State = {
+  /** An object in which each key is the name of a column, and each value is the name of a variable. 
+   *  Not to be confused with the prop varMap, which has variable-name keys and column-name values. */
   selections: [],
+  /** An object in which each key is the name of a parent column, and each value is a boolean representing
+   *  the collapsed state of the parent columns corresponding Collapse component. */
   collapse: {},
+  /** The CURRENT format of the error/uncertainty values provided (may be % or abs). */
   unctFormat: string,
+  /** An error message to be displayed next to the Submit button. */
   errorMessage: string
 }
 
+/**
+ * Component responsible for the selection of variable/column associations. Leaf columns in the table data may be 
+ * associated with plotting variables.
+ */
 class VariableChooser extends Component<Props, State> {
   constructor(props) {
     super(props);
@@ -83,6 +96,12 @@ class VariableChooser extends Component<Props, State> {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
+  /**
+   * Occurs when a user selects a variable to associate with a leaf column.
+   * 
+   * @param {string} colName 
+   * @param {string} varName 
+   */
   handleSelectionChange(colName, varName) {
     const selections = { ...this.state.selections };
     
@@ -103,10 +122,18 @@ class VariableChooser extends Component<Props, State> {
     this.setState({ selections });
   }
 
+  /**
+   * Occurs when the user changes the error/uncertainty format.
+   * 
+   * @param {React.SyntheticEvent} event 
+   */
   handleChangeUnctFormat(event) {
     this.setState({ unctFormat: event.target.value });
   }
 
+  /**
+   * Occurs when the user submits the variable chooser form.
+   */
   handleSubmit() {
     const { selections, unctFormat } = this.state,
           variables = {};
@@ -116,6 +143,7 @@ class VariableChooser extends Component<Props, State> {
       }
     }
 
+    // Check that required variables are selected; otherwise display error message and return.
     const { requiredVars } = this.props;
     if (requiredVars) {
       for (let v of requiredVars) {
@@ -129,6 +157,11 @@ class VariableChooser extends Component<Props, State> {
     this.props.onSubmit(variables, unctFormat);
   }
 
+  /**
+   * Occurs when the user toggles the collapse state for a parent column.
+   * 
+   * @param {string} colName 
+   */
   handleToggleCollapse(colName) {
     const collapse = {...this.state.collapse};
     collapse[colName] = !collapse[colName];
@@ -163,7 +196,7 @@ class VariableChooser extends Component<Props, State> {
           <div style={styles.varList}>
             {this.props.columns.map(column => {
               if (column.columns) {
-                return this.renderBranchColumnItem(column);
+                return this.renderParentColumnItem(column);
               } else {
                 return this.renderLeafColumnItem(column);
               }
@@ -189,7 +222,12 @@ class VariableChooser extends Component<Props, State> {
     );
   }
 
-  renderBranchColumnItem(column) {
+  /**
+   * Renders a Collapse component for the provided parent column.
+   * 
+   * @param {*} column 
+   */
+  renderParentColumnItem(column) {
     const { title: colName } = column;
     return (
       <Collapse
@@ -200,7 +238,7 @@ class VariableChooser extends Component<Props, State> {
       >
         {column.columns.map(child => {
           if (child.columns) {
-            return this.renderBranchColumnItem(child);
+            return this.renderParentColumnItem(child);
           } else {
             return this.renderLeafColumnItem(child);
           }
@@ -209,6 +247,11 @@ class VariableChooser extends Component<Props, State> {
     );
   }
 
+  /**
+   * Renders a Select component for the provided leaf column.
+   * 
+   * @param {*} column 
+   */
   renderLeafColumnItem(column) {
     const { title: colName } = column,
           { selections } = this.state;
@@ -231,6 +274,13 @@ class VariableChooser extends Component<Props, State> {
 
 export default VariableChooser;
 
+/**
+ * Recursively generates an object representing the initial collapsed state for each parent column in the provided 
+ * list of columns.
+ * 
+ * @param {*} columns
+ * @param {*} rtnval 
+ */
 function getInitialCollapseState(columns, rtnval) {
   rtnval = rtnval || {};
   columns.forEach(col => {

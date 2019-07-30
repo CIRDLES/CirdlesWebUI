@@ -1,6 +1,7 @@
 // @flow
 import React, { Component } from 'react';
 import logo from "../../../img/logos/Topsoil.svg";
+import { colors } from '../../../constants';
 
 const styles = {
   toolbar: {
@@ -9,7 +10,7 @@ const styles = {
     flexDirection: "column",
     flexGrow: 0,
     padding: "0.25em",
-    height: "100%"
+    height: "calc(100% - 0.5em)"
   },
   toolbarTail: {
     position: "absolute",
@@ -33,6 +34,12 @@ const styles = {
   tailLink: {
     textAlign: "center",
     margin: "0.25em 0"
+  },
+  separator: {
+    width: "6.25rem",
+    height: "0.2em",
+    margin: "0.25em",
+    backgroundColor: colors.darkGray
   }
 }
 
@@ -40,7 +47,7 @@ type Props = {
   children: []
 }
 
-class Toolbar extends Component<Props> {
+export class Toolbar extends Component<Props> {
 
   render() { 
 
@@ -70,5 +77,9 @@ class Toolbar extends Component<Props> {
     );
   }
 }
- 
-export default Toolbar;
+
+export const ToolbarSeparator = () => {
+  return (
+    <div style={styles.separator} />
+  );
+}
