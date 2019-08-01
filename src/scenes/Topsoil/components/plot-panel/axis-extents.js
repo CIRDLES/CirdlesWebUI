@@ -1,5 +1,7 @@
 // @flow
 import React, { Component } from "react";
+import { Button } from "../../../../components";
+import { colors } from "../../../../constants";
 
 const styles = {
   container: {
@@ -69,7 +71,11 @@ class AxisExtents extends Component<Props> {
             defaultValue={axisMax}
           />
         </div>
-        <button onClick={this.handleSetExtents}>Set Extents</button>
+        <Button 
+          size={12}
+          color={colors.topsoilDark}
+          onClick={this.handleSetExtents}
+        >Set Extents</Button>
       </div>
     );
   }

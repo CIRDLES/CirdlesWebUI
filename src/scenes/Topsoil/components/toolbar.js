@@ -2,13 +2,15 @@
 import React, { Component } from 'react';
 import logo from "../../../img/logos/Topsoil.svg";
 import { colors } from '../../../constants';
+import { Button } from '../../../components';
 
 const styles = {
   toolbar: {
     position: "relative",
     display: "flex",
     flexDirection: "column",
-    flexGrow: 0,
+    alignItems: "stretch",
+    maxWidth: "7.75em",
     padding: "0.25em",
     height: "calc(100% - 0.5em)"
   },
@@ -18,7 +20,8 @@ const styles = {
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    margin: "0.25em"
+    margin: "0.25em",
+    width: "calc(100% - 1em)"
   },
   logo: {
     backgroundImage: `url(${logo})`,
@@ -27,8 +30,6 @@ const styles = {
     margin: "0.25em"
   },
   toolbarItem: {
-    display: "block",
-    width: "6.25rem",
     margin: "0.25em"
   },
   tailLink: {
@@ -36,7 +37,6 @@ const styles = {
     margin: "0.25em 0"
   },
   separator: {
-    width: "6.25rem",
     height: "0.2em",
     margin: "0.25em",
     backgroundColor: colors.darkGray
@@ -44,6 +44,7 @@ const styles = {
 }
 
 type Props = {
+  style?: {},
   children: []
 }
 
@@ -55,7 +56,7 @@ export class Toolbar extends Component<Props> {
       <div style={styles.toolbar}>
         
         {React.Children.map(this.props.children, child => {
-          return React.cloneElement(child, { style: styles.toolbarItem });
+          return React.cloneElement(child);
         })}
 
         <div style={styles.toolbarTail}>
@@ -90,5 +91,11 @@ export class Toolbar extends Component<Props> {
 export const ToolbarSeparator = () => {
   return (
     <div style={styles.separator} />
+  );
+}
+
+export const ToolbarButton = ({ onClick, text, ...rest }) => {
+  return (
+    <Button onClick={onClick} size={14} color={colors.topsoilDark} {...rest}>{text}</Button>
   );
 }

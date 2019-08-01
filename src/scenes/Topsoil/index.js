@@ -1,3 +1,4 @@
+// @flow
 import React, { Component } from "react";
 import { TOPSOIL_ENDPOINT } from "../../constants";
 import axios from "axios";
@@ -10,18 +11,20 @@ import {
   DataTable,
   VariableChooser,
   Toolbar,
+  ToolbarButton,
+  ToolbarSeparator,
   TopsoilPlot,
   TopsoilPlotPanel
 } from "./components";
+import { Button } from "components";
 import { DefaultOptions } from "./constants/defaults";
 import { SampleRows, SampleColumns } from "./constants/sample-data";
-import { colors } from "../../constants";
+import { colors } from "constants";
 
 import "../../styles/topsoil.scss";
 
 import verticalGrip from "../../img/vertical-grip.png";
 import horizontalGrip from "../../img/horizontal-grip.png";
-import { ToolbarSeparator } from "./components/toolbar";
 
 Modal.setAppElement("#root");
 
@@ -53,7 +56,6 @@ const styles = {
     backgroundOpacity: 0.5
   },
   loadIndicator: {
-    backgroundColor: colors.lightGray,
     padding: "0.5em 0.75em"
   },
   pageContainer: {
@@ -62,6 +64,9 @@ const styles = {
     flexDirection: "row",
     height: "100%",
     width: "100%"
+  },
+  toolbarButton: {
+    margin: "0.25em"
   },
   mainContainer: {
     flexGrow: 1,
@@ -90,9 +95,9 @@ const styles = {
   splitGutter: (dimension, gutterSize, index) => {
     const style = {
       backgroundRepeat: "no-repeat",
-      backgroundColor: colors.lightGray,
+      backgroundColor: colors.topsoilLight,
       backgroundPosition: "center",
-      border: "solid " + colors.darkGray,
+      border: "solid " + colors.topsoilDark,
     }
     style[dimension] = `${gutterSize}px`;
     if (dimension === "width") {
@@ -333,132 +338,136 @@ class TopsoilPage extends Component<{}, State> {
     }
 
     return (
-      <div style={styles.pageContainer}>
-        <Modal
-          isOpen={this.state.varChooserIsOpen}
-          onRequestClose={this.handleCloseVarChooser}
-          style={styles.modal}
-          contentLabel="Variable Chooser"
-          aria={{
-            labelledby: "var-chooser-heading",
-            describedby: "var-chooser-desc"
-          }}
-        >
-          <h2 id="var-chooser-heading">Variable Chooser</h2>
-          <p id="var-chooser-desc">
-            Use this form to select which data columns correspond to specific
-            plotting variables.
-          </p>
-          <VariableChooser
-            columns={table.columns}
-            onSubmit={this.handleSubmitVarChooser}
-            variables={this.state.table.variables}
-            requiredVars={[Variable.X, Variable.Y]}
-            unctFormat={this.state.table.unctFormat}
-          />
-        </Modal>
-
-        <Modal
-          isOpen={this.state.uploadFormIsOpen}
-          onRequestClose={this.handleCloseUploadForm}
-          style={styles.modal}
-          contentLabel="Data Uploader"
-          aria={{
-            labelledby: "upload-form-heading",
-            describedby: "upload-form-desc"
-          }}
-        >
-          <h2 id="upload-form-heading">Data Uploader</h2>
-          <p>Use this form to select a data file to upload.</p>
-          <UploadForm
-            tableFile={selectedTableFile}
-            template={template}
-            onSubmit={this.handleSubmitUploadForm}
-            onChangeTableFile={this.handleChangeTableFile}
-            onChangeTemplate={this.handleChangeTemplate}
-          />
-        </Modal>
-
-        <Toolbar>
-          <button onClick={this.handleLoadSampleData}>
-            Load Sample Data
-          </button>
-          <button onClick={this.handleOpenUploadForm}>
-            Upload Data
-          </button>
-          <button 
-            onClick={this.handleClearTableData}
-            disabled={table.rows.length === 0}
-          >
-            Clear Data
-          </button>
-          <ToolbarSeparator />
-          <button
-            onClick={this.handleOpenVarChooser}
-            disabled={table.rows.length === 0}
-          >
-            Generate Plot
-          </button>
-          <button
-            onClick={this.handleClearPlot}
-            disabled={Object.entries(table.variables).length === 0}
-          >
-            Clear Plot
-          </button>
-        </Toolbar>
-
-        <div style={styles.mainContainer}>
-          <Split
-            sizes={this.state.split.horizontal}
-            direction="horizontal"
-            onDrag={sizes => {
-              this.handleRefreshPlot();
+      <React.Fragment>
+        <div style={styles.pageContainer} className="topsoil-page">
+          <Modal
+            isOpen={this.state.varChooserIsOpen}
+            onRequestClose={this.handleCloseVarChooser}
+            style={styles.modal}
+            contentLabel="Variable Chooser"
+            aria={{
+              labelledby: "var-chooser-heading",
+              describedby: "var-chooser-desc"
             }}
-            onDragEnd={this.handleHorizontalSplitSizeChange}
-            style={styles.mainSplit}
-            elementStyle={styles.splitElement}
-            gutterSize={10}
-            gutterStyle={styles.splitGutter}
           >
-            <div style={styles.tableContainer}>
-              <DataTable
-                ref={this.dataTable}
-                rows={table.rows || []}
-                columns={table.columns || []}
-                onCellEdited={this.handleUpdatePlotState}
-              />
-            </div>
+            <h2 id="var-chooser-heading">Variable Chooser</h2>
+            <p id="var-chooser-desc">
+              Use this form to select which data columns correspond to specific
+              plotting variables.
+            </p>
+            <VariableChooser
+              columns={table.columns}
+              onSubmit={this.handleSubmitVarChooser}
+              variables={this.state.table.variables}
+              requiredVars={[Variable.X, Variable.Y]}
+              unctFormat={this.state.table.unctFormat}
+            />
+          </Modal>
 
+          <Modal
+            isOpen={this.state.uploadFormIsOpen}
+            onRequestClose={this.handleCloseUploadForm}
+            style={styles.modal}
+            contentLabel="Data Uploader"
+            aria={{
+              labelledby: "upload-form-heading",
+              describedby: "upload-form-desc"
+            }}
+          >
+            <h2 id="upload-form-heading">Data Uploader</h2>
+            <p>Use this form to select a data file to upload.</p>
+            <UploadForm
+              tableFile={selectedTableFile}
+              template={template}
+              onSubmit={this.handleSubmitUploadForm}
+              onChangeTableFile={this.handleChangeTableFile}
+              onChangeTemplate={this.handleChangeTemplate}
+            />
+          </Modal>
+
+          <Toolbar>
+            <ToolbarButton 
+              text="Load Sample Data"
+              onClick={this.handleLoadSampleData}
+              margin={styles.toolbarButton.margin}
+            />
+            <ToolbarButton
+              text="Upload Data"
+              onClick={this.handleOpenUploadForm}
+              margin={styles.toolbarButton.margin}
+            />
+            <ToolbarButton
+              text="Clear Data"
+              onClick={this.handleClearTableData}
+              disabled={table.rows.length === 0}
+              margin={styles.toolbarButton.margin}
+            />
+            <ToolbarSeparator />
+            <ToolbarButton
+              text="Generate Plot"
+              onClick={this.handleOpenVarChooser}
+              disabled={table.rows.length === 0}
+              margin={styles.toolbarButton.margin}
+            />
+            <ToolbarButton
+              text="Clear Plot"
+              onClick={this.handleClearPlot}
+              disabled={Object.entries(table.variables).length === 0}
+              margin={styles.toolbarButton.margin}
+            />
+          </Toolbar>
+
+          <div style={styles.mainContainer}>
             <Split
-              sizes={this.state.split.vertical}
-              direction="vertical"
+              sizes={this.state.split.horizontal}
+              direction="horizontal"
               onDrag={sizes => {
                 this.handleRefreshPlot();
               }}
-              onDragEnd={this.handleVerticalSplitSizeChange}
-              style={styles.rightSplit}
+              onDragEnd={this.handleHorizontalSplitSizeChange}
+              style={styles.mainSplit}
               elementStyle={styles.splitElement}
               gutterSize={10}
               gutterStyle={styles.splitGutter}
             >
-              <TopsoilPlot
-                ref={this.plotComponent}
-                plot={plot}
-                onZoomEnd={this.handlePlotZoomed}
-              />
-              <TopsoilPlotPanel
-                plot={plot}
-                onOptionChanged={this.handlePlotOptionChange}
-                onSetExtents={this.handleSetExtents}
-                snapToWetherillConcordia={this.handleSnapToConcordia}
-              />
-            </Split>
-          </Split>
-        </div>
-        
-        {loader}
+              <div style={styles.tableContainer}>
+                <DataTable
+                  ref={this.dataTable}
+                  rows={table.rows || []}
+                  columns={table.columns || []}
+                  onCellEdited={this.handleUpdatePlotState}
+                />
+              </div>
 
-      </div>
+              <Split
+                sizes={this.state.split.vertical}
+                direction="vertical"
+                onDrag={sizes => {
+                  this.handleRefreshPlot();
+                }}
+                onDragEnd={this.handleVerticalSplitSizeChange}
+                style={styles.rightSplit}
+                elementStyle={styles.splitElement}
+                gutterSize={10}
+                gutterStyle={styles.splitGutter}
+              >
+                <TopsoilPlot
+                  ref={this.plotComponent}
+                  plot={plot}
+                  onZoomEnd={this.handlePlotZoomed}
+                />
+                <TopsoilPlotPanel
+                  plot={plot}
+                  onOptionChanged={this.handlePlotOptionChange}
+                  onSetExtents={this.handleSetExtents}
+                  snapToWetherillConcordia={this.handleSnapToConcordia}
+                />
+              </Split>
+            </Split>
+          </div>
+        </div>
+        {loader}
+      </React.Fragment>
     );
   }
 }

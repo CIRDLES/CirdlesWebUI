@@ -1,10 +1,11 @@
 // @flow
 import React, { Component } from "react";
 import { Option } from "topsoil-js";
-import { Input, Select, RadioButton, CheckBox, TabPane, Tab } from "../../../../components";
+import { Input, Select, RadioButton, CheckBox, TabPane, Tab, Button } from "../../../../components";
 import AxisExtents from "./axis-extents";
 import Lambda from "./lambda";
-import RangeSlider from "../../../../components/range-slider";
+import RangeSlider from "../../../../components/RangeSlider";
+import { colors } from "../../../../constants";
 
 const styles = {
   optionList: {
@@ -62,31 +63,34 @@ export class TopsoilPlotPanel extends Component<Props> {
       snapToWetherillConcordia
     } = this.props;
     return (
-      <TabPane>
-        <Tab label="Axis Styling">
-          <AxisStylingPanel
-            options={options}
-            onOptionChanged={onOptionChanged}
-            onSetExtents={this.handleSetExtents}
-          />
-        </Tab>
-        <Tab label="Data Options">
-          <DataOptionsPanel
-            options={options}
-            onOptionChanged={onOptionChanged}
-          />
-        </Tab>
-        <Tab label="Plot Features">
-          <PlotFeaturesPanel
-            options={options}
-            onOptionChanged={onOptionChanged}
-            snapToWetherillConcordia={snapToWetherillConcordia}
-          />
-        </Tab>
-        <Tab label="Constants">
-          <ConstantsPanel options={options} onOptionChanged={onOptionChanged} />
-        </Tab>
-      </TabPane>
+      <div className="topsoil-plot-panel">
+        <TabPane>
+          <Tab label="Axis Styling">
+            <AxisStylingPanel
+              options={options}
+              onOptionChanged={onOptionChanged}
+              onSetExtents={this.handleSetExtents}
+            />
+          </Tab>
+          <Tab label="Data Options">
+            <DataOptionsPanel
+              options={options}
+              onOptionChanged={onOptionChanged}
+            />
+          </Tab>
+          <Tab label="Plot Features">
+            <PlotFeaturesPanel
+              options={options}
+              onOptionChanged={onOptionChanged}
+              snapToWetherillConcordia={snapToWetherillConcordia}
+            />
+          </Tab>
+          <Tab label="Constants">
+            <ConstantsPanel options={options} onOptionChanged={onOptionChanged} />
+          </Tab>
+        </TabPane>
+      </div>
+      
     );
   }
 }
@@ -298,10 +302,14 @@ const UPbFeatures = (options, onOptionChanged, snapToWetherillConcordia) => {
             />
             <ul style={styles.optionList}>
               <li>
-                <button 
+                <Button
+                  size={12}
+                  color={colors.topsoilDark}
                   disabled={options[Option.CONCORDIA_LINE] && concordiaType !== "wetherill"}
                   onClick={snapToWetherillConcordia}
-                >Snap to Corners</button>
+                >
+                  Snap to Corners
+                </Button>
               </li>
             </ul>
           </li>

@@ -29,6 +29,7 @@ export function NumberEditor(cell, onRendered, success, cancel, editorParams) {
   editor.style.padding = "3px";
   editor.style.width = "100%";
   editor.style.boxSizing = "border-box";
+  editor.style.fontFamily = "\'Lucida Console\', monospace";
 
   editor.value = cell.getValue();
 

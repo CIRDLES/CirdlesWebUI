@@ -1,6 +1,8 @@
 // @flow
 import React, { Component } from 'react';
 import { UID } from 'react-uid';
+import { Button } from '../../../../components';
+import { colors } from '../../../../constants';
 
 type Props = {
   label: string,
@@ -42,7 +44,13 @@ class Lambda extends Component<Props> {
               defaultValue={defaultValue}
               style={{ margin: "0 0.5em", width: "10em" }}
             />
-            <button onClick={this.handleSetValue}>Set</button>
+            <Button
+              size={12}
+              color={colors.topsoilDark}
+              onClick={this.handleSetValue}
+            >
+              Set
+            </Button>
           </div>
         }
       </UID>

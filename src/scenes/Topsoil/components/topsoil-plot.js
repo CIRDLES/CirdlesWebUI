@@ -3,6 +3,7 @@ import React, { Component } from "react";
 import { ScatterPlot, Feature } from "topsoil-js";
 import { svgElementToBlob } from "../../../actions";
 import { colors } from "../../../constants";
+import { Button } from "../../../components";
 
 const styles = {
   container: {
@@ -17,12 +18,12 @@ const styles = {
     width: "calc(100% - 1em)",
     height: "2em",
     padding: "0.5em",
-    backgroundColor: colors.lightGray,
-    border: "solid " + colors.darkGray,
+    backgroundColor: colors.whiteGray,
+    border: "solid " + colors.topsoilDark,
     borderWidth: "0 0 1px 0"
   },
   button: {
-    margin: "0.5em"
+    margin: "0.25em"
   },
   root: {
     width: "100%",
@@ -123,13 +124,15 @@ class TopsoilPlot extends Component<Props> {
 
   renderButton(label, onClick) {
     return (
-      <button
+      <Button
         onClick={onClick}
+        size={14}
+        color={colors.topsoilDark}
+        margin="0.25em"
         disabled={! this.instance}
-        style={styles.button}
       >
         {label}
-      </button>
+      </Button>
     );
   }
 
