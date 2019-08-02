@@ -1,6 +1,6 @@
 // @flow
 import React, { Component } from "react";
-import { TOPSOIL_ENDPOINT } from "../../constants";
+import { TOPSOIL_ENDPOINT } from "constants";
 import axios from "axios";
 import "tabulator-tables";
 import Modal from "react-modal";
@@ -20,10 +20,10 @@ import { DefaultOptions } from "./constants/defaults";
 import { SampleRows, SampleColumns } from "./constants/sample-data";
 import { colors } from "constants";
 
-import "../../styles/topsoil.scss";
+import "styles/topsoil.scss";
 
-import verticalGrip from "../../img/vertical-grip.png";
-import horizontalGrip from "../../img/horizontal-grip.png";
+import verticalGrip from "img/vertical-grip.png";
+import horizontalGrip from "img/horizontal-grip.png";
 
 Modal.setAppElement("#root");
 
@@ -251,7 +251,9 @@ class TopsoilPage extends Component<{}, State> {
     table.variables = variables;
     table.unctFormat = unctFormat;
 
-    this.setState({ table }, this.handleUpdatePlotState);
+    this.setState({ table }, () => {
+      this.handleUpdatePlotState(true);
+    });
     this.handleCloseVarChooser();
   }
 
@@ -315,7 +317,7 @@ class TopsoilPage extends Component<{}, State> {
     this.setState({ split });
   }
 
-  handleUpdatePlotState() {
+  handleUpdatePlotState(resetView) {
     const { rows, variables, unctFormat } = this.state.table,
           plot = { ...this.state.plot };
     if (Object.entries(variables).length > 0) {
@@ -325,7 +327,11 @@ class TopsoilPage extends Component<{}, State> {
     } else {
       plot.data = [];
     }
-    this.setState({ plot });
+    this.setState({ plot }, () => {
+      if (!resetView) return;
+      const instance = this.plotComponent.current.instance;
+      if (instance) instance.resetView();
+    });
   }
 
   render() {

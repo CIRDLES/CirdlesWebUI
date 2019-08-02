@@ -1,9 +1,9 @@
 // @flow
 import React, { Component } from "react";
 import { ScatterPlot, Feature } from "topsoil-js";
-import { svgElementToBlob } from "../../../actions";
-import { colors } from "../../../constants";
-import { Button } from "../../../components";
+import { svgElementToBlob } from "actions";
+import { colors } from "constants";
+import { Button } from "components";
 
 const styles = {
   container: {

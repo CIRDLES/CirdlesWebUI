@@ -1,8 +1,8 @@
 // @flow
 import React, { Component } from 'react';
-import logo from "../../../img/logos/Topsoil.svg";
-import { colors } from '../../../constants';
-import { Button } from '../../../components';
+import logo from "img/logos/Topsoil.svg";
+import { colors } from 'constants';
+import { Button } from 'components';
 
 const styles = {
   toolbar: {

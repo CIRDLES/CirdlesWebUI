@@ -6,9 +6,9 @@ export * from './SVGImage';
 export * from './Tab';
 export * from './TabPane';
 
-export { Input } from './Input';
-export { Select } from './Select';
+export * from './Input';
+export * from './Select';
 export * from './RadioButton';
 export * from './CheckBox';
-export { Collapse } from './Collapse';
+export * from './Collapse';
 export * from './RangeSlider';
