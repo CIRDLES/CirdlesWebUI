@@ -10,5 +10,5 @@ export const AMBAPO = {
 
 export const TOPSOIL = {
   description:
-    '(Under Construction)'
+    'Topsoil is an application for the manipulation and visualization of geochronological data.'
 }
