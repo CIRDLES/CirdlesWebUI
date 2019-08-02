@@ -16,7 +16,6 @@ import {
   TopsoilPlot,
   TopsoilPlotPanel
 } from "./components";
-import { Button } from "components";
 import { DefaultOptions } from "./constants/defaults";
 import { SampleRows, SampleColumns } from "./constants/sample-data";
 import { colors } from "constants";

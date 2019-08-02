@@ -1,8 +1,8 @@
 // @flow
 import React, { Component } from 'react';
 import { UID } from 'react-uid';
-import { Button } from '../../../../components';
-import { colors } from '../../../../constants';
+import { Button } from 'components';
+import { colors } from 'constants';
 
 type Props = {
   label: string,

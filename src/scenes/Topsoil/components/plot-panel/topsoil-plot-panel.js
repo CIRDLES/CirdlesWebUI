@@ -1,11 +1,10 @@
 // @flow
 import React, { Component } from "react";
 import { Option } from "topsoil-js";
-import { Input, Select, RadioButton, CheckBox, TabPane, Tab, Button } from "../../../../components";
+import { Input, Select, RadioButton, CheckBox, TabPane, Tab, Button, RangeSlider } from "components";
 import AxisExtents from "./axis-extents";
 import Lambda from "./lambda";
-import RangeSlider from "../../../../components/RangeSlider";
-import { colors } from "../../../../constants";
+import { colors } from "constants";
 
 const styles = {
   optionList: {
