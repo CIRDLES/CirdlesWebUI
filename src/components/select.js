@@ -12,18 +12,18 @@ type Props = {
 export class Select extends Component<Props> {
 
   render() { 
-    const { label, value, onChange } = this.props;
+    const { label, value, onChange, style, children } = this.props;
     return (
       <UID name={id => `Select_${id}`}>
         {id => 
-          <div style={this.props.style}>
+          <div style={style}>
             <label htmlFor={id}>{label}: </label>
             <select
               id={id}
               value={value}
               onChange={onChange}
             >
-              {this.props.children}
+              {children}
             </select>
           </div>
         }

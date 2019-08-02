@@ -1,7 +1,7 @@
 // @flow
 import React, { Component } from "react";
 import { Variable } from "topsoil-js";
-import { Select, Collapse } from "../../../components";
+import { Select, Collapse } from "components";
 
 const styles = {
   grid: {
