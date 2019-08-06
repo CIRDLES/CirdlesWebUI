@@ -187,7 +187,18 @@ class TopsoilPage extends Component<{}, State> {
     const table = { ...this.state.table };
     table.rows = SampleRows;
     table.columns = SampleColumns;
-    this.setState({ table });
+    table.variables = {
+      "x": "207Pb*/235U",
+      "sigma_x": "±2σ (%)",
+      "y": "206Pb*/238U",
+      "sigma_y": "±2σ (%)(1)",
+      "rho": "corr coef"
+    };
+
+    const plot = { ...this.state.plot };
+    plot.data = calculatePlotData(table.rows, table.variables, "%");
+
+    this.setState({ table, plot });
   }
 
   handleChangeTableFile(event) {
