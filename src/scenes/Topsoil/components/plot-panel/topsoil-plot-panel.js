@@ -188,10 +188,14 @@ const DataOptionsPanel = ({ options, onOptionChanged }) => {
       </div>
 
       <div style={styles.controlBlock}>
-        <CheckBox
+        <RadioButton
           label="Error Ellipses"
-          checked={options[Option.ELLIPSES]}
-          onChange={e => onOptionChanged(Option.ELLIPSES, e.target.checked)}
+          group="error"
+          selected={options[Option.ELLIPSES]}
+          onSelected={e => {
+            onOptionChanged(Option.ELLIPSES, true);
+            onOptionChanged(Option.ERROR_BARS, false);
+          }}
         />
         <ul style={styles.optionList}>
           <li>
@@ -216,13 +220,15 @@ const DataOptionsPanel = ({ options, onOptionChanged }) => {
             />
           </li> */}
         </ul>
-      </div>
 
-      <div style={styles.controlBlock}>
-        <CheckBox
+        <RadioButton
           label="Error Bars"
-          checked={options[Option.ERROR_BARS]}
-          onChange={e => onOptionChanged(Option.ERROR_BARS, e.target.checked)}
+          group="error"
+          selected={options[Option.ERROR_BARS]}
+          onSelected={e => {
+            onOptionChanged(Option.ERROR_BARS, true);
+            onOptionChanged(Option.ELLIPSES, false)
+          }}
         />
         <ul style={styles.optionList}>
           <li>
