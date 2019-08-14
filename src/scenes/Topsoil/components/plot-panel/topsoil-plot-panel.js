@@ -62,29 +62,29 @@ export class TopsoilPlotPanel extends Component<Props> {
       snapToWetherillConcordia
     } = this.props;
     return (
-      <div className="topsoil-plot-panel">
+      <div className="topsoil-plot-panel bg-white rounded">
         <TabPane>
-          <Tab label="Axis Styling">
+          <Tab label="Axis Styling" idPrefix="axisStyling">
             <AxisStylingPanel
               options={options}
               onOptionChanged={onOptionChanged}
               onSetExtents={this.handleSetExtents}
             />
           </Tab>
-          <Tab label="Data Options">
+          <Tab label="Data Options" idPrefix="dataOptions">
             <DataOptionsPanel
               options={options}
               onOptionChanged={onOptionChanged}
             />
           </Tab>
-          <Tab label="Plot Features">
+          <Tab label="Plot Features" idPrefix="plotFeatures">
             <PlotFeaturesPanel
               options={options}
               onOptionChanged={onOptionChanged}
               snapToWetherillConcordia={snapToWetherillConcordia}
             />
           </Tab>
-          <Tab label="Constants">
+          <Tab label="Constants" idPrefix="constants">
             <ConstantsPanel options={options} onOptionChanged={onOptionChanged} />
           </Tab>
         </TabPane>

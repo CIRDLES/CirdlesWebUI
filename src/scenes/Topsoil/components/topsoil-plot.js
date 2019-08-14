@@ -6,10 +6,10 @@ import { colors } from "constants";
 import { Button } from "components";
 
 const styles = {
-  container: {
-    width: "100%",
-    height: "100%"
-  },
+  // container: {
+  //   width: "100%",
+  //   height: "100%"
+  // },
   buttonBar: {
     display: "flex",
     flexDirection: "row",
@@ -112,12 +112,20 @@ class TopsoilPlot extends Component<Props> {
 
   render() {
     return (
-      <div style={styles.container}>
-        <div style={styles.buttonBar}>
-          {this.renderButton("Reset View", this.handleResetView)}
-          {this.renderButton("Download SVG", this.handleExportSVG)}
-        </div>
-        <div ref={this.rootRef} style={styles.root} />
+      <div className="position-relative">
+        <ul className="nav bg-light p-1 border-bottom rounded">
+          <li className="nav-item m-1">
+            <button className="btn btn-sm btn-outline-topsoil rounded-pill" onClick={this.handleResetView} disabled={! this.instance}>
+              Reset View
+            </button>
+          </li>
+          <li className="nav-item m-1">
+            <button className="btn btn-sm btn-outline-topsoil rounded-pill" onClick={this.handleExportSVG} disabled={! this.instance}>
+              Download SVG
+            </button>
+          </li>
+        </ul>
+        <div ref={this.rootRef} className="w-100 bg-white rounded" style={{ height: "calc(100% - 3em)" }}/>
       </div>
     );
   }
