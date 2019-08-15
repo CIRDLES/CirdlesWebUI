@@ -50,6 +50,20 @@ $topsoilDark: #0faefb;
     color: $topsoilDark;
   }
 
+  .form-control,
+  .custom-control {
+    .custom-control-input {
+      &:checked {
+        color: $topsoil;
+      }
+    }
+    
+    &:focus {
+      border-color: $topsoilDark;
+      box-shadow: $btn-box-shadow, 0 0 0 $btn-focus-width rgba(mix(color-yiq($topsoilDark), $topsoilDark, 15%), .5);
+    }
+  }
+
   .tab-container {
     .nav-tabs {
       .nav-link {

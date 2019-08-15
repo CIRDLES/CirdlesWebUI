@@ -20,7 +20,6 @@ type Props = {
 export class Toolbar extends Component<Props> {
 
   render() { 
-
     return (
       <div className="position-relative">
         
@@ -51,6 +50,13 @@ export class Toolbar extends Component<Props> {
             className="text-center my-2"
           >
             Report Issue
+          </a>
+          <a
+            href="https://github.com/CIRDLES/CirdlesWebUI/wiki/Topsoil"
+            target="_blank"
+            className="text-center my-2"
+          >
+            Help
           </a>
         </div>
       </div>
