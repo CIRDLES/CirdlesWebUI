@@ -333,7 +333,7 @@ const UPbFeatures = (options, onOptionChanged, snapToWetherillConcordia) => {
                 <button 
                   className="btn btn-sm btn-outline-topsoil rounded-pill mx-auto"
                   onClick={snapToWetherillConcordia}
-                  disabled={options[Option.CONCORDIA_LINE] && concordiaType === "wetherill"}
+                  disabled={options[Option.CONCORDIA_LINE] && concordiaType !== "wetherill"}
                 >
                   Snap to Corners
                 </button>
