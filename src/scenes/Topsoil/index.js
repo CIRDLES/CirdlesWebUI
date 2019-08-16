@@ -12,7 +12,6 @@ import {
   VariableChooser,
   Toolbar,
   ToolbarButton,
-  ToolbarSeparator,
   TopsoilPlot,
   TopsoilPlotPanel,
   ToolbarSpacer
@@ -384,9 +383,9 @@ class TopsoilPage extends Component<{}, State> {
           </Modal>
 
           <Toolbar>
-            <ToolbarButton 
+            <ToolbarButton
               text="Load Sample Data"
-              onClick={this.handleLoadSampleData} 
+              onClick={this.handleLoadSampleData}
             />
             <ToolbarButton
               text="Upload Data"
@@ -411,7 +410,10 @@ class TopsoilPage extends Component<{}, State> {
           </Toolbar>
 
           {/* Setting width will keep div from growing outside parent */}
-          <div className="flex-grow-1 border border-dark rounded h-100" style={{ width: "100px" }}> 
+          <div
+            className="flex-grow-1 border border-dark rounded h-100"
+            style={{ width: "100px" }}
+          >
             <Split
               sizes={this.state.split.horizontal}
               direction="horizontal"

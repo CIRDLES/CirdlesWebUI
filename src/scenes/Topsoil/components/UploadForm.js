@@ -52,7 +52,7 @@ class UploadForm extends Component<Props> {
           <option value="SQUID_3">Squid 3</option>
         </LeftLabelledSelect>
         <br />
-        <button onClick={onSubmit}>Submit</button>
+        <button className="btn btn-outline-topsoil" onClick={onSubmit}>Submit</button>
       </div>
     );
   }

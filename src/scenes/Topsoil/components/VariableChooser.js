@@ -186,7 +186,7 @@ class VariableChooser extends Component<Props, State> {
         </div>
         
         <div className="row">
-          <div className="col">
+          <div className="col text-center">
             <button className="btn btn-outline-topsoil" onClick={this.handleSubmit}>Submit</button>
             <span className="text-danger ml-3">{this.state.errorMessage}</span>
           </div>
