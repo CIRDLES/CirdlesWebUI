@@ -98,7 +98,7 @@ class TopsoilPlot extends Component<Props> {
       link = document.createElement("a");
 
     link.href = url;
-    link.download = this.options[Option.TITLE] || "download";
+    link.download = this.props.plot.options[Option.TITLE] || "download";
 
     const onClick = () => {
       setTimeout(() => {

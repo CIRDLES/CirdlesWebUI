@@ -337,7 +337,7 @@ class TopsoilPage extends Component<{}, State> {
 
     return (
       <React.Fragment>
-        <div className="topsoil p-2 h-100 w-100 d-flex flex-row">
+        <div className="topsoil p-2 h-100 w-100 mw-100 d-flex flex-row">
           <Modal
             isOpen={this.state.varChooserIsOpen}
             onRequestClose={this.handleCloseVarChooser}
@@ -410,7 +410,8 @@ class TopsoilPage extends Component<{}, State> {
             />
           </Toolbar>
 
-          <div className="flex-grow-1 border border-dark rounded h-100">
+          {/* Setting width will keep div from growing outside parent */}
+          <div className="flex-grow-1 border border-dark rounded h-100" style={{ width: "100px" }}> 
             <Split
               sizes={this.state.split.horizontal}
               direction="horizontal"

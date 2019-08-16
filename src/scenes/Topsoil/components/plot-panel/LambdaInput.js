@@ -1,6 +1,6 @@
 // @flow
 import React, { Component } from 'react';
-import LeftLabelledInput from './LeftLabelledInput';
+import { LeftLabelledInput } from 'components/bootstrap';
 
 type Props = {
   id?: string,
@@ -40,7 +40,7 @@ class LambdaInput extends Component<Props> {
           defaultValue={defaultValue}
         />
         <button 
-          className="btn btn-sm btn-outline-topsoil rounded-pill ml-1"
+          className="btn btn-sm btn-outline-topsoil rounded-pill ml-1 mb-1"
           onClick={this.handleSetValue}
         >
           Set

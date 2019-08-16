@@ -2,20 +2,17 @@
 import React, { Component } from "react";
 import { Option } from "topsoil-js";
 import {
-  Input,
-  Select,
   TabPane,
-  Tab,
-  Button,
-  RangeSlider
+  Tab
 } from "components";
-import AxisExtents from "./axis-extents";
+import {
+  CheckBox,
+  LeftLabelledInput,
+  LeftLabelledSelect,
+  RadioButton
+} from "components/bootstrap";
+import AxisExtents from "./AxisExtents";
 import LambdaInput from "./LambdaInput";
-import { colors } from "constants";
-import CheckBox from "./CheckBox";
-import RadioButton from "./RadioButton";
-import LeftLabelledInput from "./LeftLabelledInput";
-import LeftLabelledSelect from "./LeftLabelledSelect";
 
 const classes = {
   subpanel: "d-flex flex-row flex-wrap align-items-start",

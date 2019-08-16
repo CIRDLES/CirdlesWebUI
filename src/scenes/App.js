@@ -10,6 +10,8 @@ import ambapoLogo from "../img/logos/Ambapo.svg";
 import topsoilLogo from "../img/logos/Topsoil.svg";
 import { colors } from "constants";
 
+import "styles/index.scss";
+
 const routes = [
   {
     path: "/",
