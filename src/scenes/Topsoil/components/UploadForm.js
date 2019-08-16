@@ -36,9 +36,10 @@ class UploadForm extends Component<Props> {
             className="custom-file-input"
             type="file" 
             name="tableFile" 
-            onChange={onChangeTableFile} 
+            onChange={onChangeTableFile}
+            style={{ width: "50vw" }}
           />
-          <label hmlFor="dataFileInput" className="custom-file-label">{(tableFile && tableFile.name) || "Choose File"}</label>
+          <label htmlFor="dataFileInput" className="custom-file-label">{(tableFile && shortenFileName(tableFile.name)) || "Choose File"}</label>
         </div>
         <br />
         <LeftLabelledSelect
@@ -56,6 +57,10 @@ class UploadForm extends Component<Props> {
     );
   }
 
+}
+
+function shortenFileName(fileName) {
+  return (fileName && fileName.length > 50) ? (fileName.substring(0, 47) + "...") : fileName;
 }
  
 export default UploadForm;

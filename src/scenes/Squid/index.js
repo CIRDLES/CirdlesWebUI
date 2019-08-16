@@ -135,7 +135,7 @@ class SquidPage extends Component {
                 />
                 <label htmlFor="prawnFileInput" className="custom-file-label">
                   {(this.state.selectedPrawnFile &&
-                    this.state.selectedPrawnFile.name) ||
+                    shortenFileName(this.state.selectedPrawnFile.name)) ||
                     "Choose File"}
                 </label>
               </div>
@@ -152,7 +152,7 @@ class SquidPage extends Component {
                 />
                 <label htmlFor="taskFileInput" className="custom-file-label">
                   {(this.state.selectedTaskFile &&
-                    this.state.selectedTaskFile.name) ||
+                    shortenFileName(this.state.selectedTaskFile.name)) ||
                     "Choose File"}
                 </label>
               </div>
@@ -348,6 +348,10 @@ class SquidPage extends Component {
       </Fragment>
     );
   }
+}
+
+function shortenFileName(fileName) {
+  return (fileName && fileName.length > 50) ? (fileName.substring(0, 47) + "...") : fileName;
 }
 
 function mapStateToProps(state) {
