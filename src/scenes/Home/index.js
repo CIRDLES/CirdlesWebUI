@@ -2,10 +2,10 @@
 import React from "react";
 import Radium from "radium";
 import { ProjectCard } from "components";
-import { SQUID, AMBAPO, TOPSOIL, MARS } from "constants";
+import { SQUID, AMBAPO, TOPSOIL, MARS, MARS_MAP_MAKER } from "constants";
 
 type Props = {
-  history: any
+  history: any,
 };
 
 const HomePage = ({ history }: Props) => {
@@ -44,6 +44,14 @@ const HomePage = ({ history }: Props) => {
           onClick={() => history.push("/mars")}
           style={{ margin: 40 }}
         />
+        <ProjectCard
+          description={MARS_MAP_MAKER.description}
+          logo={require("img/logos/Mars.svg")}
+          width={300}
+          height={300}
+          onClick={() => history.push("/marsmapmaker")}
+          style={{ margin: 40 }}
+        />
       </div>
     </div>
   );
@@ -51,7 +59,7 @@ const HomePage = ({ history }: Props) => {
 
 const styles = {
   home: {
-    height: "100%"
+    height: "100%",
   },
   cardWrapper: {
     width: "100%",
@@ -59,8 +67,8 @@ const styles = {
     display: "flex",
     flexDirection: "row",
     justifyContent: "center",
-    alignItems: "center"
-  }
+    alignItems: "center",
+  },
 };
 
 export default Radium(HomePage);
