@@ -5,7 +5,7 @@ export const TOPSOIL_ENDPOINT = BASE_URL + "/topsoil";
 export const MARS_ENDPOINT = BASE_URL + "/mars";
 
 // Sesar APIs
-export const SESAR_BASE_URL = "https://sesardev.geosamples.org";
+export const SESAR_BASE_URL = "https://app.geosamples.org";
 export const SESAR_LOGIN =
   SESAR_BASE_URL + "/webservices/credentials_service_v2.php";
 export const SESAR_SAMPLE_PROFILE =
