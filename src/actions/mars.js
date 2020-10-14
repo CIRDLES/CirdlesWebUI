@@ -316,7 +316,7 @@ export function upload(username, password, usercode, samples, selectedSamples) {
       );
       //POST request
       const res = await axios.post(
-        SESAR_BASE_URL + "/webservices/upload.php",
+        "https://app.geosamples.org/webservices/upload.php",
         formData
       );
 
