@@ -30,6 +30,7 @@ import {
   SESAR_LOGIN,
   SESAR_SAMPLE_PROFILE,
   SESAR_USER_SAMPLES,
+  SESAR_BASE_URL,
 } from "../constants/api";
 
 // ==============================================================================
@@ -255,7 +256,7 @@ export function upload(username, password, usercode, samples, selectedSamples) {
 
         try {
           const response = await axios.get(
-            `https://app.geosamples.org/samples/user_code/${usercode}?sample_name=${sampleToCheck}`
+            SESAR_BASE_URL + `/samples/user_code/${usercode}?sample_name=${sampleToCheck}`
           );
           if (response.data.total_counts == 0) {
             filteredSamples.push(samplesToUpload[i]);
@@ -316,7 +317,7 @@ export function upload(username, password, usercode, samples, selectedSamples) {
       );
       //POST request
       const res = await axios.post(
-        "https://app.geosamples.org/webservices/upload.php",
+        SESAR_BASE_URL + "/webservices/upload.php",
         formData
       );
 
