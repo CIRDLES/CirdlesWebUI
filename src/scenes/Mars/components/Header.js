@@ -43,7 +43,7 @@ class Header extends Component {
             <a
               style={{ marginTop: "1px" }}
               className="nav-link"
-              href="http://cirdles.org/projects/mars/"
+              href="https://cirdles.org/projects/mars/"
               target="_blank"
             >
               Help
@@ -72,7 +72,7 @@ class Header extends Component {
             <a
               style={{ marginTop: "8.5px" }}
               className="nav-link"
-              href="http://cirdles.org/projects/mars/"
+              href="https://cirdles.org/projects/mars/"
               target="_blank"
             >
               Help
