@@ -47,6 +47,7 @@ function NavModal() {
               width: "50%",
               backgroundColor: "#f8f9fa",
               border: "2px solid #000",
+              inset: "5px",
             }}
           >
             <h2 id="transition-modal-title">MARS</h2>
@@ -56,7 +57,8 @@ function NavModal() {
               legacy samples at SESAR (System for Earth Sample Registration)
               with pertinent metadata and a IGSN (International GeoSample
               Number). The initial targeted repository is the cores collection
-              of Scripps Institution of Oceanography.
+              of Scripps Institution of Oceanography.  Please visit CIRDLES.org
+              and send inquiries to bowring@gmail.com.
             </p>
           </div>
         </Fade>

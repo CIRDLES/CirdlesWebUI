@@ -15,5 +15,7 @@ export const TOPSOIL = {
 
 export const MARS = {
   description:
-    'MARS is being developed to explore the automation of registering legacy samples at SESAR (System for Earth Sample Registration) with pertinent metadata and a IGSN (International GeoSample Number). The initial targeted repository is the cores collection of Scripps Institution of Oceanography.'
+    'MARS is being developed to explore the automation of registering legacy samples at SESAR '
+    + '(System for Earth Sample Registration) with pertinent metadata and a '
+    + 'IGSN (International GeoSample Number). The initial targeted repository is the cores collection of Scripps Institution of Oceanography.'
 }
