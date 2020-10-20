@@ -1,8 +1,6 @@
 import FormData from "form-data";
 import convert from "xml-to-json-promise";
-import _, { sample } from "lodash";
 import { csvParse } from "d3-dsv";
-import { csv } from "d3-fetch";
 import axios from "axios";
 import * as jsCON from "xml-js";
 import localForage from "localforage";
@@ -107,9 +105,9 @@ export const fetchUsercodeAndSamples = (usercode) => async (
       dispatch(fetchSamplesSuccessful());
     }
   });
+  //dispatch(fetchSamplesSuccessful());
 };
 
-//TODO: Change Api Links
 export const fetchUsercode = (usercode) => async (dispatch) => {
   const response = await axios.get(SESAR_USER_SAMPLES + `${usercode}`);
 
@@ -117,14 +115,45 @@ export const fetchUsercode = (usercode) => async (dispatch) => {
 };
 
 export const fetchSamples = (igsn) => async (dispatch) => {
-  const response = await axios.get(SESAR_SAMPLE_PROFILE + `${igsn}`);
+  /* Oct 2020 - JFB - need to handle missing data including case where
+     release date is in future, which reutrns this:
+    <results>
+      <user_code>IEE3E</user_code>
+      <igsn>IEE3E0001</igsn>
+      <status>This is a valid IGSN. The metadata will be released on 2021-11-07.</status>
+    </results>   
+    */
+  var notProvided = "<Not Provided>";
+  var response;
 
-  //Grab key data to display in table
-  const sampleIgsn = response.data.sample.igsn;
-  const sampleName = response.data.sample.name;
-  const latitudes = response.data.sample.latitude;
-  const longitudes = response.data.sample.longitude;
-  const elevations = response.data.sample.elevation;
+  var sampleIgsn = notProvided;
+  var sampleName = notProvided;
+  var latitudes = notProvided;
+  var longitudes = notProvided;
+  var elevations = notProvided;
+
+  try {
+    response = await axios.get(SESAR_SAMPLE_PROFILE + `${igsn}`);
+    sampleIgsn = response.data.sample.igsn;
+    sampleName =
+      typeof response.data.sample.name == "undefined"
+        ? notProvided
+        : response.data.sample.name;
+    latitudes =
+      typeof response.data.sample.latitude == "undefined"
+        ? notProvided
+        : response.data.sample.latitude;
+    longitudes =
+      typeof response.data.sample.longitude == "undefined"
+        ? notProvided
+        : response.data.sample.longitude;
+    elevations =
+      typeof response.data.sample.elevation == "undefined"
+        ? notProvided
+        : response.data.sample.elevation;
+  } catch (e) {
+    sampleIgsn = `${igsn}`;
+  }
 
   dispatch({
     type: FETCH_SAMPLES,
@@ -256,7 +285,8 @@ export function upload(username, password, usercode, samples, selectedSamples) {
 
         try {
           const response = await axios.get(
-            SESAR_BASE_URL + `/samples/user_code/${usercode}?sample_name=${sampleToCheck}`
+            SESAR_BASE_URL +
+              `/samples/user_code/${usercode}?sample_name=${sampleToCheck}`
           );
           if (response.data.total_counts == 0) {
             filteredSamples.push(samplesToUpload[i]);

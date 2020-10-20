@@ -5,6 +5,8 @@ import { signOutAction } from "../../../actions/mars";
 import NavModal from "./NavModal";
 import "../../../styles/mars.scss";
 
+import { SESAR_BASE_URL } from "../../../constants/api";
+
 class Header extends Component {
   //This function returns header links based on if the user is loged in or not
   renderLinks() {
@@ -88,7 +90,7 @@ class Header extends Component {
       <header>
         <nav className="navbar top-nav fixed-top navbar-light bg-light">
           <Link className="navbar-brand" to="/mars">
-            MARS BETA
+            MARS BETA - interacting with: <a href={SESAR_BASE_URL} target="_blank">{SESAR_BASE_URL.replace("https://", "")}</a>   
           </Link>
           <div>{this.renderLinks()}</div>
         </nav>
