@@ -99,13 +99,10 @@ export const fetchUsercodeAndSamples = (usercode) => async (
   igsn_list.forEach(async (element) => {
     await dispatch(fetchSamples(element));
     count++;
-
-    // Might be able to remove this
     if (count == igsn_list.length) {
       dispatch(fetchSamplesSuccessful());
     }
   });
-  //dispatch(fetchSamplesSuccessful());
 };
 
 export const fetchUsercode = (usercode) => async (dispatch) => {
