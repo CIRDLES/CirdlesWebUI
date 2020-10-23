@@ -113,7 +113,7 @@ export const fetchUsercode = (usercode) => async (dispatch) => {
 
 export const fetchSamples = (igsn) => async (dispatch) => {
   /* Oct 2020 - JFB - need to handle missing data including case where
-     release date is in future, which reutrns this:
+     release date is in future, which returns this:
     <results>
       <user_code>IEE3E</user_code>
       <igsn>IEE3E0001</igsn>
