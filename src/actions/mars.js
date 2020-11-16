@@ -140,7 +140,7 @@ export const fetchSamples = (igsn, username, password) => async (dispatch) => {
       <status>This is a valid IGSN. The metadata will be released on 2021-11-07.</status>
     </results>   
     */
-  var notProvided = "<Not Provided>";
+  var notProvided = "<Not Released>";
   var response;
 
   var sampleIgsn = notProvided;

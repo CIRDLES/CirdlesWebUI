@@ -43,6 +43,7 @@ class SignIn extends Component {
               autoComplete="none"
             />
           </fieldset>
+          <br></br>
           <fieldset>
             <label className="signin-label">SESAR UserCode in CAPS</label>
             <br></br>

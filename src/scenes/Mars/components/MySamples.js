@@ -12,7 +12,11 @@ import { SESAR_BASE_URL } from "../../../constants/api";
 class MySamples extends Component {
   //When the component mounts, get the user's samples and key data about those samples
   componentDidMount() {
-    this.props.fetchUsercodeAndSamples(this.props.usercode, this.props.username, this.props.password);
+    this.props.fetchUsercodeAndSamples(
+      this.props.usercode,
+      this.props.username,
+      this.props.password
+    );
   }
 
   //Purpose: This function opens a new window showing the full sample profile
@@ -111,7 +115,12 @@ class MySamples extends Component {
           <div className="mysamples-table">
             <MuiThemeProvider theme={theme}>
               <MUIDataTable
-                title={"My Samples from " + SESAR_BASE_URL.replace("https://", "")}
+                title={
+                  "My Samples with User Code '" +
+                  this.props.usercode +
+                  "' from " +
+                  SESAR_BASE_URL.replace("https://", "")
+                }
                 data={this.props.mySamplesList}
                 columns={columns}
                 options={options}
