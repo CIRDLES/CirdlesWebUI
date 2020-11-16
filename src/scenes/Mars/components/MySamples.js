@@ -12,7 +12,7 @@ import { SESAR_BASE_URL } from "../../../constants/api";
 class MySamples extends Component {
   //When the component mounts, get the user's samples and key data about those samples
   componentDidMount() {
-    this.props.fetchUsercodeAndSamples(this.props.usercode);
+    this.props.fetchUsercodeAndSamples(this.props.usercode, this.props.username, this.props.password);
   }
 
   //Purpose: This function opens a new window showing the full sample profile
@@ -74,7 +74,7 @@ class MySamples extends Component {
       );
     } else {
       //Display the table showing key data about registered samples
-      var columns = ["IGSN", "Name", "Latitude", "Longitude", "Elevation"];
+      var columns = ["IGSN", "Name", "Type", "Latitude", "Longitude"];
 
       const options = {
         filter: true,
@@ -132,6 +132,8 @@ class MySamples extends Component {
 function mapStateToProps(state) {
   return {
     usercode: state.mars.usercode,
+    password: state.mars.password,
+    username: state.mars.username,
     mySamplesList: state.mars.mySamplesList,
     loading: state.mars.loading,
   };
