@@ -72,12 +72,11 @@ export const signInAction = (formProps, callback) => async (dispatch) => {
     // force check of supplied user code
     await dispatch(fetchUsercode(userCode));
 
-    // if (Boolean(valid)) {
     //Dispatch an action with type AUTHENTICATED if everything above was succesfull
     dispatch({
       type: AUTHENTICATED,
       username: formProps.username,
-      usercode: userCode, //formProps.usercode,
+      usercode: userCode,
       password: formProps.password,
     });
 
@@ -117,15 +116,19 @@ export const fetchUsercodeAndSamples = (usercode, username, password) => async (
   //Grab igsn_list from state
   var igsn_list = getState().mars.igsnResponseList.igsn_list;
 
-  //For each igsn in igsn_list run fetchSamples()
-  var count = 0;
-  igsn_list.forEach(async (element) => {
-    await dispatch(fetchSamples(element, username, password));
-    count++;
-    if (count == igsn_list.length) {
-      dispatch(fetchSamplesSuccessful());
-    }
-  });
+  if (0 == igsn_list.length) {
+    dispatch(fetchSamplesSuccessful());
+  } else {
+    //For each igsn in igsn_list run fetchSamples()
+    var count = 0;
+    igsn_list.forEach(async (element) => {
+      await dispatch(fetchSamples(element, username, password));
+      count++;
+      if (count == igsn_list.length) {
+        dispatch(fetchSamplesSuccessful());
+      }
+    });
+  }
 };
 
 export const fetchUsercode = (usercode) => async (dispatch) => {
