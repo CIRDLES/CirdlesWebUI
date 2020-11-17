@@ -6,9 +6,9 @@ export const MARS_ENDPOINT = BASE_URL + "/mars";
 
 // Sesar APIs
 // development server - uncomment next line
-export const SESAR_BASE_URL = "https://sesardev.geosamples.org";
+//export const SESAR_BASE_URL = "https://sesardev.geosamples.org";
 // production server - uncomment next line
-//export const SESAR_BASE_URL = "https://app.geosamples.org";
+export const SESAR_BASE_URL = "https://app.geosamples.org";
 
 export const SESAR_LOGIN =
   SESAR_BASE_URL + "/webservices/credentials_service_v2.php";

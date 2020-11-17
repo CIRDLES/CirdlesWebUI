@@ -82,12 +82,30 @@ export const signInAction = (formProps, callback) => async (dispatch) => {
 
     //Return callback
     callback();
-  } catch (e) {
-    //Dispatch an action with type AUTHENTICATION_ERROR if an error occured
-    dispatch({
-      type: AUTHENTICATION_ERROR,
-      payload: "Invalid email (user name), password, or UserCode",
-    });
+  } catch (err) {
+    //Dispatch an action with type AUTHENTICATION_ERROR if an error occurred
+    if (err.response.status == 400) {
+      dispatch({
+        type: AUTHENTICATION_ERROR,
+        payload: "Invalid User Code",
+      });
+    }
+    if (err.response.status == 401) {
+      dispatch({
+        type: AUTHENTICATION_ERROR,
+        payload: "Invalid email (user name) or password",
+      });
+    }
+    if (err.response.status == 404) {
+      // this is the case of no records for a valid user code
+      dispatch({
+        type: AUTHENTICATED,
+        username: formProps.username,
+        usercode: userCode,
+        password: formProps.password,
+      });
+      callback();
+    }
   }
 };
 
@@ -110,15 +128,13 @@ export const fetchUsercodeAndSamples = (usercode, username, password) => async (
   dispatch,
   getState
 ) => {
-  //Wait for fetchUserCode() to finish
-  await dispatch(fetchUsercode(usercode));
+  try {
+    //Wait for fetchUserCode() to finish
+    await dispatch(fetchUsercode(usercode));
 
-  //Grab igsn_list from state
-  var igsn_list = getState().mars.igsnResponseList.igsn_list;
+    //Grab igsn_list from state
+    var igsn_list = getState().mars.igsnResponseList.igsn_list;
 
-  if (0 == igsn_list.length) {
-    dispatch(fetchSamplesSuccessful());
-  } else {
     //For each igsn in igsn_list run fetchSamples()
     var count = 0;
     igsn_list.forEach(async (element) => {
@@ -128,6 +144,9 @@ export const fetchUsercodeAndSamples = (usercode, username, password) => async (
         dispatch(fetchSamplesSuccessful());
       }
     });
+  } catch (err) {
+    // no samples found for this legal user code
+    dispatch(fetchSamplesSuccessful());
   }
 };
 
