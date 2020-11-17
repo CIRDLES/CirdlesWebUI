@@ -1,3 +1,4 @@
+export const MARS_VERSION = "v2.0.0"; // 17 Nov 2020
 export const BASE_URL = "https://cirdles.cs.cofc.edu/Services";
 export const AMBAPO_ENDPOINT = BASE_URL + "/ambapo";
 export const SQUID_ENDPOINT = BASE_URL + "/prawn";
