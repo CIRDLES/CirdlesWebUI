@@ -10,21 +10,6 @@ import React, { Component } from "react";
 ////////////////////////////////////////////////
 
 // CSS & Styling
-let dialogStyles = {
-  width: "800px",
-  maxWidth: "100%",
-  margin: "0 auto",
-  position: "fixed",
-  left: "50%",
-  top: "50%",
-  transform: "translate(-50%,-50%)",
-  zIndex: "999",
-  backgroundColor: "#eee",
-  padding: "10px 20px 40px",
-  borderRadius: "8px",
-  display: "flex",
-  flexDirection: "column"
-};
 
 let dialogCloseButtonStyles = {
   marginBottom: "15px",
@@ -41,8 +26,8 @@ let dialogCloseButtonStyles = {
 class Dialog extends Component {
   render() {
     let dialog = (
-      <div style={dialogStyles}>
-        <button style={dialogCloseButtonStyles} onClick={this.props.onClose}>
+      <div className="dialog">
+        <button className="dialog_close" onClick={this.props.onClose}>
           x
         </button>
         <div>{this.props.children}</div>
