@@ -11,17 +11,6 @@ import React, { Component } from "react";
 
 // CSS & Styling
 
-let dialogCloseButtonStyles = {
-  marginBottom: "15px",
-  padding: "3px 8px",
-  cursor: "pointer",
-  borderRadius: "50%",
-  border: "none",
-  width: "30px",
-  height: "30px",
-  fontWeight: "bold",
-  alignSelf: "flex-end"
-};
 
 class Dialog extends Component {
   render() {
