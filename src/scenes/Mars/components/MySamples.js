@@ -3,6 +3,9 @@ import { connect } from "react-redux";
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
 import MUIDataTable from "mui-datatables";
 import Button from "@material-ui/core/Button";
+import Tooltip from "@material-ui/core/Tooltip";
+import IconButton from "@material-ui/core/IconButton";
+import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
 import { fetchUsercodeAndSamples } from "../../../actions/mars";
 import { SESAR_SAMPLE_DISPLAY } from "../../../constants/api";
 import "../../../styles/mars.scss";
@@ -40,10 +43,24 @@ class MySamples extends Component {
       samples.push(sample);
     }
 
+    console.log(samples);
+
+    if (samples.length === 1) {
+      window.open(
+        SESAR_SAMPLE_DISPLAY + `${igsn}`,
+        "_blank",
+        "PopUp",
+        randomnumber,
+        "scrollbars=1,menubar=0,resizable=1,width=850,height=500"
+      );
+    }
     //For each sample selected open a new popup window showing the sample profile
     for (i = 0; i < samples.length; i++) {
       let igsn = samples[i];
+      console.log(samples[i]);
       var randomnumber = Math.floor(Math.random() * 100 + 1);
+
+      // maybe open a page with a list of clickable sample links
       window.open(
         SESAR_SAMPLE_DISPLAY + `${igsn}`,
         "_blank",
@@ -107,16 +124,11 @@ class MySamples extends Component {
         filter: true,
         filterType: "dropdown",
         responsive: "scroll",
+        //why doesn't this work
+        selectToolbarPlacement: "above",
         
         customToolbarSelect: (selectedRows, displayData) => (
           <div>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => this.handleExport(selectedRows, displayData, columns)}
-            >
-              CSV of Selected
-            </Button>
             <Button
               variant="contained"
               color="primary"
@@ -124,6 +136,11 @@ class MySamples extends Component {
             >
               View Webpage for Selected Samples
             </Button>
+            <Tooltip title="Download CSV of Selected Samples">
+              <IconButton aria-label="download" onClick={() => this.handleExport(selectedRows, displayData, columns)}>
+                <CloudDownloadIcon />
+              </IconButton>
+            </Tooltip>
           </div>
         ),
       };
