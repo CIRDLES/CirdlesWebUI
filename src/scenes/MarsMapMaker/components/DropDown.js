@@ -170,7 +170,6 @@ export class DropDown extends React.Component {
       value.length !== 0 &&
       !this.detectNonDateCharacters(value)
     ) {
-      alert(value);
       alert("You have not selected a date, try again...");
       this.props.refresh();
       console.log("You have not selected a date, try again...");
@@ -411,7 +410,10 @@ export class DropDown extends React.Component {
 
     let headerOverride = this.props.title;
     let valueOverride = this.props.value;
-    if (this.props.ent[this.props.id].header === "<METADATA>") {
+    if (
+      this.props.ent[this.props.id].header === "<METADATA>" &&
+      this.props.ent[this.props.id].sesarTitle === ""
+    ) {
       headerOverride = this.props.ent[this.props.id].header;
       valueOverride = this.props.ent[this.props.id].value;
     }
@@ -444,7 +446,7 @@ export class DropDown extends React.Component {
     }
 
     if (this.props.ent[this.props.id].header === "<METADATA>") {
-      this.props.callback(this.props.ent[this.props.id].value, newValue);
+      this.props.callback(this.props.value, newValue);
       return;
     }
   };

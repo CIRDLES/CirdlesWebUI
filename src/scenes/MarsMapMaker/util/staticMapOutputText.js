@@ -27,6 +27,21 @@ export const HEADER_DENOTER = denoter;
 
 export const MULTIVALUE_FUNCTION_TEXT = keyValueString + delimit;
 
+export const dateString = (prefix, y, d, m) => {
+  return (
+    'const scrippsDate = (scrippsValue) => {\n  const y  =  "' +
+    prefix +
+    '" + ' +
+    "scrippsValue.substr(" +
+    y +
+    ")\n  const d = scrippsValue.substr(" +
+    d +
+    ")\n  const m = scrippsValue.substr(" +
+    m +
+    ")\n  return y + '-' + m + '-' + d + 'T00:00:00Z'\n}\n\n"
+  );
+};
+
 export const COMBINATION_TEXT = `let combinations = {
   field_name: delimit,
   description: delimit,
@@ -38,7 +53,7 @@ export const COMBINATION_TEXT = `let combinations = {
 export const STATIC_FUNCTION_TEXT =
   "  collection_start_date: scrippsDate,\n  collection_end_date: scrippsDate," +
   "\n  geological_age: keyValueString,\n  field_name: keyValueString,\n  description: keyValueString," +
-  "\n  sample_comment: keyValueString,\n  size: keyValueString\n  }\n\n";
+  "\n  sample_comment: keyValueString,\n  size: keyValueString\n}\n\n";
 
 export const USER_CODE_ALERT =
   "Sesar Selection 'user_code' must be set before file output\n " +

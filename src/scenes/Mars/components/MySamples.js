@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import {useState} from "react";
 import { connect } from "react-redux";
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
 import MUIDataTable from "mui-datatables";
@@ -6,16 +7,27 @@ import Button from "@material-ui/core/Button";
 import Tooltip from "@material-ui/core/Tooltip";
 import IconButton from "@material-ui/core/IconButton";
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
+import VisibilityIcon from '@material-ui/icons/Visibility';
 import { fetchUsercodeAndSamples } from "../../../actions/mars";
 import { SESAR_SAMPLE_DISPLAY } from "../../../constants/api";
 import "../../../styles/mars.scss";
 import { CsvBuilder } from "filefy";
+import FormControl from '@material-ui/core/FormControl';
+import InputLabel from '@material-ui/core/InputLabel';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
+import ReactToPrint, { PrintContextConsumer } from 'react-to-print';
+import PrintIcon from '@material-ui/icons/Print';
+
+
+
 
 
 
 import { SESAR_BASE_URL } from "../../../constants/api";
 
 class MySamples extends Component {
+
   //When the component mounts, get the user's samples and key data about those samples
   componentDidMount() {
     this.props.fetchUsercodeAndSamples(
@@ -43,8 +55,6 @@ class MySamples extends Component {
       samples.push(sample);
     }
 
-    console.log(samples);
-
     if (samples.length === 1) {
       window.open(
         SESAR_SAMPLE_DISPLAY + `${igsn}`,
@@ -71,7 +81,7 @@ class MySamples extends Component {
     }
   }
 
-  handleExport(selectedRows,displayData, columns) {
+  handleExport(selectedRows, displayData, columns) {
     //Get the rows that the user selected
     let rows = [];
     for (var i = 0; i < selectedRows.data.length; i++) {
@@ -88,10 +98,11 @@ class MySamples extends Component {
       .setDelimeter(",")
       .setColumns(columns)
       .addRows(samples)
-      .exportFile();
+      .exportFile()
   }
 
   renderTable() {
+
     if (this.props.loading === true || this.props.loading == undefined) {
       //Show spinner
       return (
@@ -123,26 +134,29 @@ class MySamples extends Component {
       const options = {
         filter: true,
         filterType: "dropdown",
-        responsive: "scroll",
-        //why doesn't this work
-        selectToolbarPlacement: "above",
-        
+        responsive: "standard",
+        download: false,
+        selectToolbarPlacement: "above", 
+
         customToolbarSelect: (selectedRows, displayData) => (
           <div>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => this.openWindow(selectedRows, displayData)}
-            >
-              View Webpage for Selected Samples
-            </Button>
+            <Tooltip title="View Webpage for Selected Samples">
+              <IconButton aria-label="download" onClick={() => this.openWindow(selectedRows, displayData)}>
+                <VisibilityIcon />
+              </IconButton>
+            </Tooltip>
             <Tooltip title="Download CSV of Selected Samples">
               <IconButton aria-label="download" onClick={() => this.handleExport(selectedRows, displayData, columns)}>
                 <CloudDownloadIcon />
               </IconButton>
             </Tooltip>
+            {/* <Tooltip title="Print CSV of Selected Samples">
+              <IconButton aria-label="print">
+                <PrintIcon />
+              </IconButton>
+            </Tooltip> */}
           </div>
-        ),
+        )
       };
 
       let theme = createMuiTheme({
@@ -159,7 +173,8 @@ class MySamples extends Component {
       });
 
       return (
-        <div className="mysamples-table__container">
+        
+        <div className="mysamples-table__container p-0">
           <div className="mysamples-table">
             <MuiThemeProvider theme={theme}>
               <MUIDataTable
@@ -188,6 +203,7 @@ class MySamples extends Component {
 }
 
 function mapStateToProps(state) {
+
   return {
     usercode: state.mars.usercode,
     password: state.mars.password,
