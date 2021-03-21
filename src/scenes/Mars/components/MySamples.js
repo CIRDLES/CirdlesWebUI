@@ -1,9 +1,7 @@
 import React, { Component } from "react";
-import {useState} from "react";
 import { connect } from "react-redux";
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
 import MUIDataTable from "mui-datatables";
-import Button from "@material-ui/core/Button";
 import Tooltip from "@material-ui/core/Tooltip";
 import IconButton from "@material-ui/core/IconButton";
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
@@ -12,17 +10,6 @@ import { fetchUsercodeAndSamples } from "../../../actions/mars";
 import { SESAR_SAMPLE_DISPLAY } from "../../../constants/api";
 import "../../../styles/mars.scss";
 import { CsvBuilder } from "filefy";
-import FormControl from '@material-ui/core/FormControl';
-import InputLabel from '@material-ui/core/InputLabel';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
-import ReactToPrint, { PrintContextConsumer } from 'react-to-print';
-import PrintIcon from '@material-ui/icons/Print';
-
-
-
-
-
 
 import { SESAR_BASE_URL } from "../../../constants/api";
 
@@ -54,31 +41,28 @@ class MySamples extends Component {
       let sample = displayData[index].data[0];
       samples.push(sample);
     }
-
-    if (samples.length === 1) {
-      window.open(
-        SESAR_SAMPLE_DISPLAY + `${igsn}`,
-        "_blank",
-        "PopUp",
-        randomnumber,
-        "scrollbars=1,menubar=0,resizable=1,width=850,height=500"
-      );
-    }
+    
     //For each sample selected open a new popup window showing the sample profile
     for (i = 0; i < samples.length; i++) {
       let igsn = samples[i];
-      console.log(samples[i]);
       var randomnumber = Math.floor(Math.random() * 100 + 1);
 
       // maybe open a page with a list of clickable sample links
-      window.open(
-        SESAR_SAMPLE_DISPLAY + `${igsn}`,
-        "_blank",
-        "PopUp",
-        randomnumber,
-        "scrollbars=1,menubar=0,resizable=1,width=850,height=500"
-      );
+      if (samples.length === 1) {
+        window.open(
+          SESAR_SAMPLE_DISPLAY + `${igsn}`,
+          "_blank",
+          "PopUp",
+          randomnumber,
+          "scrollbars=1,menubar=0,resizable=1,width=850,height=500"
+        );
+      }
+      else {
+        // maybe open a page with a list of clickable sample links
+        console.log('in here');
+      }
     }
+
   }
 
   handleExport(selectedRows, displayData, columns) {
@@ -139,7 +123,7 @@ class MySamples extends Component {
         selectToolbarPlacement: "above", 
 
         customToolbarSelect: (selectedRows, displayData) => (
-          <div>
+          <div style={{paddingRight: '25px'}}>
             <Tooltip title="View Webpage for Selected Samples">
               <IconButton aria-label="download" onClick={() => this.openWindow(selectedRows, displayData)}>
                 <VisibilityIcon />
