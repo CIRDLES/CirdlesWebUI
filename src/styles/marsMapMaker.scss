@@ -8,6 +8,10 @@ $mars--border: rgb(46, 14, 8);
     "Lucida Sans", Arial, sans-serif;
 }
 
+span {
+  display: block;
+}
+
 .pageBackground {
   height: "100vh";
   position: "relative";
@@ -56,6 +60,11 @@ $mars--border: rgb(46, 14, 8);
 
 .btn-margin {
   margin: 10px;
+}
+
+.btn-middle {
+  border-radius: 0px!important;
+  border-top: 0!important;
 }
 
 .description__value {
@@ -187,7 +196,7 @@ $mars--border: rgb(46, 14, 8);
 
 .fa-angle-double-right {
   position: relative;
-  z-index: 15;
+  z-index: 1;
   top: 50%;
   font-size: x-large;
   padding-left: 2.5%;
@@ -197,6 +206,7 @@ $mars--border: rgb(46, 14, 8);
   font-size: 13px;
   min-height: auto !important;
   display: inline-block;
+  padding-top: 5px;
 }
 
 .description__mapped__header {
@@ -244,7 +254,6 @@ $mars--border: rgb(46, 14, 8);
 .descriptionMapped {
   display: inline-block;
   padding-left: 0px;
-  padding-top: 7px;
 }
 
 .description__mapped__content {
@@ -253,6 +262,13 @@ $mars--border: rgb(46, 14, 8);
   color: rgb(99, 99, 102);
   font-size: 12px;
   padding-right: 5px;
+}
+
+.map_disabled {
+  padding-top: 10px;
+  padding-left: 62px;
+  float: right;
+  display: inline;
 }
 
 .ui {
@@ -317,8 +333,6 @@ $mars--border: rgb(46, 14, 8);
   line-height: 27px;
   background-color: #e9a9a9;
   border-radius: 4px;
-  padding-top: 15px;
-  padding-bottom: 15px;
 }
 
 .fieldContainerDisabled {
@@ -327,8 +341,6 @@ $mars--border: rgb(46, 14, 8);
   border-width: 0.5px;
   line-height: 27px;
   border-radius: 4px;
-  padding-top: 15px;
-  padding-bottom: 15px;
 }
 
 .fieldContainerMetadataAdd {
@@ -338,8 +350,6 @@ $mars--border: rgb(46, 14, 8);
   background-color: #fcb471;
   line-height: 27px;
   border-radius: 4px;
-  padding-top: 15px;
-  padding-bottom: 15px;
 }
 
 .fieldContainerMetadata {
@@ -354,6 +364,28 @@ $mars--border: rgb(46, 14, 8);
 .rightArrowIcon {
   display: inline-block;
   width: 20px;
+}
+
+.mult_count {
+  font-size: small;
+}
+
+.input {
+  display: inline-block;
+  width: 150px;
+  padding-right: 35px;
+}
+
+.input_box {
+  max-height: 27px;
+  display: inline-block;
+  width: 150px;
+}
+
+.after_drop {
+  width: 60px;
+  padding: 4px;
+  height: 26px;
 }
 
 .refreshButton {
@@ -374,20 +406,49 @@ $mars--border: rgb(46, 14, 8);
   width: 18px;
 }
 
+.ReactModal__Overlay {
+  z-index: 3;
+}
+
 
 @media (min-width: 544px) {  
   .description__checkbox {
     font-size: 17px;
   } 
   .description__title {
-    font-size: 17px;
+    font-size: small;
     width: 15%;
     max-width: 100%;
   }
   .description__value {
-    font-size: 17px;
+    font-size: small;
   }
   .maps__to {
+    font-size: 17px;
+  }
+  .description__mapped__content {
+    font-size: small;
+  }
+  .descriptionMapped > .dropDown > .dropdown {
+    width: 100px;
+  }
+
+}
+
+@media (min-width: 768px) { 
+  .mars_sticky_top {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+  }
+}
+
+
+@media (min-width: 992px) { 
+  .description__title {
+    font-size: 17px;
+  }
+  .description__value {
     font-size: 17px;
   }
   .description__mapped__content {
@@ -396,9 +457,8 @@ $mars--border: rgb(46, 14, 8);
   .descriptionMapped > .dropDown > .dropdown {
     width: 170px;
   }
-
-
-
-
-
+  .after_drop {
+    width: 80px;
+    height: 26px;
+  }
 }

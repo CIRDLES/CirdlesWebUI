@@ -36,14 +36,13 @@ const CardList = props => {
   const [fieldValState, addAFieldCardVal] = useState(props.fieldVal);
 
   // used to toggle between the tuples of the csv loaded in
-  const [toggleIndex, addToToggleIndex] = useState(1);
+  const [toggleIndex, addToToggleIndex] = useState(0);
 
   // maps through fields and creates unique field card entry for each
   // hiding: value to hide entry or not
   // fieldTitle: column attribute of an entry
   // fieldType: defines if content is number or text
   // fieldValue: the content of an column attribute
-  // hasContent: for initial filtering of checked cards
   // goes to the next row of content in the csv
 
   const downArrowToggle = () => {
@@ -58,7 +57,7 @@ const CardList = props => {
 
   // goes to the previous row of content in the csv
   const upArrowToggle = () => {
-    if (toggleIndex > 1) {
+    if (toggleIndex > 0) {
       addToToggleIndex((toggleIndex - 1) % props.toggleArr.length);
       let obj = {
         bool: true
@@ -135,7 +134,10 @@ const CardList = props => {
         header: field,
         isDate: false,
         isMeasurement: false,
-        isGreen: fieldValState[newKey] !== "" || valueIsInJsMappingFile(field)
+        isGreen:
+          fieldValState[newKey] !== "" ||
+          valueIsInJsMappingFile(field) ||
+          newKey === 0
       };
       fieldContentValue = fieldValState[newKey];
     } else {
@@ -171,6 +173,7 @@ const CardList = props => {
               fieldValState[newKey] !== "" || valueIsInJsMappingFile(field)
           };
         } else {
+          console.log(newKey === 0);
           storedValue = {
             id: newKey,
             sesarTitle: "",
@@ -200,30 +203,23 @@ const CardList = props => {
       if (toggleIndex === 1) {
         return (
           <FieldCard
+            key={newKey}
             jsFileValues={props.jsFileValues}
             hiding={props.hide}
             fieldTitle={field}
             id={newKey}
             fieldValue={Object.values(props.toggleArr[toggleIndex])[newKey]}
-            hasContent={
-              props.fieldVal[newKey] !== "" || valueIsInJsMappingFile(field)
-            }
           />
         );
       } else
         return (
           <FieldCard
+            key={newKey}
             jsFileValues={props.jsFileValues}
             hiding={props.hide}
             fieldTitle={Object.keys(props.toggleArr[toggleIndex])[newKey]}
             id={newKey}
             fieldValue={Object.values(props.toggleArr[toggleIndex])[newKey]}
-            hasContent={
-              props.fieldVal[newKey] !== "" ||
-              valueIsInJsMappingFile(
-                Object.keys(props.toggleArr[toggleIndex])[newKey]
-              )
-            }
           />
         );
     }
@@ -257,7 +253,7 @@ const CardList = props => {
 
     <div>
       <div className="label">
-        <div className="container-fluid">
+        <div className="container-fluid mars_sticky_top">
           <CardListMenu
             toggleIndex={toggleIndex}
             refreshButton={() => refreshButton()}
@@ -269,7 +265,7 @@ const CardList = props => {
           <HeaderFieldCard />
         </div>
 
-        <div class="container-fluid">{fields}</div>
+        <div className="container-fluid">{fields}</div>
       </div>
       <div>
         Icons made by{" "}
