@@ -47,20 +47,16 @@ class MySamples extends Component {
       let igsn = samples[i];
       var randomnumber = Math.floor(Math.random() * 100 + 1);
 
-      // maybe open a page with a list of clickable sample links
-      if (samples.length === 1) {
-        window.open(
-          SESAR_SAMPLE_DISPLAY + `${igsn}`,
-          "_blank",
-          "PopUp",
-          randomnumber,
-          "scrollbars=1,menubar=0,resizable=1,width=850,height=500"
-        );
-      }
-      else {
-        // maybe open a page with a list of clickable sample links
-        console.log('in here');
-      }
+      
+      window.open(
+        SESAR_SAMPLE_DISPLAY + `${igsn}`,
+        "_blank",
+        "PopUp",
+        randomnumber,
+        "scrollbars=1,menubar=0,resizable=1,width=850,height=500"
+      );
+    
+
     }
 
   }
@@ -124,8 +120,8 @@ class MySamples extends Component {
 
         customToolbarSelect: (selectedRows, displayData) => (
           <div style={{paddingRight: '25px'}}>
-            <Tooltip title="View Webpage for Selected Samples">
-              <IconButton aria-label="download" onClick={() => this.openWindow(selectedRows, displayData)}>
+            <Tooltip title="View Webpage(s) for Selected (Allow Pop-ups for Multiple)">
+              <IconButton aria-label="view" onClick={() => this.openWindow(selectedRows, displayData)}>
                 <VisibilityIcon />
               </IconButton>
             </Tooltip>
@@ -134,11 +130,6 @@ class MySamples extends Component {
                 <CloudDownloadIcon />
               </IconButton>
             </Tooltip>
-            {/* <Tooltip title="Print CSV of Selected Samples">
-              <IconButton aria-label="print">
-                <PrintIcon />
-              </IconButton>
-            </Tooltip> */}
           </div>
         )
       };
