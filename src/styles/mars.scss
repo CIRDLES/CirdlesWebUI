@@ -110,14 +110,27 @@
   height: 90%;
 }
 
-.MUIDataTableToolbar-actions-105 { // React classname
+.MUIDataTableToolbar-actions-105 { // React classname dev
   display: flex;
   justify-content: center;
   flex: inherit !important;
 }
 
-@media (min-width: 599px) {
+@media (min-width: 599px) { // React classname dev
   .MUIDataTableToolbar-actions-105 {
+    display: inline-flex;
+    align-content: end;
+  }
+}
+
+.jss105 { // React classname production
+  display: flex;
+  justify-content: center;
+  flex: inherit !important;
+}
+
+@media (min-width: 599px) { // React classname production
+  .jss105 {
     display: inline-flex;
     align-content: end;
   }
