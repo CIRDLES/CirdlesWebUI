@@ -318,7 +318,7 @@ function CreateRows(props) {
             component="th"
             id={labelId}
             scope="row"
-            style={{ paddingBottom: 0, paddingTop: 0 }}
+            style={{ paddingBottom: 0, paddingTop: 0, lineHeight: 1 }}
             key={key}
             align={"right"}
           >
@@ -327,7 +327,7 @@ function CreateRows(props) {
         ))}
       </TableRow>
       <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+        <TableCell style={{ paddingBottom: 0, paddingTop: 0, lineHeight: 1 }} colSpan={6}>
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Box margin={1}>
               <Typography variant="h6" gutterBottom component="div">
