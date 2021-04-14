@@ -24,7 +24,7 @@ import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
 import Collapse from "@material-ui/core/Collapse";
 import Box from "@material-ui/core/Box";
 import { CsvBuilder } from "filefy";
-import GetAppIcon from "@material-ui/icons/GetApp";
+import CloudDownloadIcon from "@material-ui/icons/CloudDownload";
 import _ from "lodash";
 
 function descendingComparator(a, b, orderBy) {
@@ -125,13 +125,13 @@ const useToolbarStyles = makeStyles((theme) => ({
   highlight:
     theme.palette.type === "light"
       ? {
-          color: theme.palette.secondary.main,
-          backgroundColor: lighten(theme.palette.secondary.light, 0.85),
-        }
+        color: theme.palette.secondary.main,
+        backgroundColor: lighten(theme.palette.secondary.light, 0.85),
+      }
       : {
-          color: theme.palette.text.primary,
-          backgroundColor: theme.palette.secondary.dark,
-        },
+        color: theme.palette.text.primary,
+        backgroundColor: theme.palette.secondary.dark,
+      },
   title: {
     flex: "1 1 100%",
   },
@@ -139,6 +139,7 @@ const useToolbarStyles = makeStyles((theme) => ({
 
 const EnhancedTableToolbar = (props) => {
   const classes = useToolbarStyles();
+  const [selected, setSelected] = React.useState([]);
   const {
     numSelected,
     samples,
@@ -154,12 +155,23 @@ const EnhancedTableToolbar = (props) => {
   } = props;
 
   var values = [];
+  var selectedValues = [];
   for (let i = 0; i < pureValues.length; i++) {
     values[i] = Object.values(pureValues[i]);
   }
   const handleClick = (props) => (event) => {
     onUpload(mapFile, samples, user, sampleIndicies);
   };
+
+  function getSelectedValues(props) {
+    var selectedValues = [];
+    for (let i = 0; i < pureValues.length; i++) {
+      if (props.sampleIndicies.includes(i)) {
+        selectedValues[i] = Object.values(pureValues[i]);
+      }
+    }
+    return selectedValues;
+  }
 
   function handleExport(values) {
     var csvBuilder = new CsvBuilder(fileName.trim() + ".csv")
@@ -184,32 +196,42 @@ const EnhancedTableToolbar = (props) => {
           {numSelected} selected
         </Typography>
       ) : (
-        <Typography
-          className={classes.title}
-          variant="h6"
-          id="tableTitle"
-          component="div"
-        >
-          Upload to SESAR
-        </Typography>
-      )}
+          <Typography
+            className={classes.title}
+            variant="h6"
+            id="tableTitle"
+            component="div"
+          >
+            Upload to SESAR
+          </Typography>
+        )}
 
       {numSelected > 0 ? (
-        <Tooltip title="Upload">
-          <IconButton aria-label="upload" onClick={handleClick(props)}>
-            <PublishIcon />
-          </IconButton>
-        </Tooltip>
+        <React.Fragment>
+          <Tooltip title="Upload">
+            <IconButton aria-label="upload" onClick={handleClick(props)}>
+              <PublishIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Download CSV">
+            <IconButton
+              aria-label="filter list"
+              onClick={() => handleExport(getSelectedValues(props))}
+            >
+              <CloudDownloadIcon />
+            </IconButton>
+          </Tooltip>
+        </React.Fragment>
       ) : (
-        <Tooltip title="Download CSV">
-          <IconButton
-            aria-label="filter list"
-            onClick={() => handleExport(values)}
-          >
-            <GetAppIcon />
-          </IconButton>
-        </Tooltip>
-      )}
+          <Tooltip title="Download CSV">
+            <IconButton
+              aria-label="filter list"
+              onClick={() => handleExport(values)}
+            >
+              <CloudDownloadIcon />
+            </IconButton>
+          </Tooltip>
+        )}
     </Toolbar>
   );
 };
