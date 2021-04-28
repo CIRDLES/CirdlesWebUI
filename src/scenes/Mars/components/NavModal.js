@@ -67,6 +67,11 @@ function NavModal() {
             <p>
               Developed by 
               <a href="https://github.com/bowring"> Jim Bowring</a>, 
+              <a href="https://github.com/baldwinjj"> Joey Baldwin</a>, 
+              <a href="https://github.com/tiaanicolee"> Tia Curry</a>, 
+              <a href="https://github.com/julius-walton"> Julius Walton</a>, 
+              <a href="https://github.com/jamesamrundle"> James Rundle</a>, 
+              <a href="https://github.com/joshuadgilley"> Josh Gilley</a>, 
               <a href="https://github.com/hafey1"> Robert Niggebrugge</a>, and
               <a href="https://github.com/stapletonce"> Chloe Stapleton</a>.
             </p>
