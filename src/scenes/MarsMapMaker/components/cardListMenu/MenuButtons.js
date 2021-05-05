@@ -10,6 +10,7 @@ import {
   convertSinglesData
 } from "../../util/helper";
 import { PreviewModal } from "./PreviewModal";
+import { AboutModal } from "./AboutModal";
 
 const MenuButtons = props => {
   const checkStore = () => {
@@ -38,13 +39,15 @@ const MenuButtons = props => {
               {props.hideText()}{" "}
             </button>
             <PreviewModal ent={props.ent} />
-            <button
+            <AboutModal ent={props.ent} />
+            <a
               className="btn bg-white btn-outline-dark"
-              onClick={checkStore}
+              target="_blank"
+              href='https://drive.google.com/file/d/1F10Fh3k2pnPr5iCJnlsxirPaegup5glP/view?usp=sharing'
             >
               {" "}
               Help{" "}
-            </button>
+            </a>
           </div>
         </div>
       </div>
