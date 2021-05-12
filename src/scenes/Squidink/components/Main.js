@@ -10,7 +10,7 @@ import "constants/api";
 import {dropdownOptions} from "../util/constants";
 import {testFunction} from "../util/constants";
 import {connect} from "react-redux";
-import {SQUIDINK_ENDPOINT} from "constants/api";
+import {SQUIDINK_ENDPOINT, FILEBROWSER_URL} from "constants/api";
 
 let cx = classNames.bind(style);
 
@@ -115,7 +115,7 @@ export class Main extends React.Component {
                                 <div className={cx('sidebar', 'withMargin', 'panel')}>
                                     <iframe id='iframee'
                                             style={{display: 'flex', flexGrow: '1', overflow: 'auto', height: '100%', width: '100%'}}
-                                            src='http://192.168.86.29:8090'></iframe>
+                                            src={FILEBROWSER_URL}></iframe>
                                 </div>
                             </ResizePanel>
                             : null}
