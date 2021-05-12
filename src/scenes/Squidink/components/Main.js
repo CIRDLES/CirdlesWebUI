@@ -36,32 +36,34 @@ export class Main extends React.Component {
     async componentDidMount() {
 
         window.addEventListener('message', (e) => {
-            //Prevents misfires
-            if(e.origin == FILEBROWSER_URL) {
-            if(e.data.toString().length != 0 && !e.data.includes(".com")) {
-                this.setState({loading: true})
-                // eslint-disable-next-line no-restricted-globals
-                axios.post(SQUIDINK_ENDPOINT + '/OpenServlet/O', localStorage.getItem("user")
-                    + ":" + e.data, {
-                    headers: {
-                        'Content-Type': 'text/plain'
+            setTimeout(function() {
+                //Prevents misfires
+                if(e.origin == FILEBROWSER_URL) {
+                    if(e.data.toString().length != 0 && !e.data.includes(".com")) {
+                        this.setState({loading: true})
+                        // eslint-disable-next-line no-restricted-globals
+                        axios.post(SQUIDINK_ENDPOINT + '/OpenServlet/O', localStorage.getItem("user")
+                            + ":" + e.data, {
+                            headers: {
+                                'Content-Type': 'text/plain'
+                            }
+                        }).then(() => {
+                            this.setState({showfbr: false});
+                            this.setState({loading: false});
+                        }).catch(() => {
+                            this.setState({loading: false});
+                        })
                     }
-                }).then(() => {
-                    this.setState({showfbr: false});
-                    this.setState({loading: false});
-                }).catch(() => {
-                    this.setState({loading: false});
-                })
-            }
-            else if(e.data.includes(".com") || e.data.includes(".gov") || e.data.includes(".edu")) {
-                localStorage.setItem("user", e.data);
-                // eslint-disable-next-line no-restricted-globals
-                axios.post(SQUIDINK_ENDPOINT + '/api', e.data, {
-                    headers: {
-                        'Content-Type': 'text/plain'
-                    }
-                })
-            }}
+                    else if(e.data.includes(".com") || e.data.includes(".gov") || e.data.includes(".edu")) {
+                        localStorage.setItem("user", e.data);
+                        // eslint-disable-next-line no-restricted-globals
+                        axios.post(SQUIDINK_ENDPOINT + '/api', e.data, {
+                            headers: {
+                                'Content-Type': 'text/plain'
+                            }
+                        })
+                    }}
+            }, 1000)
         }, false)
 
     }
