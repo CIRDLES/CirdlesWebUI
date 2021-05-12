@@ -8,7 +8,7 @@ import {
   TOPSOIL,
   MARS,
   MARSMAPMAKER,
-  SQUIDINK
+  SQUIDINK, FILEBROWSER_URL
 } from "constants";
 
 type Props = {
@@ -19,14 +19,6 @@ const HomePage = ({ history }: Props) => {
   return (
     <div style={styles.home}>
       <div style={styles.cardWrapper}>
-        <ProjectCard
-          description={SQUID.description}
-          logo={require("img/logos/Squid.svg")}
-          width={300}
-          height={300}
-          onClick={() => history.push("/squid")}
-          style={{ margin: 40 }}
-        />
         {/*Temporarily unavailable
           uncomment ambapo references in App.js as well
           <ProjectCard
@@ -62,17 +54,19 @@ const HomePage = ({ history }: Props) => {
           style={{ margin: 40 }}
         />
 {
-  /* Temporarily unavailable
-          uncomment squidink references in App.js as well
+
         <ProjectCard
           description={SQUIDINK.description}
           logo={require("img/logos/SquidInk.svg")}
           width={300}
           height={300}
-          onClick={() => history.push("/squidink")}
+          onClick={() => {
+            history.push("/squidink")
+            //window.open(FILEBROWSER_URL, "_self")
+          }}
           style={{ margin: 40 }}
         />
-  */
+
 
 }
       </div>

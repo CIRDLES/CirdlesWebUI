@@ -86,9 +86,6 @@ const Header = ({ title, logo }) => {
           <NavLink className="nav-item nav-link ml-4" to="/#">
             <strong>Home</strong>
           </NavLink>
-          <NavLink className="nav-item nav-link ml-4" to="/squid">
-            Squid
-          </NavLink>
           {/* temporarily unavailable: 
             uncomment ambapo reference in Home/index as well
             <NavLink className="nav-item nav-link ml-4" to="/ambapo">
@@ -103,11 +100,10 @@ const Header = ({ title, logo }) => {
           <NavLink className="nav-item nav-link ml-4" to="/marsMapMaker">
             MARS Map Maker
           </NavLink>
-{/* Uncomment squidink in home/index.js as well
           <NavLink className="nav-item nav-link ml-4" to="/squidink">
             SQUIDINK
           </NavLink>
-*/}
+
         </div>
       </div>
     </nav>
@@ -128,9 +124,10 @@ class App extends Component {
               render={() => Header(route)}
             />
           );
-        })}
-        <main style={styles.body}>
-          <Switch>
+          })
+        }
+        <main >
+          <Switch style={styles.body}>
             {routes.map(route => {
               const { title, ...rest } = route;
               return <Route key={title + "-main-route"} {...rest} />;
