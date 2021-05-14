@@ -15,6 +15,7 @@ import marslogo from "../img/logos/Mars.svg";
 import marsMapMakerLogo from "../img/logos/MarsMapMaker.svg";
 import inklogo from "../img/logos/SquidInk.svg";
 import { colors } from "constants";
+import {SQUIDINK_ENABLED} from "constants/api";
 
 import "styles/index.scss";
 import { maxHeaderSize } from "http";
@@ -100,9 +101,15 @@ const Header = ({ title, logo }) => {
           <NavLink className="nav-item nav-link ml-4" to="/marsMapMaker">
             MARS Map Maker
           </NavLink>
-          <NavLink className="nav-item nav-link ml-4" to="/squidink">
-            SQUIDINK
-          </NavLink>
+
+             {
+               SQUIDINK_ENABLED ?
+            <NavLink className="nav-item nav-link ml-4" to="/squidink">
+              SQUIDINK
+            </NavLink>
+                   : null
+          }
+
 
         </div>
       </div>

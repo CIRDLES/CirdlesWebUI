@@ -8,8 +8,9 @@ import {
   TOPSOIL,
   MARS,
   MARSMAPMAKER,
-  SQUIDINK, FILEBROWSER_URL
+  SQUIDINK
 } from "constants";
+import {SQUIDINK_ENABLED, FILEBROWSER_URL} from "constants/api";
 
 type Props = {
   history: any
@@ -54,7 +55,7 @@ const HomePage = ({ history }: Props) => {
           style={{ margin: 40 }}
         />
 {
-
+        SQUIDINK_ENABLED ?
         <ProjectCard
           description={SQUIDINK.description}
           logo={require("img/logos/SquidInk.svg")}
@@ -65,7 +66,7 @@ const HomePage = ({ history }: Props) => {
             //window.open(FILEBROWSER_URL, "_self")
           }}
           style={{ margin: 40 }}
-        />
+        /> : null
 
 
 }
