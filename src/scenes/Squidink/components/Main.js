@@ -37,8 +37,9 @@ export class Main extends React.Component {
 
         window.addEventListener('message', (e) => {
             setTimeout(function() {
-                //Prevents misfires
-                if(e.origin == FILEBROWSER_URL) {
+                console.log(e.data)
+                if(e.origin + "/" == FILEBROWSER_URL) {
+                    console.log(e.data)
                     if(e.data.toString().length != 0 && !e.data.includes(".com")) {
                         this.setState({loading: true})
                         // eslint-disable-next-line no-restricted-globals

@@ -28,6 +28,6 @@ export const POST_HEADERS = {
 };
 
 // Filebrowser
-export const FILEBROWSER_URL = "http://127.0.0.1:8080"
+export const FILEBROWSER_URL = "http://192.168.86.29:8090/"
 
 export const SQUIDINK_ENABLED = false;
