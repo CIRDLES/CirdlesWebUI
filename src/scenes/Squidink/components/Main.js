@@ -36,11 +36,11 @@ export class Main extends React.Component {
     async componentDidMount() {
 
         window.addEventListener('message', (e) => {
-            setTimeout(function() {
-                console.log(e.data)
+                let apiCheck = e.data.toString().split(':');
                 if(e.origin + "/" == FILEBROWSER_URL) {
-                    console.log(e.data)
-                    if(e.data.toString().length != 0 && !e.data.includes(".com")) {
+                    if(e.data.toString().length != 0 && apiCheck[0] != "api") {
+                        console.log(e.data)
+                        console.log(localStorage.getItem("user") + "_" + e.data)
                         this.setState({loading: true})
                         // eslint-disable-next-line no-restricted-globals
                         axios.post(SQUIDINK_ENDPOINT + '/OpenServlet/O', localStorage.getItem("user")
@@ -55,7 +55,8 @@ export class Main extends React.Component {
                             this.setState({loading: false});
                         })
                     }
-                    else if(e.data.includes(".com") || e.data.includes(".gov") || e.data.includes(".edu")) {
+                    else if(apiCheck[0] == "api") {
+                        console.log(e.data)
                         localStorage.setItem("user", e.data);
                         // eslint-disable-next-line no-restricted-globals
                         axios.post(SQUIDINK_ENDPOINT + '/api', e.data, {
@@ -64,7 +65,7 @@ export class Main extends React.Component {
                             }
                         })
                     }}
-            }, 1000)
+
         }, false)
 
     }

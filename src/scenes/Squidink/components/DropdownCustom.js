@@ -4,7 +4,8 @@ export default class DropdownCustom extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            isActive: false
+            isActive: false,
+            listenerActive: false
         }
         this.dropdownRef = createRef();
         this.setIsActive = this.setIsActive.bind(this);
@@ -19,13 +20,15 @@ export default class DropdownCustom extends React.Component {
     clickAction() {
         setTimeout(() =>{
             this.setIsActive(this.state.isActive);
-            window.addEventListener('click', this.pageClick)
+            if(!this.state.listenerActive) {
+                window.addEventListener('click', this.pageClick)
+            }
         }, 100)
+
 
     }
     pageClick = (e) => {
-        if (this.dropdownRef.current !== null && !this.dropdownRef.current.contains(e.target) && this.state.isActive) {
-            console.log(e.target)
+        if (this.dropdownRef.current !== null && !this.dropdownRef.current.contains(e.target)) {
             this.setIsActive(this.state.isActive);
             window.removeEventListener('click', this.pageClick)
         }
