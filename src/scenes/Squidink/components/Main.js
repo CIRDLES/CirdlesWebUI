@@ -37,10 +37,11 @@ export class Main extends React.Component {
 
         window.addEventListener('message', (e) => {
                 let apiCheck = e.data.toString().split(':');
+                console.log(apiCheck)
                 if(e.origin + "/" == FILEBROWSER_URL) {
                     if(e.data.toString().length != 0 && apiCheck[0] != "api") {
-                        console.log(e.data)
-                        console.log(localStorage.getItem("user") + "_" + e.data)
+                        //console.log(e.data)
+                        //console.log(localStorage.getItem("user") + "_" + e.data)
                         this.setState({loading: true})
                         // eslint-disable-next-line no-restricted-globals
                         axios.post(SQUIDINK_ENDPOINT + '/OpenServlet/O', localStorage.getItem("user")
@@ -57,7 +58,7 @@ export class Main extends React.Component {
                     }
                     else if(apiCheck[0] == "api") {
                         console.log(e.data)
-                        localStorage.setItem("user", e.data);
+                        localStorage.setItem("user", apiCheck[1]);
                         // eslint-disable-next-line no-restricted-globals
                         axios.post(SQUIDINK_ENDPOINT + '/api', e.data, {
                             headers: {
