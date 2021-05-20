@@ -1,10 +1,8 @@
 import {SQUIDINK_ENDPOINT} from "constants/api";
-//TODO
-//this.body is not defined
 async function clickActionGen() {
     const data = await fetch( SQUIDINK_ENDPOINT + '/reportsServlet', {
         method: "POST",
-        body: this.body
+        body: localStorage.getItem("user")
     })
 }
 async function clickActionDemo() {
@@ -67,7 +65,7 @@ export const dropdownOptions = [
         },
         {
             title: 'Open Squid Project',
-            onclick: testFunction,
+            onclick: 4,
             id: 4
         },,
         {
