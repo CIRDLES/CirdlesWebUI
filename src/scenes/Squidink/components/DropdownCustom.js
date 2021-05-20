@@ -5,15 +5,19 @@ export default class DropdownCustom extends React.Component {
         super(props);
         this.state = {
             isActive: false,
-            listenerActive: false
+            listenerActive: false,
+            hoverState: false
         }
         this.dropdownRef = createRef();
+        this.toggleHover = this.toggleHover.bind(this);
         this.setIsActive = this.setIsActive.bind(this);
         this.clickAction = this.clickAction.bind(this);
         this.pageClick = this.pageClick.bind(this);
     }
 
-
+    toggleHover() {
+        this.setState({hoverState: !this.state.hoverState})
+    }
     setIsActive(isActive) {
         this.setState({isActive: !isActive})
     }
@@ -44,14 +48,31 @@ export default class DropdownCustom extends React.Component {
                 <nav className={`menu-custom ${this.state.isActive ? "active" : "inactive"}`}>
                     <ul>
                         {
-                            this.props.dropdownOptions.map(options => {
+                            this.props.dropdownOptions.map((options) => {
+                                if(this.props.functionOverride != undefined) {
+                                    if(this.props.functionOverride.has(options.id.toString())) {
+                                        return(
 
-                            return(
-                                <li key={options.id}>
-                                    <a key={options.id}onClick={options.onclick}>{options.title}</a>
-                                </li>
-                            );
-                        })}
+                                            <li className={"dropdown-context-custom"}key={options.id}>
+                                                <a className={"dropdown-context-custom"}key={options.id}onClick={this.props.functionOverride.get(options.id.toString()).function}>{options.title} </a>
+                                            </li>
+                                        );
+                                    }
+                                    else {
+                                        return(
+                                            <li className={"dropdown-context-custom"}key={options.id}>
+                                                <a className={"dropdown-context-custom"}key={options.id}onClick={options.onclick}>{options.title}</a>
+                                            </li>
+                                        );
+                                    }
+                                }
+                                else {
+                                    return(
+                                        <li className={"dropdown-context-custom"}key={options.id}>
+                                            <a className={"dropdown-context-custom"}key={options.id}onClick={options.onclick}>{options.title}</a>
+                                        </li>
+                                );
+                        }})}
                     </ul>
                 </nav>
             </div>

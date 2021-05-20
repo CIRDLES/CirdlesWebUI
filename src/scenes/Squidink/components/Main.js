@@ -8,9 +8,9 @@ import axios from 'axios';
 import DropdownCustom from "./DropdownCustom";
 import "constants/api";
 import {dropdownOptions} from "../util/constants";
-import {testFunction} from "../util/constants";
 import {connect} from "react-redux";
 import {SQUIDINK_ENDPOINT, FILEBROWSER_URL} from "constants/api";
+import Modal from "@material-ui/core/Modal";
 
 let cx = classNames.bind(style);
 
@@ -21,11 +21,14 @@ export class Main extends React.Component {
             showfbr: true,
             adragging: false,
             loading: false,
+            modalOpen: false
         };
         this.hidediv = this.hidediv.bind(this);
         this.hideinternal = this.hideinternal.bind(this);
         this.showinternal = this.showinternal.bind(this);
+        this.handClose = this.handClose.bind(this);
         this.componentDidMount = this.componentDidMount.bind(this);
+        this.openAction = this.openAction.bind(this);
 
 
     }
@@ -55,7 +58,7 @@ export class Main extends React.Component {
                     }
                     else if(apiCheck[0] == "api") {
                         localStorage.setItem("user", apiCheck[1]);
-                        axios.post(SQUIDINK_ENDPOINT + '/api', e.data, {
+                        axios.post(SQUIDINK_ENDPOINT + '/api', apiCheck[1], {
                             headers: {
                                 'Content-Type': 'text/plain'
                             }
@@ -64,6 +67,10 @@ export class Main extends React.Component {
 
         }, false)
 
+    }
+
+    async handClose() {
+        this.setState({modalOpen: false})
     }
     async hidediv() {
         this.setState({showfbr: !this.state.showfbr});
@@ -76,10 +83,32 @@ export class Main extends React.Component {
         console.log('show')
         this.setState({adragging: false})
     }
+    async openAction() {
+        this.setState({modalOpen: true})
+    }
 
 
     render() {
-
+        let fOvd = new Map()
+        fOvd.set('2', {function: this.openAction})
+        fOvd.set('4', {function: this.openAction})
+        const body = (
+            <div style={{
+                position: 'absolute',
+                width: '400',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                border: '2px solid #000',
+                backgroundColor: 'white',
+                padding: '4px'
+            }}
+                 className={'paper'}>
+                <p id="simple-modal-description">
+                    Open / New File Actions are handled in the Filebrowser! Try double-clicking an appropriate file or viewing the context-menu with right-click.
+                </p>
+            </div>
+        );
         return (
             <>{this.state.loading ?
                 <div>
@@ -107,7 +136,7 @@ export class Main extends React.Component {
                     </div>
                 </div>
                 : <div className={cx('container-custom')}>
-
+                    <Modal open={this.state.modalOpen} onClose={this.handClose}>{body}</Modal>
                     <div className={cx('body')}>
 
                         {this.state.showfbr ?
@@ -123,7 +152,7 @@ export class Main extends React.Component {
                         <div className={cx('content')} style={{display: 'flex', overflow: 'hidden'}}>
                             <div className={cx('header-custom', 'panel-custom')} style={{position: 'absolute', top: '40'}}>
                                 <div className="rownav" style={{display: 'flex'}}>
-                                        <DropdownCustom dropdownName = "Project" dropdownOptions = {dropdownOptions[0]}></DropdownCustom>
+                                        <DropdownCustom dropdownName = "Project" dropdownOptions = {dropdownOptions[0]} functionOverride = {fOvd}></DropdownCustom>
                                         <DropdownCustom dropdownName = "Data" dropdownOptions = {dropdownOptions[1]}></DropdownCustom>
                                         <DropdownCustom dropdownName = "Task" dropdownOptions = {dropdownOptions[2]}></DropdownCustom>
                                         <DropdownCustom dropdownName = "Isotopes" dropdownOptions = {dropdownOptions[3]}></DropdownCustom>
