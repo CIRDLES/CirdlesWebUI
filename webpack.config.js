@@ -10,7 +10,9 @@ const endpoints = [
   "topsoil",
   "mars",
   "marsMapMaker",
-  "squidink"
+  "squidink",
+  "squidink/skeleton",
+    "squidink/managespots"
 ];
 const HtmlWebpackPluginList = [];
 for (let endpoint of endpoints) {

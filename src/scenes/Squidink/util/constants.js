@@ -65,9 +65,9 @@ export const dropdownOptions = [
         },
         {
             title: 'Open Squid Project',
-            onclick: 4,
+            onclick: testFunction,
             id: 4
-        },,
+        },
         {
             title: 'Open Recent Squid Project',
             onclick: testFunction,

@@ -20,6 +20,7 @@ import {SQUIDINK_ENABLED} from "constants/api";
 import "styles/index.scss";
 import { maxHeaderSize } from "http";
 
+
 const routes = [
   {
     path: "/",
@@ -148,7 +149,7 @@ class App extends Component {
 
 const styles = {
   wrapper: {
-    height: "100vh",
+    height: "100%",
     width: "100%",
     backgroundColor: colors.primary
   },
