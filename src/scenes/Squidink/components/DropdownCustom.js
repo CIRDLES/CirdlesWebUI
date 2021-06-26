@@ -29,7 +29,6 @@ export default class DropdownCustom extends React.Component {
                 window.addEventListener('click', this.pageClick)
             }
             else {
-                console.log(this.state.isActive)
                 this.setState({listenerActive: !this.state.listenerActive})
                 window.removeEventListener('click', this.pageClick)
             }
