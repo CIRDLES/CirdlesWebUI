@@ -17,7 +17,8 @@ export class ManageSpots extends React.Component {
         this.state = {
             //State-initializer, initialize state vars here for reference from html
             filterSpotsSelector: "All Samples",
-            spotName: "no spot selected"
+            spotName: "no spot selected",
+            isotopicRM: "Model1"
 
         };
         //If a component requires 'this.' context, it's easiest to bind it, i.e.
@@ -27,6 +28,9 @@ export class ManageSpots extends React.Component {
         switch(event.target.name) {
             case "filterSpotsSelector":
                 this.setState({filterSpotsSelector: event.target.value})
+                break;
+            case "isotopicRM":
+                this.setState({isotopicRM: event.target.value})
                 break;
         }
     }
@@ -654,7 +658,7 @@ export class ManageSpots extends React.Component {
                                 <h6 style={{color: "#000000"}}>
                                     <b>{"COUNT "}</b>
                                      RM Spots selected using filter
-                                    <b>{"FILTER"}</b>
+                                    <b>{" FILTER"}</b>
                                 </h6>
                             </div>
                             <div style={{overflowY: "scroll", maxHeight: "25vh"}}className={cx('rm-spots-table')}>
@@ -901,9 +905,9 @@ export class ManageSpots extends React.Component {
                                 <h5 style={{fontSize: "17px"}}>Concentration Reference Material (CRM) Spots:</h5>
                             </div>
                             <div className={cx('crm-spots-label-selected')}>
-                                <b>{"COUNT"}</b>
+                                <b>{"COUNT "}</b>
                                 CRM Spots selected using filter
-                                <b>{"FILTER"}</b>
+                                <b>{" FILTER"}</b>
                             </div>
                             <div className={cx('crm-spots-table')}>
                                 <div style={{overflowY: "scroll", maxHeight: "25vh", zIndex: "2"}}>
@@ -1015,6 +1019,23 @@ export class ManageSpots extends React.Component {
                             <div className={cx('crm-spots-hint')}>
                                 <p style={{fontSize: "x-small", display: "inline"}}>Hint: To clear the list, right mouse-click on it anywhere for menu.</p>
                                 <Button variant="contained" color="primary">Copy Filtered Spots to CRM Spots.</Button>
+                            </div>
+                            <div className={cx('isotopic-rm-label')}>
+                                <h6>Select Isotopic RM Model:</h6>
+                                <FormControl style={{width: "90%"}}>
+                                    <Select
+                                        labelId="isotopic-RM-label"
+                                        id="isotopicRM"
+                                        name="isotopicRM"
+                                        value={this.state.isotopicRM}
+                                        onChange={this.handleChange}
+                                    >
+                                        <MenuItem value={"Model1"}>Model1</MenuItem>
+                                        <MenuItem value={"Model2"}>Model2</MenuItem>
+                                        <MenuItem value={"Model3"}>Model3</MenuItem>
+                                        <MenuItem value={"Model4"}>Model4</MenuItem>
+                                    </Select>
+                                </FormControl>
                             </div>
                         </div>
 

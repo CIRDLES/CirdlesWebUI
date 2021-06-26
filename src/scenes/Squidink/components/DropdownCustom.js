@@ -25,7 +25,13 @@ export default class DropdownCustom extends React.Component {
         setTimeout(() =>{
             this.setIsActive(this.state.isActive);
             if(!this.state.listenerActive) {
+                this.setState({listenerActive: !this.state.listenerActive})
                 window.addEventListener('click', this.pageClick)
+            }
+            else {
+                console.log(this.state.isActive)
+                this.setState({listenerActive: !this.state.listenerActive})
+                window.removeEventListener('click', this.pageClick)
             }
         }, 100)
 
@@ -46,7 +52,7 @@ export default class DropdownCustom extends React.Component {
                     <span>{this.props.dropdownName}</span>
                 </button>
                 <nav className={`menu-custom ${this.state.isActive ? "active" : "inactive"}`}>
-                    <ul>
+                    <ul onClick={this.clickAction}>
                         {
                             this.props.dropdownOptions.map((options) => {
                                 if(this.props.functionOverride != undefined) {

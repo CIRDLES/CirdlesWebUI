@@ -24,19 +24,19 @@ async function clickActionUnknown() {
     })
 }
 async function clickActionProjectAudit() {
-    const data = await fetch(SQUIDINK_ENDPOINT + '/squid_servlet/individ', {
+    const data = await fetch(SQUIDINK_ENDPOINT + '/individ', {
         method: "POST",
         body: localStorage.getItem("user") + ":ProjectAudit"
     })
 }
 async function clickActionTaskAudit() {
-    const data = await fetch(SQUIDINK_ENDPOINT + '/squid_servlet/individ', {
+    const data = await fetch(SQUIDINK_ENDPOINT + '/individ', {
         method: "POST",
         body: localStorage.getItem("user") + ":TaskAudit"
     })
 }
 async function clickActionPerScan() {
-    const data = await fetch(SQUIDINK_ENDPOINT + '/squid_servlet/individ', {
+    const data = await fetch(SQUIDINK_ENDPOINT + '/individ', {
         method: "POST",
         body: localStorage.getItem("user") + ":PerScan"
     })
