@@ -35,6 +35,8 @@ export class SkeletonExample extends React.Component {
             version: "",
             dataFilePath: "",
             notes: "",
+            pbArr: [],
+            physArr: [],
             mount: false
         };
         //If a component requires 'this.' context, it's easiest to bind it, i.e.
@@ -123,6 +125,10 @@ export class SkeletonExample extends React.Component {
             this.setState({dataFilePath: arr[13]})
             this.setState({notes: arr[11]})
             this.setState({weightedMeans: arr[5].toString()})
+            this.setState({defaultCommon: arr[8]})
+            this.setState({physConstant: arr[9]})
+            this.setState({pbArr: arr[14].split('\*\&\^')})
+            this.setState({physArr: arr[15].split('\*\&\^')})
             this.setState({mount: true})
             console.log(arr)
         }).catch(() => {
@@ -256,9 +262,13 @@ export class SkeletonExample extends React.Component {
                                             value={this.state.defaultCommon}
                                             onChange={this.handleChange}
                                         >
-                                            <MenuItem value={10}>Ten</MenuItem>
-                                            <MenuItem value={20}>Twenty</MenuItem>
-                                            <MenuItem value={30}>Thirty</MenuItem>
+                                            {
+                                                this.state.pbArr.map(item => {
+                                                    return(
+                                                        <MenuItem value={item}>{item}</MenuItem>
+                                                    )
+                                                })
+                                            }
                                         </Select>
                                     </FormControl>
                                 </div>
@@ -272,9 +282,13 @@ export class SkeletonExample extends React.Component {
                                             value={this.state.physConstant}
                                             onChange={this.handleChange}
                                         >
-                                            <MenuItem value={10}>Ten</MenuItem>
-                                            <MenuItem value={20}>Twenty</MenuItem>
-                                            <MenuItem value={30}>Thirty</MenuItem>
+                                            {
+                                                this.state.physArr.map(item => {
+                                                    return(
+                                                        <MenuItem value={item}>{item}</MenuItem>
+                                                    )
+                                                })
+                                            }
                                         </Select>
                                     </FormControl>
                                     <Button variant="contained" color={"primary"}>
