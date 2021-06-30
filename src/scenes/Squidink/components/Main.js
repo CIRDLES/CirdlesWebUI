@@ -40,8 +40,7 @@ export class Main extends React.Component {
 
         window.addEventListener('message', (e) => {
                 let apiCheck = e.data.toString().split(':');
-                console.log(apiCheck)
-               if(e.origin + "/" == FILEBROWSER_URL) {
+               if(e.origin == FILEBROWSER_URL) {
                    if(e.data.toString().length != 0 && apiCheck[0] != "api") {
                        this.setState({loading: true})
                         axios.post(SQUIDINK_ENDPOINT + '/OpenServlet/O', localStorage.getItem("user")

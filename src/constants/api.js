@@ -4,7 +4,7 @@ export const AMBAPO_ENDPOINT = BASE_URL + "/ambapo";
 export const SQUID_ENDPOINT = BASE_URL + "/prawn";
 export const TOPSOIL_ENDPOINT = BASE_URL + "/topsoil";
 export const MARS_ENDPOINT = BASE_URL + "/mars";
-export const SQUIDINK_ENDPOINT = "http://127.0.0.1:8080/squid_servlet-0.0.1-SNAPSHOT";
+export const SQUIDINK_ENDPOINT = "http://127.0.0.1:8080/squid_servlet-1.0.0";
 export const PORTEDSQUID_ENDPOINT = BASE_URL + "/portedsquid";
 
 // Sesar APIs
@@ -28,6 +28,6 @@ export const POST_HEADERS = {
 };
 
 // Filebrowser
-export const FILEBROWSER_URL = "http://192.168.86.29:8090/"
+export const FILEBROWSER_URL = "http://127.0.0.1:8081"
 
 export const SQUIDINK_ENABLED = false;
