@@ -53,7 +53,8 @@ export class Main extends React.Component {
                             this.setState({loading: false});
                             this.props.history.push('/squidink/skeleton')
 
-                        }).catch(() => {
+                        }).catch((er) => {
+                            console.log(er)
                             this.setState({loading: false});
                         })
                     }

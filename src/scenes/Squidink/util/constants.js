@@ -41,6 +41,12 @@ async function clickActionPerScan() {
         body: localStorage.getItem("user") + ":PerScan"
     })
 }
+async function clickActionSave() {
+    const data = await fetch(SQUIDINK_ENDPOINT + '/save/s', {
+        method: "POST",
+        body: localStorage.getItem("user")
+    })
+}
 
 export function testFunction() {
     console.log("This is a test function")
@@ -80,7 +86,7 @@ export const dropdownOptions = [
         },
         {
             title: 'Save Squid Project',
-            onclick: testFunction,
+            onclick: clickActionSave,
             id: 7
         },
         {
