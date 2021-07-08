@@ -61,7 +61,7 @@ export class SkeletonExample extends React.Component {
                 break;
             case "prefIndex":
                 this.setState({prefIndex: event.target.value});
-                this.updateProject("PrefIso")
+                setTimeout(() => {this.updateProject("PrefIso")}, 200)
                 break;
             case "weightedMeans":
                 if(this.state.weightedMeans == "true") {
@@ -70,15 +70,15 @@ export class SkeletonExample extends React.Component {
                 else {
                     this.setState({weightedMeans: "true"})
                 }
-                this.updateProject("autoExclude")
+                setTimeout(() => {this.updateProject("autoExclude")}, 200)
                 break;
             case "defaultCommonSelect":
                 this.setState({defaultCommon: event.target.value})
-                this.updateProject("defaultCommonSelect")
+                setTimeout(() => {this.updateProject("defaultCommonSelect")}, 200)
                 break;
             case "physConstant":
                 this.setState({physConstant: event.target.value})
-                this.updateProject("physConstant")
+                setTimeout(() => {this.updateProject("physConstant")}, 200)
                 break;
 
         }
@@ -86,19 +86,19 @@ export class SkeletonExample extends React.Component {
     //Can't resolve event by name because internal spans of buttons are unnamed
     pbCounterUp() {
         this.setState({minSigPbU: this.state.minSigPbU + .01})
-        this.updateProject("minSigPbU")
+        setTimeout(() => {this.updateProject("minSigPbU")}, 200)
     }
     pbCounterDown() {
         this.setState({minSigPbU: this.state.minSigPbU - .01})
-        this.updateProject("minSigPbU")
+        setTimeout(() => {this.updateProject("minSigPbU")}, 200)
     }
     thCounterUp() {
         this.setState({minSigPbTh: this.state.minSigPbTh + .01})
-        this.updateProject("minSigPbTh")
+        setTimeout(() => {this.updateProject("minSigPbTh")}, 200)
     }
     thCounterDown() {
         this.setState({minSigPbTh: this.state.minSigPbTh - .01})
-        this.updateProject("minSigPbTh")
+        setTimeout(() => {this.updateProject("minSigPbTh")}, 200)
     }
     pullFromServ() {
         axios.post(SQUIDINK_ENDPOINT + '/pmpull', localStorage.getItem("user"), {
