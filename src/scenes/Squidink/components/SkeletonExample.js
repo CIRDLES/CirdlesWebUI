@@ -47,17 +47,21 @@ export class SkeletonExample extends React.Component {
         this.thCounterDown = this.thCounterDown.bind(this)
         this.pullFromServ = this.pullFromServ.bind(this)
         this.componentDidMount = this.componentDidMount.bind(this)
+        this.updateProject = this.updateProject.bind(this)
     }
     handleChange = (event) => {
         switch(event.target.name) {
             case "SBM":
                 this.setState({sbmVal: event.target.value});
+                setTimeout(() => {this.updateProject("SBM")}, 200)
                 break;
             case "ratioCalc":
                 this.setState({ratioCalc: event.target.value});
+                this.updateProject("ratioCalc")
                 break;
             case "prefIndex":
                 this.setState({prefIndex: event.target.value});
+                this.updateProject("PrefIso")
                 break;
             case "weightedMeans":
                 if(this.state.weightedMeans == "true") {
@@ -66,12 +70,15 @@ export class SkeletonExample extends React.Component {
                 else {
                     this.setState({weightedMeans: "true"})
                 }
+                this.updateProject("autoExclude")
                 break;
             case "defaultCommonSelect":
                 this.setState({defaultCommon: event.target.value})
+                this.updateProject("defaultCommonSelect")
                 break;
             case "physConstant":
                 this.setState({physConstant: event.target.value})
+                this.updateProject("physConstant")
                 break;
 
         }
@@ -79,15 +86,19 @@ export class SkeletonExample extends React.Component {
     //Can't resolve event by name because internal spans of buttons are unnamed
     pbCounterUp() {
         this.setState({minSigPbU: this.state.minSigPbU + .01})
+        this.updateProject("minSigPbU")
     }
     pbCounterDown() {
         this.setState({minSigPbU: this.state.minSigPbU - .01})
+        this.updateProject("minSigPbU")
     }
     thCounterUp() {
         this.setState({minSigPbTh: this.state.minSigPbTh + .01})
+        this.updateProject("minSigPbTh")
     }
     thCounterDown() {
         this.setState({minSigPbTh: this.state.minSigPbTh - .01})
+        this.updateProject("minSigPbTh")
     }
     pullFromServ() {
         axios.post(SQUIDINK_ENDPOINT + '/pmpull', localStorage.getItem("user"), {
@@ -98,13 +109,13 @@ export class SkeletonExample extends React.Component {
             let arr = body.data.split('~!@')
             this.setState({projectName: arr[0]})
             this.setState({analystName: arr[1]})
-            if(arr[2] == true) {
+            if(arr[2] == "true") {
                 this.setState({sbmVal: "Yes"})
             }
             else {
                 this.setState({sbmVal: "No"})
             }
-            if(arr[3] == true) {
+            if(arr[3] == "true") {
                 this.setState({ratioCalc: "linear"})
             }
             else {
@@ -133,6 +144,101 @@ export class SkeletonExample extends React.Component {
             console.log(arr)
         }).catch(() => {
         })
+    }
+    updateProject(updateType) {
+        switch(updateType) {
+            case "SBM":
+                let str = "";
+                this.state.sbmVal == "Yes" ? str = "true" : str = "false"
+                axios.post(SQUIDINK_ENDPOINT + '/pmset', localStorage.getItem("user") + ":" + "SBM" + ":" + str, {
+                    headers: {
+                        'Content-Type': 'text/plain'
+                    }
+                })
+                console.log(this.state.sbmVal)
+                break;
+            case "ratioCalc":
+                str = "";
+                this.state.ratioCalc == "spot" ? str = "false" : str = "true"
+                axios.post(SQUIDINK_ENDPOINT + '/pmset', localStorage.getItem("user") + ":" + "LinFit" + ":" + str, {
+                    headers: {
+                        'Content-Type': 'text/plain'
+                    }
+                })
+                break;
+            case "PrefIso":
+                str = "";
+                if(this.state.prefIndex == "204Pb") {
+                    str = "204Pb"
+                }
+                else if(this.state.prefIndex == "207Pb") {
+                    str = "207Pb"
+                }
+                else {
+                    str = "208Pb"
+                }
+                axios.post(SQUIDINK_ENDPOINT + '/pmset', localStorage.getItem("user") + ":" + "PrefIso" + ":" + str, {
+                    headers: {
+                        'Content-Type': 'text/plain'
+                    }
+                })
+                break;
+            case "autoExclude":
+                str = "";
+                str = this.state.weightedMeans;
+                axios.post(SQUIDINK_ENDPOINT + '/pmset', localStorage.getItem("user") + ":" + "autoExclude" + ":" + str, {
+                    headers: {
+                        'Content-Type': 'text/plain'
+                    }
+                })
+                break;
+            case "minSigPbU":
+                let out = this.state.minSigPbU;
+                axios.post(SQUIDINK_ENDPOINT + '/pmset', localStorage.getItem("user") + ":" + "minSig206" + ":" + out, {
+                    headers: {
+                        'Content-Type': 'text/plain'
+                    }
+                })
+                break;
+            case "minSigPbTh":
+                out = this.state.minSigPbTh
+                axios.post(SQUIDINK_ENDPOINT + '/pmset', localStorage.getItem("user") + ":" + "minSig208" + ":" + out, {
+                    headers: {
+                        'Content-Type': 'text/plain'
+                    }
+                })
+                break;
+            case "defaultCommonSelect":
+                str = this.state.defaultCommon;
+                axios.post(SQUIDINK_ENDPOINT + '/pmset', localStorage.getItem("user") + ":" + "commonPb" + ":" + str, {
+                    headers: {
+                        'Content-Type': 'text/plain'
+                    }
+                })
+                break;
+            case "physConstant":
+                str = this.state.physConstant;
+                axios.post(SQUIDINK_ENDPOINT + '/pmset', localStorage.getItem("user") + ":" + "physConstant" + ":" + str, {
+                    headers: {
+                        'Content-Type': 'text/plain'
+                    }
+                })
+                break;
+            case "setDefaultParam":
+                axios.post(SQUIDINK_ENDPOINT + '/pmset', localStorage.getItem("user") + ":" + "setDefaultParam", {
+                    headers: {
+                        'Content-Type': 'text/plain'
+                    }
+                })
+                break;
+            case "refreshModel":
+                axios.post(SQUIDINK_ENDPOINT + '/pmset', localStorage.getItem("user") + ":" + "refreshModel", {
+                    headers: {
+                        'Content-Type': 'text/plain'
+                    }
+                })
+                break;
+        }
     }
     componentDidMount() {
         this.pullFromServ();
@@ -178,7 +284,7 @@ export class SkeletonExample extends React.Component {
                                 </div>
                                 <div className={cx('parameters-label')}>
                                     <h3>Parameters:</h3>
-                                    <Button variant="contained" color={"primary"} style={{float: "right"}}>
+                                    <Button variant="contained" color={"primary"} style={{float: "right"}} onClick={() => this.updateProject("setDefaultParam")}>
                                         Set Defaults
                                     </Button>
                                 </div>
@@ -291,7 +397,7 @@ export class SkeletonExample extends React.Component {
                                             }
                                         </Select>
                                     </FormControl>
-                                    <Button variant="contained" color={"primary"}>
+                                    <Button variant="contained" color={"primary"} onClick={() => this.updateProject("refreshModel")}>
                                         Refresh Models
                                     </Button>
                                 </div>
