@@ -159,7 +159,8 @@ export class SkeletonExample extends React.Component {
                 break;
             case "ratioCalc":
                 str = "";
-                this.state.ratioCalc == "spot" ? str = "false" : str = "true"
+                this.state.ratioCalc == "spot" ? str = "true" : str = "false"
+                console.log(str);
                 axios.post(SQUIDINK_ENDPOINT + '/pmset', localStorage.getItem("user") + ":" + "LinFit" + ":" + str, {
                     headers: {
                         'Content-Type': 'text/plain'
@@ -301,7 +302,7 @@ export class SkeletonExample extends React.Component {
                                     <TextField defaultValue={this.state.analystName}style={{width: '100%'}}/>
                                 </div>
                                 <div className={cx('project-file-text')}>
-                                    <TextField value={"C:/User/hard/set/route/project.squid"}style={{width: '100%'}}/>
+                                    <TextField value={localStorage.getItem("user") + localStorage.getItem("profileFilePath")}style={{width: '100%'}}/>
                                 </div>
                                 <div className={cx('data-file-text')}>
                                     <TextField value={this.state.dataFilePath}style={{width: '100%'}}/>
