@@ -52,7 +52,7 @@ export class Main extends React.Component {
                             this.setState({showfbr: false});
                             this.setState({loading: false});
                             localStorage.setItem("profileFilePath", e.data);
-                            this.props.history.push('/squidink/skeleton')
+                            this.props.history.push('/squidink/manageproject')
 
                         }).catch((er) => {
                             console.log(er)

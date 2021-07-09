@@ -11,7 +11,7 @@ const endpoints = [
   "mars",
   "marsMapMaker",
   "squidink",
-  "squidink/skeleton",
+  "squidink/manageproject",
     "squidink/managespots"
 ];
 const HtmlWebpackPluginList = [];
