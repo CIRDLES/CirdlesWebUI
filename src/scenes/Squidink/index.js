@@ -17,7 +17,7 @@ class SquidInkPage extends Component {
             <div className="squidink">
                 <main>
                     <Route exact path="/squidink" component={Main} />
-                    <Route exact path="/squidink/skeleton" component={SkeletonExample} />
+                    <Route exact path="/squidink/manageproject" component={SkeletonExample} />
                     <Route exact path="/squidink/managespots" component={ManageSpots} />
                 </main>
             </div>
