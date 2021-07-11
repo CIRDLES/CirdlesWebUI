@@ -254,7 +254,7 @@ export class SkeletonExample extends React.Component {
                     <div className={cx('container-custom')}>
                     <div className={cx('body')}>
                         <div className={cx('content')} style={{display: 'flex', overflow: 'hidden'}}>
-                            <div className={cx('header-custom', 'panel-custom')} style={{position: 'absolute', top: '40'}}>
+                            <div className={cx('header-custom', 'panel-custom')} style={{position: 'fixed', top: '40', zIndex: 10}}>
                                 <div className="rownav" style={{display: 'flex'}}>
                                     <DropdownCustom dropdownName = "Project" dropdownOptions = {dropdownOptions[0]}></DropdownCustom>
                                     <DropdownCustom dropdownName = "Data" dropdownOptions = {dropdownOptions[1]}></DropdownCustom>
@@ -406,7 +406,7 @@ export class SkeletonExample extends React.Component {
                                     <h3>Notes:</h3>
                                 </div>
                                 <div className={cx('notes-content')}>
-                                    <TextField label="Notes" defaultValue={this.state.notes} multiline rows={16} fullWidth={true}></TextField>
+                                    <TextField label="Notes" defaultValue={this.state.notes} multiline rows={8} fullWidth={true}></TextField>
                                 </div>
                             </div>
                         </div>
