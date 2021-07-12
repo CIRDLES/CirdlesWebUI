@@ -9,7 +9,16 @@ async function clickActionDemo() {
     const data = await fetch( SQUIDINK_ENDPOINT + '/clickServlet/D', {
         method: "POST",
         body: localStorage.getItem("user")
-    }).then(window.location.href = window.location.href + "/manageproject")
+    }).then(() =>
+        {
+        let str = window.location.href.split('/');
+        if(str[str.length - 1] == "manageproject") {
+            window.location.reload();
+        }
+        else {
+            window.location.href = window.location.href + "/manageproject"}
+        })
+
 }
 async function clickActionRefMat() {
     const data = await fetch(SQUIDINK_ENDPOINT+ '/individ', {
