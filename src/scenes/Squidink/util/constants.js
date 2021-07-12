@@ -9,7 +9,7 @@ async function clickActionDemo() {
     const data = await fetch( SQUIDINK_ENDPOINT + '/clickServlet/D', {
         method: "POST",
         body: localStorage.getItem("user")
-    })
+    }).then(window.location.href = window.location.href + "/manageproject")
 }
 async function clickActionRefMat() {
     const data = await fetch(SQUIDINK_ENDPOINT+ '/individ', {
@@ -46,6 +46,7 @@ async function clickActionSave() {
         method: "POST",
         body: localStorage.getItem("user")
     })
+
 }
 
 export function testFunction() {

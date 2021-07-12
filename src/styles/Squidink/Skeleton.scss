@@ -1,15 +1,20 @@
+.navbar {
+  position: fixed !important;
+  top: 0 !important;
+  width: 100% !important;
+  z-index: 11 !important;
+}
 .grid-container-custom {
   display: inline-grid;
   background: #dce3e6;
-  grid-template-columns: [c1-start]4fr [c1-end c2-start]8fr [c2-end c3-start]4fr [c3-end c4-start]1fr [c4-end c5-start]1fr [c5-end]6fr [c-end];
+  grid-template-columns: [c1-start]4fr [c1-end c2-start]8fr [c2-end c3-start]4fr [c3-end c4-start]1fr [c4-end c5-start]1fr [c5-end]4fr [c-end];
   grid-template-rows: [r1-start]2fr [r1-end r2-start]2fr [r2-end r3-start]2fr [r3-end r4-start]2fr [r4-end r5-start]1fr
-  [r5-end r6-start]1fr [r6-end r7-start]1fr [r7-end r8-start]1fr [r8-end r9-start]  2fr [r9-end] 6fr[r-end];
+  [r5-end r6-start]1fr [r6-end r7-start]1fr [r7-end r8-start]1fr [r8-end r9-start]  2fr [r9-end] 4fr[r-end];
   width: 100%;
-  height: 100%;
+  height: 88%;
   margin: 60px;
-  transform: translateY(5%);
-  border: 2px solid #e1e4e8
-;
+  transform: translateY(10%);
+  border: 2px solid #e1e4e8;
 
 }
 .project-name-label {
