@@ -38,8 +38,8 @@ export class ManageSpots extends React.Component {
         return(
             <div className={cx('container-custom')}>
                 <div className={cx('body')}>
-                    <div className={cx('content')} style={{display: 'flex', overflow: 'hidden'}}>
-                        <div className={cx('header-custom', 'panel-custom')} style={{position: 'absolute', top: '40'}}>
+                    <div className={cx('content')} style={{display: 'flex', overflow: 'scroll'}}>
+                        <div className={cx('header-custom', 'panel-custom')} style={{position: 'fixed', top: '40', zIndex: '20'}}>
                             <div className="rownav" style={{display: 'flex'}}>
                                 <DropdownCustom dropdownName = "Project" dropdownOptions = {dropdownOptions[0]}></DropdownCustom>
                                 <DropdownCustom dropdownName = "Data" dropdownOptions = {dropdownOptions[1]}></DropdownCustom>
@@ -643,7 +643,7 @@ export class ManageSpots extends React.Component {
                                 </div>
 
                             </div>
-                            <div className={cx('edit-spot-name-hint')}>
+                            <div className={cx('edit-spot-name-hint')} style={{display: 'inline'}}>
                                 <p style={{fontSize: "smaller"}}>Hint: To remove a spot or split session, right mouse-click on spot for menu.</p>
                             </div>
                             <div className={cx('edit-spot-name-label')}>

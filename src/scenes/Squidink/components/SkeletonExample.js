@@ -253,7 +253,7 @@ export class SkeletonExample extends React.Component {
                     this.state.mount ?
                     <div className={cx('container-custom')}>
                     <div className={cx('body')}>
-                        <div className={cx('content')} style={{display: 'flex', overflow: 'hidden'}}>
+                        <div className={cx('content')} style={{display: 'flex', overflow: 'scroll !important;'}}>
                             <div className={cx('header-custom', 'panel-custom')} style={{position: 'fixed', top: '40', zIndex: 10}}>
                                 <div className="rownav" style={{display: 'flex'}}>
                                     <DropdownCustom dropdownName = "Project" dropdownOptions = {dropdownOptions[0]}></DropdownCustom>
@@ -302,10 +302,10 @@ export class SkeletonExample extends React.Component {
                                     <TextField defaultValue={this.state.analystName}style={{width: '100%'}}/>
                                 </div>
                                 <div className={cx('project-file-text')}>
-                                    <TextField value={localStorage.getItem("user") + localStorage.getItem("profileFilePath")}style={{width: '100%'}}/>
+                                    <h5 style={{color: "#000000 !important"}}>{localStorage.getItem("user") + localStorage.getItem("profileFilePath")}</h5>
                                 </div>
                                 <div className={cx('data-file-text')}>
-                                    <TextField value={this.state.dataFilePath}style={{width: '100%'}}/>
+                                    <h5 style={{color: "#000000 !important"}}>{this.state.dataFilePath}</h5>
                                 </div>
                                 <div className={cx('software-text')}>
                                     <h4 style={{color: "#000000 !important"}}>{this.state.version}</h4>
@@ -406,7 +406,7 @@ export class SkeletonExample extends React.Component {
                                     <h3>Notes:</h3>
                                 </div>
                                 <div className={cx('notes-content')}>
-                                    <TextField label="Notes" defaultValue={this.state.notes} multiline rows={8} fullWidth={true}></TextField>
+                                    <TextField label="" defaultValue={this.state.notes} InputLabelProps={{shrink: false}} multiline rows={8} fullWidth={true}></TextField>
                                 </div>
                             </div>
                         </div>

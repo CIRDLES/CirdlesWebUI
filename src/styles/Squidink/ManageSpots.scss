@@ -13,8 +13,8 @@
   padding-left: 5%;
   grid-column-start: c1-start;
   grid-column-end: c1-end;
-  grid-row-start: 2;
-  grid-row-end: 3;
+  grid-row-start: 1;
+  grid-row-end: 2;
   justify-self: start;
   align-self: center;
 }
@@ -24,8 +24,8 @@
   padding-left: 5%;
   grid-column-start: c1-start;
   grid-column-end: c1-end;
-  grid-row-start: 3;
-  grid-row-end: 18;
+  grid-row-start: 2;
+  grid-row-end: 17;
   justify-self: start;
   align-self: start;
 }
@@ -34,16 +34,16 @@
   width: 100%;
   grid-column-start: c1-start;
   grid-column-end: c1-end;
-  grid-row-start: 15;
-  grid-row-end: 16;
+  grid-row-start: 14;
+  grid-row-end: 15;
 }
 .edit-spot-name-label {
   padding-left: 5%;
   width: 100%;
   grid-column-start: c1-start;
   grid-column-end: c1-end;
-  grid-row-start: 16;
-  grid-row-end: 17;
+  grid-row-start: 15;
+  grid-row-end: 16;
 }
 .rm-spots-label {
   padding-left: 5%;
