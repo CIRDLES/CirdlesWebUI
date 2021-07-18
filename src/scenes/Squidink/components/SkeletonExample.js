@@ -1,7 +1,7 @@
 import React from 'react';
 import {connect} from "react-redux";
 import DropdownCustom from "./DropdownCustom";
-import {dropdownOptions} from "../util/constants";
+import {dropdownOptions, testFunction} from "../util/constants";
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -15,7 +15,8 @@ import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import ButtonGroup from "@material-ui/core/ButtonGroup";
 import axios from "axios";
-import {SQUIDINK_ENDPOINT} from "constants/api";
+import {FILEBROWSER_URL, SQUIDINK_ENDPOINT} from "constants/api";
+import ResizePanel from "./ResizePanel";
 let cx = classNames.bind(style);
 export class SkeletonExample extends React.Component {
     constructor(props) {
@@ -37,6 +38,7 @@ export class SkeletonExample extends React.Component {
             notes: "",
             pbArr: [],
             physArr: [],
+            showfbr: true,
             mount: false
         };
         //If a component requires 'this.' context, it's easiest to bind it, i.e.
@@ -48,6 +50,7 @@ export class SkeletonExample extends React.Component {
         this.pullFromServ = this.pullFromServ.bind(this)
         this.componentDidMount = this.componentDidMount.bind(this)
         this.updateProject = this.updateProject.bind(this)
+        this.toggleFilebrowserFunc = this.toggleFilebrowserFunc.bind(this)
     }
     handleChange = (event) => {
         switch(event.target.name) {
@@ -144,6 +147,16 @@ export class SkeletonExample extends React.Component {
             console.log(arr)
         }).catch(() => {
         })
+    }
+    toggleFilebrowserFunc() {
+        let func = () => {
+            this.setState({showfbr: !this.state.showfbr})
+        }
+        let out = [{
+            title: 'Toggle Filebrowser',
+            onclick: func,
+            id: 34}]
+        return out;
     }
     updateProject(updateType) {
         switch(updateType) {
@@ -252,10 +265,21 @@ export class SkeletonExample extends React.Component {
                     //Dont generate elements until project management pull is complete for defaultVal generation
                     this.state.mount ?
                     <div className={cx('container-custom')}>
-                    <div className={cx('body')}>
+                    <div className={cx('body')} style={{overflow: 'scroll'}}>
+                        {this.state.showfbr ?
+                            <ResizePanel onDragStart={this.hideinternal} onDragEnd={this.showinternal} direction="e"
+                                         style={{id: 'fbr', flexGrow: '1'}}>
+                                <div className={cx('sidebar', 'withMargin', 'panel')}>
+                                    <iframe id='iframee'
+                                            style={{display: 'flex', flexGrow: '1', overflow: 'auto', height: '100%', width: '100%'}}
+                                            src={FILEBROWSER_URL}></iframe>
+                                </div>
+                            </ResizePanel>
+                            : null}
                         <div className={cx('content')} style={{display: 'flex', overflow: 'scroll !important;'}}>
                             <div className={cx('header-custom', 'panel-custom')} style={{position: 'fixed', top: '40', zIndex: 10}}>
                                 <div className="rownav" style={{display: 'flex'}}>
+                                    <DropdownCustom dropdownName = "Filebrowser" dropdownOptions = {this.toggleFilebrowserFunc()}></DropdownCustom>
                                     <DropdownCustom dropdownName = "Project" dropdownOptions = {dropdownOptions[0]}></DropdownCustom>
                                     <DropdownCustom dropdownName = "Data" dropdownOptions = {dropdownOptions[1]}></DropdownCustom>
                                     <DropdownCustom dropdownName = "Task" dropdownOptions = {dropdownOptions[2]}></DropdownCustom>
