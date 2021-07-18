@@ -57,6 +57,7 @@ export class SkeletonExample extends React.Component {
     }
     async componentDidMount() {
         this.pullFromServ();
+
         window.addEventListener('message', (e) => {
             let apiCheck = e.data.toString().split(':');
             if(e.origin == FILEBROWSER_URL) {
@@ -71,7 +72,7 @@ export class SkeletonExample extends React.Component {
                         this.setState({showfbr: false});
                         this.setState({loading: false});
                         localStorage.setItem("profileFilePath", e.data);
-                        this.props.history.push('/squidink/manageproject')
+                        location.reload();
 
                     }).catch((er) => {
                         console.log(er)
