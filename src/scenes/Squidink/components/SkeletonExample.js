@@ -197,6 +197,13 @@ export class SkeletonExample extends React.Component {
             id: 34}]
         return out;
     }
+    projectNameFilterandUpdate(event) {
+        axios.post(SQUIDINK_ENDPOINT + '/pmset', localStorage.getItem("user") + ":" + "projectName" + ":" + event.target.value, {
+            headers: {
+                'Content-Type': 'text/plain'
+            }
+        })
+    }
     updateProject(updateType) {
         switch(updateType) {
             case "SBM":
@@ -207,7 +214,6 @@ export class SkeletonExample extends React.Component {
                         'Content-Type': 'text/plain'
                     }
                 })
-                console.log(this.state.sbmVal)
                 break;
             case "ratioCalc":
                 str = "";
@@ -357,7 +363,7 @@ export class SkeletonExample extends React.Component {
                                     <h3>Analyst Name:</h3>
                                 </div>
                                 <div className={cx('project-name-text')}>
-                                    <TextField defaultValue={this.state.projectName}style={{width: '100%'}}/>
+                                    <TextField defaultValue={this.state.projectName} onChange={this.projectNameFilterandUpdate} style={{width: '100%'}}/>
                                 </div>
                                 <div className={cx('analyst-name-text')}>
                                     <TextField defaultValue={this.state.analystName}style={{width: '100%'}}/>
