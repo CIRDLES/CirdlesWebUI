@@ -1,7 +1,7 @@
 import React from 'react';
 import {connect} from "react-redux";
 import DropdownCustom from "./DropdownCustom";
-import {dropdownOptions} from "../util/constants";
+import {dropdownOptions, testFunction} from "../util/constants";
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -15,7 +15,9 @@ import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import ButtonGroup from "@material-ui/core/ButtonGroup";
 import axios from "axios";
-import {SQUIDINK_ENDPOINT} from "constants/api";
+import {FILEBROWSER_URL, SQUIDINK_ENDPOINT} from "constants/api";
+import ResizePanel from "./ResizePanel";
+import ReactLoading from "react-loading";
 let cx = classNames.bind(style);
 export class SkeletonExample extends React.Component {
     constructor(props) {
@@ -37,9 +39,12 @@ export class SkeletonExample extends React.Component {
             notes: "",
             pbArr: [],
             physArr: [],
+            showfbr: true,
+            loading: false,
             mount: false
         };
         //If a component requires 'this.' context, it's easiest to bind it, i.e.
+        this.componentDidMount = this.componentDidMount.bind(this);
         this.handleChange = this.handleChange.bind(this)
         this.pbCounterUp = this.pbCounterUp.bind(this)
         this.pbCounterDown = this.pbCounterDown.bind(this)
@@ -48,6 +53,42 @@ export class SkeletonExample extends React.Component {
         this.pullFromServ = this.pullFromServ.bind(this)
         this.componentDidMount = this.componentDidMount.bind(this)
         this.updateProject = this.updateProject.bind(this)
+        this.toggleFilebrowserFunc = this.toggleFilebrowserFunc.bind(this)
+    }
+    async componentDidMount() {
+        this.pullFromServ();
+        window.addEventListener('message', (e) => {
+            let apiCheck = e.data.toString().split(':');
+            if(e.origin == FILEBROWSER_URL) {
+                if(e.data.toString().length != 0 && apiCheck[0] != "api") {
+                    this.setState({loading: true})
+                    axios.post(SQUIDINK_ENDPOINT + '/OpenServlet/O', localStorage.getItem("user")
+                        + ":" + e.data, {
+                        headers: {
+                            'Content-Type': 'text/plain'
+                        }
+                    }).then(() => {
+                        this.setState({showfbr: false});
+                        this.setState({loading: false});
+                        localStorage.setItem("profileFilePath", e.data);
+                        this.props.history.push('/squidink/manageproject')
+
+                    }).catch((er) => {
+                        console.log(er)
+                        this.setState({loading: false});
+                    })
+                }
+                else if(apiCheck[0] == "api") {
+                    localStorage.setItem("user", apiCheck[1]);
+                    axios.post(SQUIDINK_ENDPOINT + '/api', apiCheck[1], {
+                        headers: {
+                            'Content-Type': 'text/plain'
+                        }
+                    })
+                }}
+
+        }, false)
+
     }
     handleChange = (event) => {
         switch(event.target.name) {
@@ -145,6 +186,16 @@ export class SkeletonExample extends React.Component {
         }).catch(() => {
         })
     }
+    toggleFilebrowserFunc() {
+        let func = () => {
+            this.setState({showfbr: !this.state.showfbr})
+        }
+        let out = [{
+            title: 'Toggle Filebrowser',
+            onclick: func,
+            id: 34}]
+        return out;
+    }
     updateProject(updateType) {
         switch(updateType) {
             case "SBM":
@@ -241,21 +292,30 @@ export class SkeletonExample extends React.Component {
                 break;
         }
     }
-    componentDidMount() {
-        this.pullFromServ();
-    }
 
     render() {
         return (
             <>
                 {
                     //Dont generate elements until project management pull is complete for defaultVal generation
-                    this.state.mount ?
+                    this.state.mount  ?
+                        !this.state.loading ?
                     <div className={cx('container-custom')}>
-                    <div className={cx('body')}>
-                        <div className={cx('content')} style={{display: 'flex', overflow: 'scroll !important;'}}>
+                    <div className={cx('body')} style={{overflow: 'scroll'}}>
+                        {this.state.showfbr ?
+                            <ResizePanel onDragStart={this.hideinternal} onDragEnd={this.showinternal} direction="e"
+                                         style={{id: 'fbr', flexGrow: '1'}}>
+                                <div className={cx('sidebar', 'withMargin', 'panel')}>
+                                    <iframe id='iframee'
+                                            style={{display: 'flex', flexGrow: '1', overflow: 'auto', height: '100%', width: '100%'}}
+                                            src={FILEBROWSER_URL}></iframe>
+                                </div>
+                            </ResizePanel>
+                            : null}
+                        <div className={cx('content')} style={{display: 'flex', overflow: 'scroll !important'}}>
                             <div className={cx('header-custom', 'panel-custom')} style={{position: 'fixed', top: '40', zIndex: 10}}>
                                 <div className="rownav" style={{display: 'flex'}}>
+                                    <DropdownCustom dropdownName = "Filebrowser" dropdownOptions = {this.toggleFilebrowserFunc()}></DropdownCustom>
                                     <DropdownCustom dropdownName = "Project" dropdownOptions = {dropdownOptions[0]}></DropdownCustom>
                                     <DropdownCustom dropdownName = "Data" dropdownOptions = {dropdownOptions[1]}></DropdownCustom>
                                     <DropdownCustom dropdownName = "Task" dropdownOptions = {dropdownOptions[2]}></DropdownCustom>
@@ -411,7 +471,30 @@ export class SkeletonExample extends React.Component {
                             </div>
                         </div>
                     </div>
-                    </div>
+                    </div> : <div>
+                                <div style={{
+                                    position: 'absolute',
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    height: '100%',
+                                    width: '100%'
+                                }}>
+                                    <div>
+                                        <ReactLoading type={'spin'} color={'#000000'}/>
+                                    </div>
+                                </div>
+                                <div style={{
+                                    position: 'absolute',
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    height: 'calc(100% + 8em)',
+                                    width: '100%'
+                                }}>
+                                    <h1>Your file is loading</h1>
+                                </div>
+                            </div>
                         :
                         <div style={{display: "flex", alignItems: "center", justifyContent: "center", height: "100%", width: "100%"}}>
                             <h1>No File Selected</h1>
