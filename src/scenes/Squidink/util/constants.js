@@ -13,7 +13,9 @@ async function clickActionDemo() {
         {
         let str = window.location.href.split('/');
         if(str[str.length - 1] == "manageproject") {
+            localStorage.setItem("profileFilePath", "/SQUID3_demo_file.squid");
             window.location.reload();
+
         }
         else {
             window.location.href = window.location.href + "/manageproject"}
