@@ -1,57 +1,69 @@
 import {SQUIDINK_ENDPOINT} from "constants/api";
+
+// project menu items functions+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+async function clickActionDemo() {
+    const data = await fetch(SQUIDINK_ENDPOINT + '/clickServlet/D', {
+        method: "POST",
+        body: localStorage.getItem("user")
+    }).then(() => {
+        let str = window.location.href.split('/');
+        if (str[str.length - 1] == "manageproject") {
+            localStorage.setItem("profileFilePath", "/SQUID3_demo_file.squid");
+            window.location.reload();
+        } else {
+            window.location.href = "/squidink/manageproject"
+        }
+    })
+}
+
+async function clickManageProject() {
+    window.location.href = "/squidink/manageproject"
+}
+
+// reports menu items functions+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 async function clickActionGen() {
-    const data = await fetch( SQUIDINK_ENDPOINT + '/reportsServlet', {
+    const data = await fetch(SQUIDINK_ENDPOINT + '/reportsServlet', {
         method: "POST",
         body: localStorage.getItem("user")
     })
 }
-async function clickActionDemo() {
-    const data = await fetch( SQUIDINK_ENDPOINT + '/clickServlet/D', {
-        method: "POST",
-        body: localStorage.getItem("user")
-    }).then(() =>
-        {
-        let str = window.location.href.split('/');
-        if(str[str.length - 1] == "manageproject") {
-            localStorage.setItem("profileFilePath", "/SQUID3_demo_file.squid");
-            window.location.reload();
 
-        }
-        else {
-            window.location.href = window.location.href + "/manageproject"}
-        })
 
-}
 async function clickActionRefMat() {
-    const data = await fetch(SQUIDINK_ENDPOINT+ '/individ', {
+    const data = await fetch(SQUIDINK_ENDPOINT + '/individ', {
         method: "POST",
         body: localStorage.getItem("user") + ":RefMat"
     })
 }
+
 async function clickActionUnknown() {
     const data = await fetch(SQUIDINK_ENDPOINT + '/individ', {
         method: "POST",
         body: localStorage.getItem("user") + ":Unknown"
     })
 }
+
 async function clickActionProjectAudit() {
     const data = await fetch(SQUIDINK_ENDPOINT + '/individ', {
         method: "POST",
         body: localStorage.getItem("user") + ":ProjectAudit"
     })
 }
+
 async function clickActionTaskAudit() {
     const data = await fetch(SQUIDINK_ENDPOINT + '/individ', {
         method: "POST",
         body: localStorage.getItem("user") + ":TaskAudit"
     })
 }
+
 async function clickActionPerScan() {
     const data = await fetch(SQUIDINK_ENDPOINT + '/individ', {
         method: "POST",
         body: localStorage.getItem("user") + ":PerScan"
     })
 }
+
 async function clickActionSave() {
     const data = await fetch(SQUIDINK_ENDPOINT + '/save/s', {
         method: "POST",
@@ -60,6 +72,13 @@ async function clickActionSave() {
 
 }
 
+// about menu items functions+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+async function clickShowAbout() {
+        window.location.href = "/squidink/showabout"
+}
+
+
+// place holder functions ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 export function testFunction() {
     console.log("This is a test function")
 }
@@ -68,7 +87,7 @@ export const dropdownOptions = [
     [
         {
             title: 'Manage Project',
-            onclick: testFunction,
+            onclick: clickManageProject,
             id: 1
         },
         {
@@ -77,7 +96,7 @@ export const dropdownOptions = [
             id: 2
         },
         {
-            title: 'New SQUID RATIO Project BETA' ,
+            title: 'New SQUID RATIO Project BETA',
             onclick: testFunction,
             id: 3
         },
@@ -232,8 +251,8 @@ export const dropdownOptions = [
     ],
     [
         {
-            title: 'About Squid3',
-            onclick: testFunction,
+            title: 'About SquidInk',
+            onclick: clickShowAbout,
             id: 28
         },
         {
