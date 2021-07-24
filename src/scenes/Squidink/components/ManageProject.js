@@ -396,9 +396,17 @@ export class ManageProject extends React.Component {
                                 </div>
                                 <div className={cx('parameters-label')}>
                                     <h3>Parameters:</h3>
+                                    <div style={{padding: "10px"}}>
+                                        <Button variant="contained" color={"primary"} style={{float: "right"}}
+                                                onClick={() => this.updateProject("setDefaultParam")}>
+                                            Set Defaults
+                                        </Button>
+                                    </div>
+                                </div>
+                                <div className={cx('refresh-button')} style={{padding: "10px"}}>
                                     <Button variant="contained" color={"primary"} style={{float: "right"}}
-                                            onClick={() => this.updateProject("setDefaultParam")}>
-                                        Set Defaults
+                                            onClick={() => this.updateProject("refreshModel")}>
+                                        Refresh Models
                                     </Button>
                                 </div>
                                 <div className={cx('session-label')}>
@@ -572,10 +580,6 @@ export class ManageProject extends React.Component {
                                             }
                                         </Select>
                                     </FormControl>
-                                    <Button variant="contained" color={"primary"}
-                                            onClick={() => this.updateProject("refreshModel")}>
-                                        Refresh Models
-                                    </Button>
                                 </div>
                                 <div className={cx('notes-label')}>
                                     <h3>Notes:</h3>

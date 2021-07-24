@@ -181,6 +181,14 @@
     place-self: stretch;
 
 }
+.refresh-button {
+  grid-column-start: c1-start;
+  grid-column-end: c1-end;
+  grid-row-start: r8-end;
+  grid-row-end: r9-end;
+  justify-self: center;
+  align-self: start;
+}
 h3 {
   color: #3D83CC !important;
 }
