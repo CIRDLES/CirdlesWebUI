@@ -54,7 +54,7 @@ function WrapperComponent(props) {
                     <h1>Your file is loading</h1>
                 </div>
             </div>
-            : <div className={cx('container-custom')}>
+            : <div className={cx('container-custom')} style={props.style}>
                 <Modal open={props.modalOpen} onClose={props.handClose}>{body}</Modal>
                 <div className={cx('body')}>
                     {props.showfbr ?

@@ -155,8 +155,8 @@ const styles = {
   },
   body: {
     position: "absolute",
-    top: "3.5em",
-    right: "0",
+    top: "5.5em",
+    right: "100%",
     bottom: "0",
     left: "0",
     backgroundColor: colors.primary

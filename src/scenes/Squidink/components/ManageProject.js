@@ -379,9 +379,9 @@ export class ManageProject extends React.Component {
                 {
                     //Dont generate elements until project management pull is complete for defaultVal generation
                     this.state.mount ?
-                        <WrapperComponent openAction={this.openAction} isLoading={this.state.loading} modalOpen={this.state.modalOpen} handClose={this.handClose}
+                        <WrapperComponent style={{overflow: "scroll"}}openAction={this.openAction} isLoading={this.state.loading} modalOpen={this.state.modalOpen} handClose={this.handClose}
                                           hideinternal={this.hideinternal} showinternal={this.showinternal} toggleFilebrowserFunc={this.toggleFilebrowserFunc()} showfbr={this.state.showfbr}>
-                            <div className={cx('grid-container-custom')}>
+                            <div className={cx('grid-container-custom')} >
                                 <div className={cx('project-name-label')}>
                                     <h3>Project Name:</h3>
                                 </div>
