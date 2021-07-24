@@ -5,7 +5,7 @@ import { connect } from "react-redux";
 
 // Components
 import Main from "./components/Main"
-import SkeletonExample from "./components/SkeletonExample"
+import SkeletonExample from "./components/ManageProject"
 import ManageSpots from "./components/ManageSpots"
 import 'styles/Squidink/Main.scss';
 

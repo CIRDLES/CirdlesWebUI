@@ -105,17 +105,7 @@ export const dropdownOptions = [
             title: 'Save Squid Project as ...',
             onclick: testFunction,
             id: 8
-        },
-        {
-            title: 'Close Squid Project',
-            onclick: testFunction,
-            id: 9
-        },
-        {
-            title: 'Quit Squid',
-            onclick: testFunction,
-            id: 10
-        },
+        }
     ],
     [
         {
