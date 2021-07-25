@@ -62,6 +62,10 @@ export class ManageProject extends React.Component {
         this.showinternal = this.showinternal.bind(this);
         this.handClose = this.handClose.bind(this);
         this.openAction = this.openAction.bind(this);
+        this.projectNameFilterandUpdate = this.projectNameFilterandUpdate.bind(this)
+        this.analystNameUpdate = this.analystNameUpdate.bind(this)
+        this.notesUpdate = this.notesUpdate.bind(this)
+
     }
 
     async componentDidMount() {
@@ -229,19 +233,33 @@ export class ManageProject extends React.Component {
     }
 
     projectNameFilterandUpdate(event) {
-        axios.post(SQUIDINK_ENDPOINT + '/pmset', localStorage.getItem("user") + ":" + "projectName" + ":" + event.target.value, {
-            headers: {
-                'Content-Type': 'text/plain'
-            }
-        })
+        let regex = /[-._0-9a-zA-Z]+/g;
+        if(event.target.value == (event.target.value.match(regex) || []).join('')) {
+            axios.post(SQUIDINK_ENDPOINT + '/pmset', localStorage.getItem("user") + ":" + "projectName" + ":" + event.target.value, {
+                headers: {
+                    'Content-Type': 'text/plain'
+                }
+            })
+            this.setState({projectName: event.target.value})
+        }
+        else {
+            event.target.value = this.state.projectName;
+        }
     }
 
     analystNameUpdate(event) {
+        let regex = /[-._0-9a-zA-Z]+/g;
+        if(event.target.value == (event.target.value.match(regex) || []).join('')) {
         axios.post(SQUIDINK_ENDPOINT + '/pmset', localStorage.getItem("user") + ":" + "analystName" + ":" + event.target.value, {
             headers: {
                 'Content-Type': 'text/plain'
             }
         })
+            this.setState({projectName: event.target.value})
+        }
+        else {
+            event.target.value = this.state.projectName;
+        }
     }
 
     notesUpdate(event) {
