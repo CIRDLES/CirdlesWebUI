@@ -58,6 +58,10 @@ export class ManageProject extends React.Component {
         this.showinternal = this.showinternal.bind(this);
         this.handClose = this.handClose.bind(this);
         this.openAction = this.openAction.bind(this);
+        this.projectNameFilterandUpdate = this.projectNameFilterandUpdate.bind(this)
+        this.analystNameUpdate = this.analystNameUpdate.bind(this)
+        this.notesUpdate = this.notesUpdate.bind(this)
+
     }
 
     async componentDidMount() {
@@ -225,19 +229,31 @@ export class ManageProject extends React.Component {
     }
 
     projectNameFilterandUpdate(event) {
-        axios.post(SQUIDINK_ENDPOINT + '/pmset', localStorage.getItem("user") + ":" + "projectName" + ":" + event.target.value, {
-            headers: {
-                'Content-Type': 'text/plain'
-            }
-        })
+        let regex = /[-._0-9a-zA-Z]+/g;
+        if (event.target.value == (event.target.value.match(regex) || []).join('')) {
+            axios.post(SQUIDINK_ENDPOINT + '/pmset', localStorage.getItem("user") + ":" + "projectName" + ":" + event.target.value, {
+                headers: {
+                    'Content-Type': 'text/plain'
+                }
+            })
+            this.setState({projectName: event.target.value})
+        } else {
+            event.target.value = this.state.projectName;
+        }
     }
 
     analystNameUpdate(event) {
-        axios.post(SQUIDINK_ENDPOINT + '/pmset', localStorage.getItem("user") + ":" + "analystName" + ":" + event.target.value, {
-            headers: {
-                'Content-Type': 'text/plain'
-            }
-        })
+        let regex = /[-._0-9a-zA-Z]+/g;
+        if (event.target.value == (event.target.value.match(regex) || []).join('')) {
+            axios.post(SQUIDINK_ENDPOINT + '/pmset', localStorage.getItem("user") + ":" + "analystName" + ":" + event.target.value, {
+                headers: {
+                    'Content-Type': 'text/plain'
+                }
+            })
+            this.setState({projectName: event.target.value})
+        } else {
+            event.target.value = this.state.projectName;
+        }
     }
 
     notesUpdate(event) {
@@ -376,8 +392,9 @@ export class ManageProject extends React.Component {
                 {
                     //Dont generate elements until project management pull is complete for defaultVal generation
                     this.state.mount ?
-                        <WrapperComponent openAction={this.openAction} isLoading={this.state.loading}
-                                          modalOpen={this.state.modalOpen} handClose={this.handClose}
+                        <WrapperComponent style={{overflow: "scroll"}} openAction={this.openAction}
+                                          isLoading={this.state.loading} modalOpen={this.state.modalOpen}
+                                          handClose={this.handClose}
                                           hideinternal={this.hideinternal} showinternal={this.showinternal}
                                           toggleFilebrowserFunc={this.toggleFilebrowserFunc()}
                                           showfbr={this.state.showfbr}>
@@ -396,9 +413,17 @@ export class ManageProject extends React.Component {
                                 </div>
                                 <div className={cx('parameters-label')}>
                                     <h3>Parameters:</h3>
+                                    <div style={{padding: "10px"}}>
+                                        <Button variant="contained" color={"primary"} style={{float: "right"}}
+                                                onClick={() => this.updateProject("setDefaultParam")}>
+                                            Set Defaults
+                                        </Button>
+                                    </div>
+                                </div>
+                                <div className={cx('refresh-button')} style={{padding: "10px"}}>
                                     <Button variant="contained" color={"primary"} style={{float: "right"}}
-                                            onClick={() => this.updateProject("setDefaultParam")}>
-                                        Set Defaults
+                                            onClick={() => this.updateProject("refreshModel")}>
+                                        Refresh Models
                                     </Button>
                                 </div>
                                 <div className={cx('session-label')}>
@@ -572,10 +597,6 @@ export class ManageProject extends React.Component {
                                             }
                                         </Select>
                                     </FormControl>
-                                    <Button variant="contained" color={"primary"}
-                                            onClick={() => this.updateProject("refreshModel")}>
-                                        Refresh Models
-                                    </Button>
                                 </div>
                                 <div className={cx('notes-label')}>
                                     <h3>Notes:</h3>

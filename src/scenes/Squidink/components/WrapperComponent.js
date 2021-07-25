@@ -3,24 +3,11 @@ import ReactLoading from 'react-loading';
 import ResizePanel from "./ResizePanel";
 import style from 'styles/Squidink/Main.scss';
 import classNames from 'classnames/bind';
-import Image from "img/logos/SquidInk.svg"
-import axios from 'axios';
 import DropdownCustom from "./DropdownCustom";
 import "constants/api";
 import {dropdownOptions} from "../util/constants";
-import {connect} from "react-redux";
-import {FILEBROWSER_URL, SQUIDINK_ENDPOINT} from "constants/api";
+import {FILEBROWSER_URL} from "constants/api";
 import Modal from "@material-ui/core/Modal";
-import Button from "@material-ui/core/Button";
-import TextField from "@material-ui/core/TextField";
-import FormControl from "@material-ui/core/FormControl";
-import RadioGroup from "@material-ui/core/RadioGroup";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Radio from "@material-ui/core/Radio";
-import Checkbox from "@material-ui/core/Checkbox";
-import ButtonGroup from "@material-ui/core/ButtonGroup";
-import Select from "@material-ui/core/Select";
-import MenuItem from "@material-ui/core/MenuItem";
 
 let cx = classNames.bind(style);
 
@@ -28,7 +15,7 @@ function WrapperComponent(props) {
     let fOvd = new Map()
     fOvd.set('2', {function: props.openAction})
     fOvd.set('4', {function: props.openAction})
-    return(
+    return (
         <>{props.isLoading ?
             <div>
                 <div style={{
@@ -54,7 +41,7 @@ function WrapperComponent(props) {
                     <h1>Your file is loading</h1>
                 </div>
             </div>
-            : <div className={cx('container-custom')}>
+            : <div className={cx('container-custom')} style={props.style}>
                 <Modal open={props.modalOpen} onClose={props.handClose}>{body}</Modal>
                 <div className={cx('body')}>
                     {props.showfbr ?
@@ -81,7 +68,8 @@ function WrapperComponent(props) {
                                 <DropdownCustom dropdownName="Filebrowser"
                                                 dropdownOptions={props.toggleFilebrowserFunc}></DropdownCustom>
                                 <DropdownCustom dropdownName="Project"
-                                                dropdownOptions={dropdownOptions[0]} functionOverride={fOvd}></DropdownCustom>
+                                                dropdownOptions={dropdownOptions[0]}
+                                                functionOverride={fOvd}></DropdownCustom>
                                 <DropdownCustom dropdownName="Data"
                                                 dropdownOptions={dropdownOptions[1]}></DropdownCustom>
                                 <DropdownCustom dropdownName="Task"
@@ -110,9 +98,10 @@ function WrapperComponent(props) {
 
                 </div>
             </div>}
-            </>
-            )
+        </>
+    )
 }
+
 const body = (
     <div style={{
         position: 'absolute',

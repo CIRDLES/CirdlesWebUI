@@ -1,9 +1,4 @@
-.navbar {
-  position: fixed !important;
-  top: 0 !important;
-  width: 100% !important;
-  z-index: 11 !important;
-}
+
 .grid-container-custom {
   display: inline-grid;
   background: #dce3e6;
@@ -185,6 +180,14 @@
     width: 100%;
     place-self: stretch;
 
+}
+.refresh-button {
+  grid-column-start: c1-start;
+  grid-column-end: c1-end;
+  grid-row-start: r8-end;
+  grid-row-end: r9-end;
+  justify-self: center;
+  align-self: start;
 }
 h3 {
   color: #3D83CC !important;
