@@ -1,7 +1,5 @@
 import React from 'react';
 import {connect} from "react-redux";
-import DropdownCustom from "./DropdownCustom";
-import {dropdownOptions} from "../util/constants";
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -16,8 +14,6 @@ import MenuItem from "@material-ui/core/MenuItem";
 import ButtonGroup from "@material-ui/core/ButtonGroup";
 import axios from "axios";
 import {FILEBROWSER_URL, SQUIDINK_ENDPOINT} from "constants/api";
-import ResizePanel from "./ResizePanel";
-import ReactLoading from "react-loading";
 import WrapperComponent from "./WrapperComponent";
 
 let cx = classNames.bind(style);
@@ -234,30 +230,28 @@ export class ManageProject extends React.Component {
 
     projectNameFilterandUpdate(event) {
         let regex = /[-._0-9a-zA-Z]+/g;
-        if(event.target.value == (event.target.value.match(regex) || []).join('')) {
+        if (event.target.value == (event.target.value.match(regex) || []).join('')) {
             axios.post(SQUIDINK_ENDPOINT + '/pmset', localStorage.getItem("user") + ":" + "projectName" + ":" + event.target.value, {
                 headers: {
                     'Content-Type': 'text/plain'
                 }
             })
             this.setState({projectName: event.target.value})
-        }
-        else {
+        } else {
             event.target.value = this.state.projectName;
         }
     }
 
     analystNameUpdate(event) {
         let regex = /[-._0-9a-zA-Z]+/g;
-        if(event.target.value == (event.target.value.match(regex) || []).join('')) {
-        axios.post(SQUIDINK_ENDPOINT + '/pmset', localStorage.getItem("user") + ":" + "analystName" + ":" + event.target.value, {
-            headers: {
-                'Content-Type': 'text/plain'
-            }
-        })
+        if (event.target.value == (event.target.value.match(regex) || []).join('')) {
+            axios.post(SQUIDINK_ENDPOINT + '/pmset', localStorage.getItem("user") + ":" + "analystName" + ":" + event.target.value, {
+                headers: {
+                    'Content-Type': 'text/plain'
+                }
+            })
             this.setState({projectName: event.target.value})
-        }
-        else {
+        } else {
             event.target.value = this.state.projectName;
         }
     }
@@ -391,15 +385,20 @@ export class ManageProject extends React.Component {
         }]
         return out;
     }
+
     render() {
         return (
             <>
                 {
                     //Dont generate elements until project management pull is complete for defaultVal generation
                     this.state.mount ?
-                        <WrapperComponent style={{overflow: "scroll"}}openAction={this.openAction} isLoading={this.state.loading} modalOpen={this.state.modalOpen} handClose={this.handClose}
-                                          hideinternal={this.hideinternal} showinternal={this.showinternal} toggleFilebrowserFunc={this.toggleFilebrowserFunc()} showfbr={this.state.showfbr}>
-                            <div className={cx('grid-container-custom')} >
+                        <WrapperComponent style={{overflow: "scroll"}} openAction={this.openAction}
+                                          isLoading={this.state.loading} modalOpen={this.state.modalOpen}
+                                          handClose={this.handClose}
+                                          hideinternal={this.hideinternal} showinternal={this.showinternal}
+                                          toggleFilebrowserFunc={this.toggleFilebrowserFunc()}
+                                          showfbr={this.state.showfbr}>
+                            <div className={cx('grid-container-custom')}>
                                 <div className={cx('project-name-label')}>
                                     <h3>Project Name:</h3>
                                 </div>
@@ -604,7 +603,8 @@ export class ManageProject extends React.Component {
                                 </div>
                                 <div className={cx('notes-content')}>
                                     <TextField label="" defaultValue={this.state.notes}
-                                               InputLabelProps={{shrink: false}} onChange={this.notesUpdate} multiline rows={8}
+                                               InputLabelProps={{shrink: false}} onChange={this.notesUpdate} multiline
+                                               rows={8}
                                                fullWidth={true} style={{
                                         backgroundColor: "#d3d3d3"
                                     }}></TextField>
