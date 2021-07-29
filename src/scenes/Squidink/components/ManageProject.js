@@ -6,7 +6,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import TextField from "@material-ui/core/TextField";
 import classNames from "classnames/bind";
-import style from "styles/Squidink/Skeleton.scss";
+import style from "styles/Squidink/ManageProject.scss";
 import Checkbox from "@material-ui/core/Checkbox";
 import Button from "@material-ui/core/Button";
 import Select from "@material-ui/core/Select";
@@ -54,10 +54,6 @@ export class ManageProject extends React.Component {
         this.pullFromServ = this.pullFromServ.bind(this)
         this.updateProject = this.updateProject.bind(this)
         this.toggleFilebrowserFunc = this.toggleFilebrowserFunc.bind(this)
-        this.hideinternal = this.hideinternal.bind(this);
-        this.showinternal = this.showinternal.bind(this);
-        this.handClose = this.handClose.bind(this);
-        this.openAction = this.openAction.bind(this);
         this.projectNameFilterandUpdate = this.projectNameFilterandUpdate.bind(this)
         this.analystNameUpdate = this.analystNameUpdate.bind(this)
         this.notesUpdate = this.notesUpdate.bind(this)
@@ -66,39 +62,6 @@ export class ManageProject extends React.Component {
 
     async componentDidMount() {
         this.pullFromServ();
-
-        window.addEventListener('message', (e) => {
-            let apiCheck = e.data.toString().split(':');
-            if (e.origin == FILEBROWSER_URL) {
-                if (e.data.toString().length != 0 && apiCheck[0] != "api") {
-                    this.setState({loading: true})
-                    axios.post(SQUIDINK_ENDPOINT + '/OpenServlet/O', localStorage.getItem("user")
-                        + ":" + e.data, {
-                        headers: {
-                            'Content-Type': 'text/plain'
-                        }
-                    }).then(() => {
-                        this.setState({showfbr: false});
-                        this.setState({loading: false});
-                        localStorage.setItem("profileFilePath", e.data);
-                        location.reload();
-
-                    }).catch((er) => {
-                        console.log(er)
-                        this.setState({loading: false});
-                    })
-                } else if (apiCheck[0] == "api") {
-                    localStorage.setItem("user", apiCheck[1]);
-                    axios.post(SQUIDINK_ENDPOINT + '/api', apiCheck[1], {
-                        headers: {
-                            'Content-Type': 'text/plain'
-                        }
-                    })
-                }
-            }
-
-        }, false)
-
     }
 
     handleChange = (event) => {
@@ -200,8 +163,8 @@ export class ManageProject extends React.Component {
             } else {
                 this.setState({prefIndex: "208Pb"})
             }
-            this.setState({minSigPbU: arr[6]})
-            this.setState({minSigPbTh: arr[7]})
+            this.setState({minSigPbU: parseFloat(arr[6])})
+            this.setState({minSigPbTh: parseFloat(arr[7])})
             this.setState({version: arr[12]})
             this.setState({dataFilePath: arr[13]})
             this.setState({notes: arr[11]})
@@ -358,46 +321,13 @@ export class ManageProject extends React.Component {
         }
     }
 
-    async handClose() {
-        this.setState({modalOpen: false})
-    }
-
-    async hideinternal() {
-        this.setState({adragging: true})
-    }
-
-    async showinternal() {
-        this.setState({adragging: false})
-    }
-
-    async openAction() {
-        this.setState({modalOpen: true})
-    }
-
-    toggleFilebrowserFunc() {
-        let func = () => {
-            this.setState({showfbr: !this.state.showfbr})
-        }
-        let out = [{
-            title: 'Toggle Filebrowser',
-            onclick: func,
-            id: 34
-        }]
-        return out;
-    }
-
     render() {
         return (
             <>
                 {
                     //Dont generate elements until project management pull is complete for defaultVal generation
                     this.state.mount ?
-                        <WrapperComponent style={{overflow: "scroll"}} openAction={this.openAction}
-                                          isLoading={this.state.loading} modalOpen={this.state.modalOpen}
-                                          handClose={this.handClose}
-                                          hideinternal={this.hideinternal} showinternal={this.showinternal}
-                                          toggleFilebrowserFunc={this.toggleFilebrowserFunc()}
-                                          showfbr={this.state.showfbr}>
+                        <WrapperComponent style={{overflow: "scroll"}} history={this.props.history}>
                             <div className={cx('grid-container-custom')}>
                                 <div className={cx('project-name-label')}>
                                     <h3>Project Name:</h3>

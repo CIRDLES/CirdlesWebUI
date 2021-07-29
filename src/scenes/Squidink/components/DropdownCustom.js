@@ -45,14 +45,21 @@ export default class DropdownCustom extends React.Component {
 
     render() {
         return (
-
-            <div  ref={this.dropdownRef}className="menu-container-custom" >
+            this.props.onClickOveride != null ?
+                <div  ref={this.dropdownRef}className="menu-container-custom">
+                    <button onClick={this.props.onClickOveride} className="menu-trigger-custom">
+                        <span>{this.props.dropdownName}</span>
+                    </button>
+                </div>
+                :
+            <div  ref={this.dropdownRef}className="menu-container-custom">
                 <button onClick={this.clickAction} className="menu-trigger-custom">
                     <span>{this.props.dropdownName}</span>
                 </button>
                 <nav className={`menu-custom ${this.state.isActive ? "active" : "inactive"}`}>
                     <ul onClick={this.clickAction}>
                         {
+
                             this.props.dropdownOptions.map((options) => {
                                 if(this.props.functionOverride != undefined) {
                                     if(this.props.functionOverride.has(options.id.toString())) {
