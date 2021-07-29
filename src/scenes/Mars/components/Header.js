@@ -89,9 +89,8 @@ class Header extends Component {
       <header>
         <nav className="navbar navbar-light sticky-top">
           <Link className="navbar-brand" to="/mars">
-            MARS {MARS_VERSION} - interacting with:
+            MARS {MARS_VERSION} - interacting with: <a href={SESAR_BASE_URL} target="_blank">{SESAR_BASE_URL.replace("https://", "")}</a>
           </Link>
-           <a href={SESAR_BASE_URL} target="_blank">{SESAR_BASE_URL.replace("https://", "")}</a>
            <div>{this.renderLinks()}</div>
         </nav>
       </header>
