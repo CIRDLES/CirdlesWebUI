@@ -322,6 +322,7 @@ export class ManageProject extends React.Component {
     }
 
     render() {
+        console.log(localStorage.getItem("profileFilePath"))
         return (
             <>
                 {

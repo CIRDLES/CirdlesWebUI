@@ -10,6 +10,7 @@ import {FILEBROWSER_URL, SQUIDINK_ENDPOINT} from "constants/api";
 import Modal from "@material-ui/core/Modal";
 import axios from "axios";
 
+
 let cx = classNames.bind(style);
 class WrapperComponent extends React.Component{
     constructor(props) {
@@ -26,13 +27,13 @@ class WrapperComponent extends React.Component{
         this.handClose = this.handClose.bind(this);
         this.componentDidMount = this.componentDidMount.bind(this);
         this.openAction = this.openAction.bind(this);
-        this.toggleFilebrowserFunc = this.toggleFilebrowserFunc.bind(this)
         this.messageFunction = this.messageFunction.bind(this)
 
 
     }
     messageFunction = (e) => {
         let apiCheck = e.data.toString().split(':');
+
         if (e.origin == FILEBROWSER_URL) {
             if (e.data.toString().length != 0 && apiCheck[0] != "api") {
                 this.setState({loading: true})
@@ -90,17 +91,6 @@ class WrapperComponent extends React.Component{
         this.setState({modalOpen: true})
     }
 
-    toggleFilebrowserFunc() {
-        let func = () => {
-            this.setState({showfbr: !this.state.showfbr})
-        }
-        let out = [{
-            title: 'Toggle Filebrowser',
-            onclick: func,
-            id: 34
-        }]
-        return out;
-    }
     render() {
         let fOvd = new Map();
         fOvd.set('2', {function: this.openAction})
@@ -156,7 +146,7 @@ class WrapperComponent extends React.Component{
                                  style={{position: 'fixed', top: '40', zIndex: 10}}>
                                 <div className="rownav" style={{display: 'flex'}}>
                                     <DropdownCustom dropdownName="Filebrowser"
-                                                    dropdownOptions={this.toggleFilebrowserFunc} onClickOveride={this.hidediv}></DropdownCustom>
+                                                    onClickOveride={this.hidediv}></DropdownCustom>
                                     <DropdownCustom dropdownName="Project"
                                                     dropdownOptions={dropdownOptions[0]}
                                                     functionOverride={fOvd}></DropdownCustom>

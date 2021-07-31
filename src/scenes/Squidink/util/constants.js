@@ -68,6 +68,7 @@ async function clickActionSave() {
     const data = await fetch(SQUIDINK_ENDPOINT + '/save/s', {
         method: "POST",
         body: localStorage.getItem("user")
+            + ":" + localStorage.getItem("profileFilePath")
     })
 
 }
