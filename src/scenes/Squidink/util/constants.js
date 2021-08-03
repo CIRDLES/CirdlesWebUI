@@ -83,7 +83,17 @@ async function clickShowAbout() {
 export function testFunction() {
     console.log("This is a test function")
 }
-
+export const dropdownState = [
+    //State-Index
+    //State 0, Fresh-Page, Unopened File
+    [
+        0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1
+    ],
+    //State 1, Opened Demo File
+    [
+        1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1
+    ]
+]
 export const dropdownOptions = [
     [
         {
@@ -129,50 +139,52 @@ export const dropdownOptions = [
     ],
     [
         {
-            title: 'Data',
+            title: 'Manage Sample Names',
+            onclick: testFunction,
+            id: 9
+        },
+        {
+            title: 'Manage Spots & Reference Materials',
+            onclick: testFunction,
+            id: 10
+        },
+        {
+            title: 'Audit Raw Data',
             onclick: testFunction,
             id: 11
         },
         {
-            title: 'Data',
+            title: 'Save Project Data as Prawn Data File',
             onclick: testFunction,
             id: 12
         },
         {
-            title: 'Data',
+            title: 'Replace Project Data with data from another Prawn File...',
             onclick: testFunction,
             id: 13
         }
     ],
     [
         {
-            title: 'Task',
+            title: 'View Current Task',
             onclick: testFunction,
             id: 14
-        }
-    ],
-    [
-
+        },
         {
-            title: 'Isotopes',
+            title: 'New Task from...',
             onclick: testFunction,
             id: 15
-        }
-
-    ],
-    [
-
+        },
         {
-            title: 'Expressions',
+            title: 'Browse, Load, or Edit Task Files',
             onclick: testFunction,
             id: 16
         }
-
     ],
     [
 
         {
-            title: 'Common PB',
+            title: 'Map Isotopes from Data to Task',
             onclick: testFunction,
             id: 17
         }
@@ -181,9 +193,57 @@ export const dropdownOptions = [
     [
 
         {
-            title: 'Interpretations',
+            title: 'Manage Expressions',
             onclick: testFunction,
             id: 18
+        },
+        {
+            title: 'Load Expression from Library',
+            onclick: testFunction,
+            id: 19
+        },
+        {
+            title: 'Load Expression from xml File',
+            onclick: testFunction,
+            id: 20
+        },
+        {
+            title: 'Load Recent Expression from xml File',
+            onclick: testFunction,
+            id: 21
+        },
+        {
+            title: 'Import Custom Expressions from Folder',
+            onclick: testFunction,
+            id: 22
+        },
+        {
+            title: 'Export Custom Expressions to Folder',
+            onclick: testFunction,
+            id: 23
+        }
+
+    ],
+    [
+
+        {
+            title: 'Unknowns: 204 Count Corrections & Assign Common Lead Ratios',
+            onclick: testFunction,
+            id: 24
+        }
+
+    ],
+    [
+
+        {
+            title: 'Reference Materials',
+            onclick: testFunction,
+            id: 25
+        },
+        {
+            title: 'Unknowns',
+            onclick: testFunction,
+            id: 26
         }
 
     ],
@@ -192,37 +252,37 @@ export const dropdownOptions = [
         {
             title: 'Custom Report Builder',
             onclick: testFunction,
-            id: 19
+            id: 27
         },
         {
             title: 'Reference Materials',
             onclick: clickActionRefMat,
-            id: 20
+            id: 28
         },
         {
             title: 'Unknowns',
             onclick: clickActionUnknown,
-            id: 21
+            id: 29
         },
         {
             title: 'Project Audit',
             onclick: clickActionProjectAudit,
-            id: 22
+            id: 30
         },
         {
             title: 'Task Audit',
             onclick: clickActionTaskAudit,
-            id: 23
+            id: 31
         },
         {
             title: 'Generate All Reports',
             onclick: clickActionGen,
-            id: 24
+            id: 32
         },
         {
             title: 'PerScan Reports Bundle',
             onclick: clickActionPerScan,
-            id: 25
+            id: 33
         },
 
     ],
@@ -230,46 +290,56 @@ export const dropdownOptions = [
         {
             title: 'Archiving',
             onclick: testFunction,
-            id: 26
+            id: 34
         }
     ],
     [
         {
-            title: 'Parameters',
+            title: 'Reference Material Models',
             onclick: testFunction,
-            id: 27
+            id: 35
+        },
+        {
+            title: 'Common Pb Models',
+            onclick: testFunction,
+            id: 36
+        },
+        {
+            title: 'Physical Constants Models',
+            onclick: testFunction,
+            id: 37
         }
     ],
     [
         {
             title: 'About SquidInk',
             onclick: clickShowAbout,
-            id: 28
+            id: 38
         },
         {
             title: 'How to Cite Squid3',
             onclick: testFunction,
-            id: 29
+            id: 39
         },
         {
             title: 'Squid3 Github Repository',
             onclick: testFunction,
-            id: 30
+            id: 40
         },
         {
             title: 'CIRDLES.org',
             onclick: testFunction,
-            id: 31
+            id: 41
         },
         {
             title: 'Topsoil Github Repository',
             onclick: testFunction,
-            id: 32
+            id: 42
         },
         {
             title: 'Enjoy!',
             onclick: testFunction,
-            id: 33
+            id: 43
         }
     ]
 

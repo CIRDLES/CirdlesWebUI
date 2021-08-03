@@ -213,9 +213,9 @@ export class ManageProject extends React.Component {
                     'Content-Type': 'text/plain'
                 }
             })
-            this.setState({projectName: event.target.value})
+            this.setState({analystName: event.target.value})
         } else {
-            event.target.value = this.state.projectName;
+            event.target.value = this.state.analystName;
         }
     }
 
@@ -322,7 +322,6 @@ export class ManageProject extends React.Component {
     }
 
     render() {
-        console.log(localStorage.getItem("profileFilePath"))
         return (
             <>
                 {
