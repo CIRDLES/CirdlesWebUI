@@ -17,6 +17,10 @@ import {FILEBROWSER_URL, SQUIDINK_ENDPOINT} from "constants/api";
 import WrapperComponent from "./WrapperComponent";
 
 let cx = classNames.bind(style);
+//Fixes floating point arithmetic issues
+function strip(number) {
+    return parseFloat(parseFloat(number).toPrecision(12));
+}
 
 export class ManageProject extends React.Component {
     constructor(props) {
@@ -110,31 +114,64 @@ export class ManageProject extends React.Component {
 
     //Can't resolve event by name because internal spans of buttons are unnamed
     pbCounterUp() {
-        this.setState({minSigPbU: this.state.minSigPbU + .01})
-        setTimeout(() => {
-            this.updateProject("minSigPbU")
-        }, 200)
+        if(this.state.minSigPbU + .05 >= 1) {
+            this.setState({minSigPbU: 1})
+            setTimeout(() => {
+                this.updateProject("minSigPbU")
+            }, 200)
+        }
+        else {
+            this.setState({minSigPbU: strip(this.state.minSigPbU + .05)})
+            setTimeout(() => {
+                this.updateProject("minSigPbU")
+            }, 200)
+        }
     }
 
     pbCounterDown() {
-        this.setState({minSigPbU: this.state.minSigPbU - .01})
-        setTimeout(() => {
-            this.updateProject("minSigPbU")
-        }, 200)
+        if(this.state.minSigPbU - .05 <= 0) {
+            this.setState({minSigPbU: 0})
+            setTimeout(() => {
+                this.updateProject("minSigPbU")
+            }, 200)
+        }
+        else {
+            this.setState({minSigPbU: strip(this.state.minSigPbU - .05)})
+            setTimeout(() => {
+                this.updateProject("minSigPbU")
+            }, 200)
+        }
+        console.log(this.state.minSigPbU);
     }
 
     thCounterUp() {
-        this.setState({minSigPbTh: this.state.minSigPbTh + .01})
-        setTimeout(() => {
-            this.updateProject("minSigPbTh")
-        }, 200)
+        if(this.state.minSigPbTh + .05 >= 1) {
+            this.setState({minSigPbTh: 1})
+            setTimeout(() => {
+                this.updateProject("minSigPbTh")
+            }, 200)
+        }
+        else {
+            this.setState({minSigPbTh: strip(this.state.minSigPbTh + .05)})
+            setTimeout(() => {
+                this.updateProject("minSigPbTh")
+            }, 200)
+        }
     }
 
     thCounterDown() {
-        this.setState({minSigPbTh: this.state.minSigPbTh - .01})
-        setTimeout(() => {
-            this.updateProject("minSigPbTh")
-        }, 200)
+        if(this.state.minSigPbTh - .05 <= 0) {
+            this.setState({minSigPbTh: 0})
+            setTimeout(() => {
+                this.updateProject("minSigPbTh")
+            }, 200)
+        }
+        else {
+            this.setState({minSigPbTh: strip(this.state.minSigPbTh - .05)})
+            setTimeout(() => {
+                this.updateProject("minSigPbTh")
+            }, 200)
+        }
     }
 
     pullFromServ() {
@@ -449,7 +486,7 @@ export class ManageProject extends React.Component {
                                     <p style={{display: "inline"}}><b>Minimum external 1sigma % err for
                                         206Pb/238U: </b></p>
                                     <TextField value={this.state.minSigPbU}
-                                               style={{width: "4ch", marginLeft: "1%"}}></TextField>
+                                               style={{width: "4ch", marginLeft: "1%", minWidth: "4ch"}}></TextField>
                                     <ButtonGroup orientation="vertical" style={{maxHeight: "15px"}}>
                                         <Button style={{maxHeight: "15px"}} name="incPbU"
                                                 onClick={this.pbCounterUp}>+</Button>
@@ -459,7 +496,7 @@ export class ManageProject extends React.Component {
                                     <p style={{display: "inline", marginLeft: "1%"}}><b>for
                                         208Pb/232Th: </b></p>
                                     <TextField value={this.state.minSigPbTh}
-                                               style={{width: "4ch", marginLeft: "1%"}}></TextField>
+                                               style={{width: "4ch", marginLeft: "1%", minWidth: "4ch"}}></TextField>
                                     <ButtonGroup orientation="vertical" style={{maxHeight: "15px"}}>
                                         <Button style={{maxHeight: "15px"}} name="incPbTh"
                                                 onClick={this.thCounterUp}>+</Button>
