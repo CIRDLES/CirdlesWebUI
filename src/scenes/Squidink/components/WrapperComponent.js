@@ -58,14 +58,16 @@ class WrapperComponent extends React.Component{
                     headers: {
                         'Content-Type': 'text/plain'
                     }
+                }).catch((er) => {
+                    console.log(er)
                 })
             }
         }
     }
-    async componentDidMount() {
+    componentDidMount() {
         window.addEventListener('message', this.messageFunction, false)
     }
-    async componentWillUnmount() {
+    componentWillUnmount() {
         window.removeEventListener('message', this.messageFunction, false)
     }
 
