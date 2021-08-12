@@ -21,10 +21,18 @@ export class ManageSpots extends React.Component {
             //State-initializer, initialize state vars here for reference from html
             filterSpotsSelector: "All Samples",
             filterSpotsOptions: [],
+            rmSpots: [],
+            rmCount: 0,
+            rmFilter: "N/A",
+            crmSpots: [],
+            crmCount: 0,
+            crmFilter: "N/A",
             spotName: "no spot selected",
             isotopicRM: "Model1",
             crmModel: "Model1",
             spotsTable: [],
+            maxSampleCount: 0,
+            currentSampleCount: 0,
             showfbr: true,
             adragging: false,
             loading: false,
@@ -36,10 +44,13 @@ export class ManageSpots extends React.Component {
         this.componentDidMount = this.componentDidMount.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.generateTable = this.generateTable.bind(this);
+        this.copyRMButton = this.copyRMButton.bind(this);
+        this.copyCRMButton = this.copyCRMButton.bind(this);
     }
     handleChange = (event) => {
         switch(event.target.name) {
             case "filterSpotsSelector":
+                this.updateTable(event.target.value);
                 this.setState({filterSpotsSelector: event.target.value})
                 break;
             case "isotopicRM":
@@ -47,31 +58,57 @@ export class ManageSpots extends React.Component {
                 break;
         }
     }
-    generateTable(sampleType, value) {
-        console.log(value[0])
-        console.log()
-            if(value[0].toUpperCase().indexOf(sampleType) >= 0 || sampleType == "All Samples") {
+    generateRMTable(value) {
+        return(
+            <tr>
+                <td>
+                    {value[0]}
+                </td>
+                <td>
+                    {value[1]}
+                </td>
+                <td>
+                    {value[2]}
+                </td>
+            </tr>
+        )
+    }
+    generateTable(value) {
+            {
                 return(
                     <tr>
                         <td>
-                            {value[0].trim()}
+                            {value[0]}
                         </td>
                         <td>
-                            {value[1].trim()}
+                            {value[1]}
                         </td>
                         <td>
-                            {value[2].trim()}
+                            {value[2]}
                         </td>
                         <td>
-                            {value[3].trim()}
+                            {value[3]}
                         </td>
                         <td>
-                            {value[4].trim()}
+                            {value[4]}
                         </td>
                     </tr>
                 )
             }
         }
+    updateTable(event) {
+        axios.post(SQUIDINK_ENDPOINT + '/spotsupdate', localStorage.getItem("user") + "!@#" + event, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then( (body) => {
+            this.setState({spotsTable: body.data})
+            this.setState({currentSampleCount: body.data.length})
+        }).catch((err) => {
+            console.log(err)
+        })
+
+    }
     componentDidMount() {
         axios.post(SQUIDINK_ENDPOINT + '/spotspull', localStorage.getItem("user"), {
             headers: {
@@ -80,14 +117,31 @@ export class ManageSpots extends React.Component {
         }).then((body) => {
             //Because all of the responses come from a single servlet, must split/remove new line
             let arr = (body.data.split("\n"))
-            this.setState({filterSpotsOptions: JSON.parse(arr[0])})
-            this.setState({spotsTable: JSON.parse(arr[1])})
-            console.log(this.state.spotsTable)
+            this.setState({filterSpotsOptions: JSON.parse(arr[0].trim())})
+            this.setState({spotsTable: JSON.parse(arr[1].trim())})
+            this.setState({rmSpots: JSON.parse(arr[2].trim())})
+            this.setState({crmSpots: JSON.parse(arr[3].trim())})
+            this.setState({rmCount: JSON.parse(arr[2].trim()).length})
+            this.setState({crmCount: JSON.parse(arr[3].trim()).length})
+            this.setState({rmFilter: arr[4]})
+            this.setState({crmFilter: arr[5]})
+            this.setState({maxSampleCount: JSON.parse(arr[1].trim()).length})
+            this.setState({currentSampleCount: JSON.parse(arr[1].trim()).length})
             this.setState({mount: true})
         }).catch((err) => {
             console.log(err);
         })
+    }
+    copyRMButton() {
+        this.setState({rmSpots: this.state.spotsTable})
+        this.setState({rmCount: this.state.currentSampleCount})
+        this.setState({rmFilter: this.state.filterSpotsSelector})
 
+    }
+    copyCRMButton() {
+        this.setState({crmSpots: this.state.spotsTable})
+        this.setState({crmCount: this.state.currentSampleCount})
+        this.setState({crmFilter: this.state.filterSpotsSelector})
     }
 
     render() {
@@ -117,13 +171,14 @@ export class ManageSpots extends React.Component {
                                     }
                                 </Select>
                             </FormControl>
-                            <p style={{padding: "0 0 0 40px", display: "inline", fontSize: "smaller"}}>{"115/115"} shown</p>
+                            <p style={{padding: "0 0 0 40px", display: "inline", fontSize: "smaller"}}>{this.state.currentSampleCount + "/" + this.state.maxSampleCount} shown</p>
 
                         </div>
                         <div className={cx('table-left-custom')} style={{display: 'inline'}}>
-                            <div style={{overflowY: "scroll", maxHeight: "40em"}}>
+                            <div style={{overflowY: "auto", height: "40em"}}>
                                 <table style={{width: "100%"}}>
                                     <thead>
+                                    <tr>
                                         <th>
                                             Spot Name
                                         </th>
@@ -139,9 +194,11 @@ export class ManageSpots extends React.Component {
                                         <th>
                                             Scans
                                         </th>
+                                    </tr>
                                     </thead>
                                     <tbody>
-                                    { this.state.spotsTable.map(this.generateTable.bind(null, this.state.filterSpotsSelector))
+                                    {
+                                        this.state.spotsTable.map(this.generateTable.bind(null))
                                     }
                                     </tbody>
                                 </table>
@@ -159,14 +216,15 @@ export class ManageSpots extends React.Component {
                         </div>
                         <div className={cx('rm-spots-label-selected')}>
                             <h6 style={{color: "#000000"}}>
-                                <b>{"COUNT "}</b>
+                                <b>{this.state.rmCount + " "}</b>
                                 RM Spots selected using filter
-                                <b>{" FILTER"}</b>
+                                <b>{" " + this.state.rmFilter}</b>
                             </h6>
                         </div>
                         <div className={cx('rm-spots-table')} style={{display: "inline"}}>
                             <div style={{overflowY: "scroll", maxHeight: "12em"}}>
-                                <table style={{width: "100%"}}>
+                                <table>
+                                    <thead>
                                     <tr>
                                         <th>
                                             Ref Mat Name
@@ -178,245 +236,30 @@ export class ManageSpots extends React.Component {
                                             Time
                                         </th>
                                     </tr>
-                                    <tr>
-                                        <td>
-                                            Temora-1.1
-                                        </td>
-                                        <td>
-                                            2011-10-19
-                                        </td>
-                                        <td>
-                                            02:43:18
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            Temora-2.1
-                                        </td>
-                                        <td>
-                                            2012-01-23
-                                        </td>
-                                        <td>
-                                            07:12:54
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            Temora-1.1
-                                        </td>
-                                        <td>
-                                            2011-10-19
-                                        </td>
-                                        <td>
-                                            02:43:18
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            Temora-2.1
-                                        </td>
-                                        <td>
-                                            2012-01-23
-                                        </td>
-                                        <td>
-                                            07:12:54
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            Temora-1.1
-                                        </td>
-                                        <td>
-                                            2011-10-19
-                                        </td>
-                                        <td>
-                                            02:43:18
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            Temora-2.1
-                                        </td>
-                                        <td>
-                                            2012-01-23
-                                        </td>
-                                        <td>
-                                            07:12:54
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            Temora-1.1
-                                        </td>
-                                        <td>
-                                            2011-10-19
-                                        </td>
-                                        <td>
-                                            02:43:18
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            Temora-2.1
-                                        </td>
-                                        <td>
-                                            2012-01-23
-                                        </td>
-                                        <td>
-                                            07:12:54
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            Temora-1.1
-                                        </td>
-                                        <td>
-                                            2011-10-19
-                                        </td>
-                                        <td>
-                                            02:43:18
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            Temora-2.1
-                                        </td>
-                                        <td>
-                                            2012-01-23
-                                        </td>
-                                        <td>
-                                            07:12:54
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            Temora-1.1
-                                        </td>
-                                        <td>
-                                            2011-10-19
-                                        </td>
-                                        <td>
-                                            02:43:18
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            Temora-2.1
-                                        </td>
-                                        <td>
-                                            2012-01-23
-                                        </td>
-                                        <td>
-                                            07:12:54
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            Temora-1.1
-                                        </td>
-                                        <td>
-                                            2011-10-19
-                                        </td>
-                                        <td>
-                                            02:43:18
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            Temora-2.1
-                                        </td>
-                                        <td>
-                                            2012-01-23
-                                        </td>
-                                        <td>
-                                            07:12:54
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            Temora-1.1
-                                        </td>
-                                        <td>
-                                            2011-10-19
-                                        </td>
-                                        <td>
-                                            02:43:18
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            Temora-2.1
-                                        </td>
-                                        <td>
-                                            2012-01-23
-                                        </td>
-                                        <td>
-                                            07:12:54
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            Temora-1.1
-                                        </td>
-                                        <td>
-                                            2011-10-19
-                                        </td>
-                                        <td>
-                                            02:43:18
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            Temora-2.1
-                                        </td>
-                                        <td>
-                                            2012-01-23
-                                        </td>
-                                        <td>
-                                            07:12:54
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            Temora-1.1
-                                        </td>
-                                        <td>
-                                            2011-10-19
-                                        </td>
-                                        <td>
-                                            02:43:18
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            Temora-2.1
-                                        </td>
-                                        <td>
-                                            2012-01-23
-                                        </td>
-                                        <td>
-                                            07:12:54
-                                        </td>
-                                    </tr>
-
+                                    </thead>
+                                    <tbody>
+                                    { this.state.rmSpots.map(this.generateRMTable.bind(null))
+                                    }
+                                    </tbody>
                                 </table>
                             </div>
                             <div className={cx('hint-wrapper')}>
                                 <p style={{fontSize: "smaller", display: "inline"}}>Hint: To clear the list, right mouse-click on it anywhere for menu.</p>
-                                <Button variant="contained" color="primary">Copy Filtered Spots to RM Spots.</Button>
+                                <Button variant="contained" color="primary" onClick={this.copyRMButton}>Copy Filtered Spots to RM Spots.</Button>
                             </div>
                         </div>
                         <div className={cx('crm-spots-label')}>
                             <h5 style={{fontSize: "17px"}}>Concentration Reference Material (CRM) Spots:</h5>
                         </div>
                         <div className={cx('crm-spots-label-selected')}>
-                            <b>{"COUNT "}</b>
+                            <b>{this.state.crmCount + " "}</b>
                             CRM Spots selected using filter
-                            <b>{" FILTER"}</b>
+                            <b>{" " + this.state.crmFilter}</b>
                         </div>
                         <div className={cx('crm-spots-table')} style={{display: "inline"}}>
                             <div style={{overflowY: "scroll", maxHeight: "12em"}}>
                                 <table>
+                                    <thead>
                                     <tr>
                                         <th>
                                             Ref Mat Name
@@ -428,101 +271,16 @@ export class ManageSpots extends React.Component {
                                             Time
                                         </th>
                                     </tr>
-                                    <tr>
-                                        <td>
-                                            6266-1.1
-                                        </td>
-                                        <td>
-                                            2012-02-08
-                                        </td>
-                                        <td>
-                                            9:18:18
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            6266-1.1
-                                        </td>
-                                        <td>
-                                            2012-02-08
-                                        </td>
-                                        <td>
-                                            9:18:18
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            6266-1.1
-                                        </td>
-                                        <td>
-                                            2012-02-08
-                                        </td>
-                                        <td>
-                                            9:18:18
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            6266-1.1
-                                        </td>
-                                        <td>
-                                            2012-02-08
-                                        </td>
-                                        <td>
-                                            9:18:18
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            6266-1.1
-                                        </td>
-                                        <td>
-                                            2012-02-08
-                                        </td>
-                                        <td>
-                                            9:18:18
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            6266-1.1
-                                        </td>
-                                        <td>
-                                            2012-02-08
-                                        </td>
-                                        <td>
-                                            9:18:18
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            6266-1.1
-                                        </td>
-                                        <td>
-                                            2012-02-08
-                                        </td>
-                                        <td>
-                                            9:18:18
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            6266-1.1
-                                        </td>
-                                        <td>
-                                            2012-02-08
-                                        </td>
-                                        <td>
-                                            9:18:18
-                                        </td>
-                                    </tr>
-
-
+                                    </thead>
+                                    <tbody>
+                                    { this.state.crmSpots.map(this.generateRMTable.bind(null))
+                                    }
+                                    </tbody>
                                 </table>
                             </div>
                             <div className={cx('hint-wrapper')}>
                                 <p style={{fontSize: "smaller", display: "inline"}}>Hint: To clear the list, right mouse-click on it anywhere for menu.</p>
-                                <Button variant="contained" color="primary">Copy Filtered Spots to CRM Spots.</Button>
+                                <Button variant="contained" color="primary" onClick={this.copyCRMButton}>Copy Filtered Spots to CRM Spots.</Button>
                             </div>
                         </div>
                         <div className={cx('isotopic-rm-label')}>
