@@ -78,7 +78,9 @@ async function clickActionSave() {
     })
 
 }
-
+async function clickManageSpots() {
+    window.location.href = "/squidink/managespots"
+}
 // about menu items functions+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 async function clickShowAbout() {
         window.location.href = "/squidink/showabout"
@@ -151,7 +153,7 @@ export const dropdownOptions = [
         },
         {
             title: 'Manage Spots & Reference Materials',
-            onclick: testFunction,
+            onclick: clickManageSpots,
             id: 10
         },
         {

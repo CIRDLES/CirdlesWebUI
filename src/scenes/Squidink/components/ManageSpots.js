@@ -204,25 +204,25 @@ export class ManageSpots extends React.Component {
                                 </table>
                             </div>
                             <div className={cx('hint-wrapper')}>
-                                <p style={{fontSize: "smaller", display: "block", paddingRight: "10px", float: "none", clear:"right"}}>Hint:
-                                    To remove a spot or split session, right mouse-click on spot for menu.</p>
+                                <div className={cx('hint-wrapper')} style={{width: "100%"}}>
+                                    <p style={{fontSize: "smaller", display: "block", paddingRight: "10px"}}>
+                                        Hint: To remove a spot or split session, right mouse-click on spot for menu.</p>
+                                </div>
                                 <h6 style={{display: "inline", paddingRight: "5%"}}> Edit Spot Name: </h6>
                                 <TextField defaultValue={this.state.spotName} style={{paddingRight: "5%"}}/>
                                 <Button variant="contained" color="primary">Save Name</Button>
                             </div>
                         </div>
                         <div className={cx('rm-spots-label')}>
-                            <h5 style={{fontSize: "17px"}}>Isotopic Reference Material (RM) Spots</h5>
-                        </div>
-                        <div className={cx('rm-spots-label-selected')}>
-                            <h6 style={{color: "#000000"}}>
-                                <b>{this.state.rmCount + " "}</b>
-                                RM Spots selected using filter
-                                <b>{" " + this.state.rmFilter}</b>
-                            </h6>
-                        </div>
-                        <div className={cx('rm-spots-table')} style={{display: "inline"}}>
-                            <div style={{overflowY: "scroll", maxHeight: "12em"}}>
+                            <div className={cx('hint-wrapper')}>
+                                <h5 style={{fontSize: "17px", paddingTop: "15px"}}>Isotopic Reference Material (RM) Spots</h5>
+                                <h6 style={{color: "#000000"}}>
+                                    <b>{this.state.rmCount + " "}</b>
+                                    RM Spots selected using filter
+                                    <b>{" " + this.state.rmFilter}</b>
+                                </h6>
+                            </div>
+                            <div style={{overflowY: "scroll", maxHeight: "15em"}}>
                                 <table>
                                     <thead>
                                     <tr>
@@ -243,21 +243,19 @@ export class ManageSpots extends React.Component {
                                     </tbody>
                                 </table>
                             </div>
+                                <div className={cx('hint-wrapper')}>
+                                    <p style={{fontSize: "smaller", display: "inline"}}>Hint: To clear the list, right mouse-click on it anywhere for menu.</p>
+                                    <Button variant="contained" color="primary" onClick={this.copyRMButton}>Copy Filtered Spots to RM Spots.</Button>
+                                </div>
                             <div className={cx('hint-wrapper')}>
-                                <p style={{fontSize: "smaller", display: "inline"}}>Hint: To clear the list, right mouse-click on it anywhere for menu.</p>
-                                <Button variant="contained" color="primary" onClick={this.copyRMButton}>Copy Filtered Spots to RM Spots.</Button>
+                                <h5 style={{fontSize: "17px", paddingTop: "15px"}}>Concentration Reference Material (CRM) Spots</h5>
+                                <h6 style={{color: "#000000"}}>
+                                <b>{this.state.crmCount + " "}</b>
+                                CRM Spots selected using filter
+                                <b>{" " + this.state.crmFilter}</b>
+                                </h6>
                             </div>
-                        </div>
-                        <div className={cx('crm-spots-label')}>
-                            <h5 style={{fontSize: "17px"}}>Concentration Reference Material (CRM) Spots:</h5>
-                        </div>
-                        <div className={cx('crm-spots-label-selected')}>
-                            <b>{this.state.crmCount + " "}</b>
-                            CRM Spots selected using filter
-                            <b>{" " + this.state.crmFilter}</b>
-                        </div>
-                        <div className={cx('crm-spots-table')} style={{display: "inline"}}>
-                            <div style={{overflowY: "scroll", maxHeight: "12em"}}>
+                            <div style={{overflowY: "scroll", maxHeight: "15em"}}>
                                 <table>
                                     <thead>
                                     <tr>
