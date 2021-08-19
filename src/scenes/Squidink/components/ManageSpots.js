@@ -12,6 +12,7 @@ import Button from "@material-ui/core/Button";
 import WrapperComponent from "./WrapperComponent";
 import {FILEBROWSER_URL, SQUIDINK_ENDPOINT} from "constants/api";
 import axios from "axios";
+import ContextMenu from "./ContextMenu";
 let cx = classNames.bind(style);
 
 export class ManageSpots extends React.Component {
@@ -28,7 +29,7 @@ export class ManageSpots extends React.Component {
             crmCount: 0,
             crmFilter: "N/A",
             spotName: "no spot selected",
-            isotopicRM: "Model1",
+            rmModel: "Model1",
             crmModel: "Model1",
             spotsTable: [],
             maxSampleCount: 0,
@@ -37,7 +38,19 @@ export class ManageSpots extends React.Component {
             adragging: false,
             loading: false,
             modalOpen: false,
-            mount: false,
+            xPos: '0px',
+            yPos: '0px',
+            menuActive: false,
+            currentSpot: null,
+            rmModels: null,
+            crmModels: null,
+            data1: null,
+            data2: null,
+            data3: null,
+            data4: null,
+            uppm: null,
+            thppm: null,
+            mount: false
 
         };
         //If a component requires 'this.' context, it's easiest to bind it, i.e.
@@ -46,6 +59,11 @@ export class ManageSpots extends React.Component {
         this.generateTable = this.generateTable.bind(this);
         this.copyRMButton = this.copyRMButton.bind(this);
         this.copyCRMButton = this.copyCRMButton.bind(this);
+        this.handleClick = this.handleClick.bind(this);
+        this.pullContent = this.pullContent.bind(this);
+        this.handleContextMenu = this.handleContextMenu.bind(this);
+        this.checkParentLeftTable = this.checkParentLeftTable.bind(this);
+        this.spotNameOnChange = this.spotNameOnChange.bind(this);
     }
     handleChange = (event) => {
         switch(event.target.name) {
@@ -53,10 +71,41 @@ export class ManageSpots extends React.Component {
                 this.updateTable(event.target.value);
                 this.setState({filterSpotsSelector: event.target.value})
                 break;
-            case "isotopicRM":
-                this.setState({isotopicRM: event.target.value})
+            case "rmModel":
+                this.updateModel(event, event.target.value)
+                this.setState({rmModel: event.target.value})
+                break;
+            case "crmModel":
+                this.updateModel(event, event.target.value)
+                this.setState({crmModel: event.target.value})
                 break;
         }
+    }
+    pullModelData() {
+        axios.post(SQUIDINK_ENDPOINT + '/spotsdata', localStorage.getItem("user")+ "!@#" + this.state.rmModel + "!@#" + this.state.crmModel, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then((body) => {
+            let response = body.data.split("\n")
+            console.log(response[0])
+
+            this.setState({data1: parseFloat(response[1].replace(/['"]+/g, '')).toFixed(3)})
+            this.setState({data2: parseFloat(response[2].replace(/['"]+/g, '')).toFixed(3)})
+            this.setState({data3: parseFloat(response[3].replace(/['"]+/g, '')).toFixed(3)})
+            this.setState({data4: parseFloat(response[4].replace(/['"]+/g, '')).toFixed(3)})
+            this.setState({uppm: parseFloat(response[5].replace(/['"]+/g, '')).toFixed(3)})
+            this.setState({thppm: parseFloat(response[6].replace(/['"]+/g, '')).toFixed(3)})
+        })
+    }
+    updateModel(event, modelName) {
+        return axios.post(SQUIDINK_ENDPOINT + '/spotsmodels', localStorage.getItem("user")+ "!@#" + event.target.name + "!@#" + modelName, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(() => {
+            this.pullModelData();
+        })
     }
     generateRMTable(value) {
         return(
@@ -77,7 +126,7 @@ export class ManageSpots extends React.Component {
             {
                 return(
                     <tr>
-                        <td>
+                        <td id="name">
                             {value[0]}
                         </td>
                         <td>
@@ -104,12 +153,13 @@ export class ManageSpots extends React.Component {
         }).then( (body) => {
             this.setState({spotsTable: body.data})
             this.setState({currentSampleCount: body.data.length})
+            this.setState({currentSpot: null})
+            this.setState({spotName: "no spot selected"})
         }).catch((err) => {
             console.log(err)
         })
-
     }
-    componentDidMount() {
+    pullContent() {
         axios.post(SQUIDINK_ENDPOINT + '/spotspull', localStorage.getItem("user"), {
             headers: {
                 'Content-Type': 'application/json'
@@ -127,21 +177,103 @@ export class ManageSpots extends React.Component {
             this.setState({crmFilter: arr[5]})
             this.setState({maxSampleCount: JSON.parse(arr[1].trim()).length})
             this.setState({currentSampleCount: JSON.parse(arr[1].trim()).length})
+            let model1 = arr[6].replace("\r", "").split("!@#")
+            let model2 = arr[7].replace("\r", "").split("!@#")
+            this.setState({rmModels: model1})
+            this.setState({crmModels: model2})
+            this.setState({rmModel: JSON.parse(arr[8])})
+            this.setState({crmModel: JSON.parse(arr[9])})
+            this.pullModelData();
             this.setState({mount: true})
         }).catch((err) => {
             console.log(err);
         })
     }
-    copyRMButton() {
-        this.setState({rmSpots: this.state.spotsTable})
-        this.setState({rmCount: this.state.currentSampleCount})
-        this.setState({rmFilter: this.state.filterSpotsSelector})
-
+    componentDidMount() {
+        this.pullContent()
+        document.addEventListener("click", this.handleClick);
+        document.addEventListener("contextmenu", this.handleContextMenu);
     }
-    copyCRMButton() {
-        this.setState({crmSpots: this.state.spotsTable})
-        this.setState({crmCount: this.state.currentSampleCount})
-        this.setState({crmFilter: this.state.filterSpotsSelector})
+    componentWillUnmount() {
+        document.removeEventListener("click", this.handleClick);
+        document.removeEventListener("contextmenu", this.handleContextMenu);
+    }
+    handleContextMenu(event) {
+        //Check event target to ensure its an element
+        if (event.target != window) {
+            //Determine base-table associated with selected element
+            let isLeftTable = this.checkParentLeftTable(event.target)
+            //Place menu at the site of the click
+            if(isLeftTable) {
+                //Catches the standard context menu action
+                event.preventDefault();
+                //Iterate through children of the target's parent to identify the name-identifying element
+                let childElements = event.target.parentElement.children;
+                for(let i = 0; i < childElements.length; i++) {
+                    if(childElements[i].id=="name") {
+                        this.setState({spotName: childElements[i].textContent.trim()})
+                        this.setState({currentSpot: childElements[i]})
+                    }
+                }
+                this.setState({
+                    xPos: event.pageX + 'px',
+                    yPos: (event.pageY - 40) + 'px',
+                    menuActive: true
+                })}
+        }
+        }
+    checkParentLeftTable(target) {
+        //Check if the target is the header of the table
+        if(target.parentElement.id == "header" || target.id == "header") {
+            return false;
+        }
+        if(target.parentElement != null) {
+            if(target.parentElement.id != "leftTable") {
+                return this.checkParentLeftTable(target.parentElement)
+            }
+            else {
+                return true;
+            }
+        }
+        else {
+            return false;
+        }
+    }
+    handleClick(event) {
+        //on a click action hide the menu
+        if(this.state.menuActive) {
+            this.setState({menuActive: false})
+        }
+    }
+    buttonPost(event) {
+        return axios.post(SQUIDINK_ENDPOINT + '/spotstables', localStorage.getItem("user")+ "!@#" + event.target.id + "!@#" +this.filterSpotsSelector, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+    }
+    copyRMButton(event) {
+        this.buttonPost(event).then(() => {
+            this.pullModelData();
+            this.setState({rmSpots: this.state.spotsTable})
+            this.setState({rmCount: this.state.currentSampleCount})
+            this.setState({rmFilter: this.state.filterSpotsSelector})
+        }).catch((err) => {
+            console.log(err);
+        })
+    }
+    copyCRMButton(event) {
+        this.buttonPost(event).then(() => {
+            this.pullModelData();
+            this.setState({crmSpots: this.state.spotsTable})
+            this.setState({crmCount: this.state.currentSampleCount})
+            this.setState({crmFilter: this.state.filterSpotsSelector})
+        }).catch((err) => {
+            console.log(err);
+        })
+    }
+    spotNameOnChange(event) {
+        this.setState({spotName: event.target.value})
     }
 
     render() {
@@ -152,6 +284,7 @@ export class ManageSpots extends React.Component {
                 //Dont generate elements until project spots pull is complete for defaultVal generation
                 this.state.mount ?
             <WrapperComponent  style={{overflow: "scroll"}}history={this.props.history}>
+                <ContextMenu xPos={this.state.xPos} yPos={this.state.yPos} menuActive={this.state.menuActive}/>
                 <div style={{display: "flex", justifyContent: "center", alignItems: "center", width: "100%"}}>
                     <div className={cx('grid-container-spots')}>
                         <div className={cx('filter-spots-label')}>
@@ -176,8 +309,8 @@ export class ManageSpots extends React.Component {
                         </div>
                         <div className={cx('table-left-custom')} style={{display: 'inline'}}>
                             <div style={{overflowY: "auto", height: "40em"}}>
-                                <table style={{width: "100%"}}>
-                                    <thead>
+                                <table id="leftTable"style={{width: "100%"}}>
+                                    <thead id="header">
                                     <tr>
                                         <th>
                                             Spot Name
@@ -209,8 +342,9 @@ export class ManageSpots extends React.Component {
                                         Hint: To remove a spot or split session, right mouse-click on spot for menu.</p>
                                 </div>
                                 <h6 style={{display: "inline", paddingRight: "5%"}}> Edit Spot Name: </h6>
-                                <TextField defaultValue={this.state.spotName} style={{paddingRight: "5%"}}/>
-                                <Button variant="contained" color="primary">Save Name</Button>
+                                <TextField value={this.state.spotName} onChange={this.spotNameOnChange} style={{paddingRight: "5%"}}/>
+                                <Button name="spotNameButton"variant="contained" color="primary" onClick={() => {this.state.currentSpot.textContent = this.state.spotName}}>
+                                    Save Name</Button>
                             </div>
                         </div>
                         <div className={cx('rm-spots-label')}>
@@ -223,8 +357,8 @@ export class ManageSpots extends React.Component {
                                 </h6>
                             </div>
                             <div style={{overflowY: "scroll", maxHeight: "15em"}}>
-                                <table>
-                                    <thead>
+                                <table id="RMTable">
+                                    <thead id="header">
                                     <tr>
                                         <th>
                                             Ref Mat Name
@@ -245,7 +379,7 @@ export class ManageSpots extends React.Component {
                             </div>
                                 <div className={cx('hint-wrapper')}>
                                     <p style={{fontSize: "smaller", display: "inline"}}>Hint: To clear the list, right mouse-click on it anywhere for menu.</p>
-                                    <Button variant="contained" color="primary" onClick={this.copyRMButton}>Copy Filtered Spots to RM Spots.</Button>
+                                    <Button id="RM"variant="contained" color="primary" onClick={this.copyRMButton}>Copy Filtered Spots to RM Spots.</Button>
                                 </div>
                             <div className={cx('hint-wrapper')}>
                                 <h5 style={{fontSize: "17px", paddingTop: "15px"}}>Concentration Reference Material (CRM) Spots</h5>
@@ -256,8 +390,8 @@ export class ManageSpots extends React.Component {
                                 </h6>
                             </div>
                             <div style={{overflowY: "scroll", maxHeight: "15em"}}>
-                                <table>
-                                    <thead>
+                                <table id="CRMTable">
+                                    <thead id="header">
                                     <tr>
                                         <th>
                                             Ref Mat Name
@@ -278,7 +412,7 @@ export class ManageSpots extends React.Component {
                             </div>
                             <div className={cx('hint-wrapper')}>
                                 <p style={{fontSize: "smaller", display: "inline"}}>Hint: To clear the list, right mouse-click on it anywhere for menu.</p>
-                                <Button variant="contained" color="primary" onClick={this.copyCRMButton}>Copy Filtered Spots to CRM Spots.</Button>
+                                <Button id="CRM"variant="contained" color="primary" onClick={this.copyCRMButton}>Copy Filtered Spots to CRM Spots.</Button>
                             </div>
                         </div>
                         <div className={cx('isotopic-rm-label')}>
@@ -286,15 +420,16 @@ export class ManageSpots extends React.Component {
                             <FormControl style={{width: "90%"}}>
                                 <Select
                                     labelId="isotopic-RM-label"
-                                    id="isotopicRM"
-                                    name="isotopicRM"
-                                    value={this.state.isotopicRM}
+                                    id="rmModel"
+                                    name="rmModel"
+                                    value={this.state.rmModel}
                                     onChange={this.handleChange}
                                 >
-                                    <MenuItem value={"Model1"}>Model1</MenuItem>
-                                    <MenuItem value={"Model2"}>Model2</MenuItem>
-                                    <MenuItem value={"Model3"}>Model3</MenuItem>
-                                    <MenuItem value={"Model4"}>Model4</MenuItem>
+                                    {
+                                        this.state.rmModels.map((value) => {
+                                            return (<MenuItem value={value}>{value}</MenuItem>)
+                                        })
+                                    }
                                 </Select>
                             </FormControl>
                         </div>
@@ -304,7 +439,7 @@ export class ManageSpots extends React.Component {
                                     206Pb/238U date (Ma):
                                 </h5>
                                 <b className={cx('grid-list-item-right')}>
-                                    value
+                                    {this.state.data1}
                                 </b>
                             </div>
                             <div className={cx('grid-list')}>
@@ -312,7 +447,7 @@ export class ManageSpots extends React.Component {
                                     207Pb/206Pb date (Ma):
                                 </h5>
                                 <b className={cx('grid-list-item-right')}>
-                                    value
+                                    {this.state.data2}
                                 </b>
                             </div>
                             <div className={cx('grid-list')}>
@@ -320,7 +455,7 @@ export class ManageSpots extends React.Component {
                                     208Pb/232Th date (Ma):
                                 </h5>
                                 <b className={cx('grid-list-item-right')}>
-                                    value
+                                    {this.state.data3}
                                 </b>
                             </div>
                             <div className={cx('grid-list')}>
@@ -328,7 +463,7 @@ export class ManageSpots extends React.Component {
                                     238U/235U (nat abun):
                                 </h5>
                                 <b className={cx('grid-list-item-right')}>
-                                    value
+                                    {this.state.data4}
                                 </b>
                             </div>
                             <div className={cx('grid-list-crm')}>
@@ -347,10 +482,11 @@ export class ManageSpots extends React.Component {
                                     value={this.state.crmModel}
                                     onChange={this.handleChange}
                                 >
-                                    <MenuItem value={"Model1"}>Model1</MenuItem>
-                                    <MenuItem value={"Model2"}>Model2</MenuItem>
-                                    <MenuItem value={"Model3"}>Model3</MenuItem>
-                                    <MenuItem value={"Model4"}>Model4</MenuItem>
+                                    {
+                                        this.state.crmModels.map((value) => {
+                                            return (<MenuItem value={value}>{value}</MenuItem>)
+                                        })
+                                    }
                                 </Select>
                             </FormControl>
                         </div>
@@ -360,7 +496,7 @@ export class ManageSpots extends React.Component {
                                     U (ppm):
                                 </h5>
                                 <b className={cx('grid-list-item-right-crm')}>
-                                    value
+                                    {this.state.uppm}
                                 </b>
                             </div>
                             <div className={cx('grid-list-crm')}>
@@ -368,7 +504,7 @@ export class ManageSpots extends React.Component {
                                     Th (ppm):
                                 </h5>
                                 <b className={cx('grid-list-item-right-crm')}>
-                                    value
+                                    {this.state.thppm}
                                 </b>
                             </div>
                             <div className={cx('grid-list-crm')}>
