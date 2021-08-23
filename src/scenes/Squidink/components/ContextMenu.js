@@ -15,9 +15,11 @@ export default class DropdownCustom extends React.Component {
                 {
                     this.props.menuActive ?
                         <ul className="menu" style={{top: this.props.yPos, left: this.props.xPos, position: "absolute"}}>
-                            <li className="menuOpt">Login</li>
-                            <li className="menuOpt">Register</li>
-                            <li className="menuOpt">Open Profile</li>
+                            {
+                                this.props.contextContent.map((val) => {
+                                    return(<li key={Math.random()}className="menuOpt">{val}</li>)
+                                })
+                            }
                         </ul>
                         : null
                 }

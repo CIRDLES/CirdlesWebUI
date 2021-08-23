@@ -44,13 +44,19 @@ export class ManageSpots extends React.Component {
             currentSpot: null,
             rmModels: null,
             crmModels: null,
-            data1: null,
-            data2: null,
-            data3: null,
-            data4: null,
+            data1: 0,
+            data2: 0,
+            data3: 0,
+            data4: 0,
             uppm: null,
             thppm: null,
-            mount: false
+            eudit: null,
+            auditChanges: "",
+            contextContent: [],
+            leftTargetElement: null,
+            rightTargetElement: null,
+            mount: false,
+
 
         };
         //If a component requires 'this.' context, it's easiest to bind it, i.e.
@@ -60,9 +66,11 @@ export class ManageSpots extends React.Component {
         this.copyRMButton = this.copyRMButton.bind(this);
         this.copyCRMButton = this.copyCRMButton.bind(this);
         this.handleClick = this.handleClick.bind(this);
+        this.handleLeftContextMenu = this.handleLeftContextMenu.bind(this)
+        this.handleRightContextMenu = this.handleRightContextMenu.bind(this)
         this.pullContent = this.pullContent.bind(this);
-        this.handleContextMenu = this.handleContextMenu.bind(this);
-        this.checkParentLeftTable = this.checkParentLeftTable.bind(this);
+        this.handleRightActiveClick = this.handleRightActiveClick.bind(this)
+        this.handleLeftActiveClick = this.handleLeftActiveClick.bind(this)
         this.spotNameOnChange = this.spotNameOnChange.bind(this);
     }
     handleChange = (event) => {
@@ -88,14 +96,23 @@ export class ManageSpots extends React.Component {
             }
         }).then((body) => {
             let response = body.data.split("\n")
-            console.log(response[0])
-
-            this.setState({data1: parseFloat(response[1].replace(/['"]+/g, '')).toFixed(3)})
-            this.setState({data2: parseFloat(response[2].replace(/['"]+/g, '')).toFixed(3)})
-            this.setState({data3: parseFloat(response[3].replace(/['"]+/g, '')).toFixed(3)})
-            this.setState({data4: parseFloat(response[4].replace(/['"]+/g, '')).toFixed(3)})
-            this.setState({uppm: parseFloat(response[5].replace(/['"]+/g, '')).toFixed(3)})
-            this.setState({thppm: parseFloat(response[6].replace(/['"]+/g, '')).toFixed(3)})
+            let parsedAudit = JSON.parse(response[0])[0]
+            if(parsedAudit.includes("F")) {
+                window.alert("This reference material model is missing meaningful age data. \n\nPlease choose another model")
+            }
+            else {
+                if (parsedAudit.includes(1)) {
+                    window.alert("This reference material model is missing * key age(s), so Squid3 is temporarily substituting values (shown in red) and refreshing as follows\n\n" + response[0][1])
+                    this.setState({auditChanges: JSON.parse(response[0])[1]})
+                }
+                this.setState({audit: JSON.parse(response[0])[1].includes("F")})
+                this.setState({data1: parseFloat(response[1].replace(/['"]+/g, '')).toFixed(3)})
+                this.setState({data2: parseFloat(response[2].replace(/['"]+/g, '')).toFixed(3)})
+                this.setState({data3: parseFloat(response[3].replace(/['"]+/g, '')).toFixed(3)})
+                this.setState({data4: parseFloat(response[4].replace(/['"]+/g, '')).toFixed(3)})
+                this.setState({uppm: parseFloat(response[5].replace(/['"]+/g, '')).toFixed(3)})
+                this.setState({thppm: parseFloat(response[6].replace(/['"]+/g, '')).toFixed(3)})
+            }
         })
     }
     updateModel(event, modelName) {
@@ -162,7 +179,8 @@ export class ManageSpots extends React.Component {
     pullContent() {
         axios.post(SQUIDINK_ENDPOINT + '/spotspull', localStorage.getItem("user"), {
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                "Access-Control-Allow-Origin":"*"
             }
         }).then((body) => {
             //Because all of the responses come from a single servlet, must split/remove new line
@@ -185,6 +203,17 @@ export class ManageSpots extends React.Component {
             this.setState({crmModel: JSON.parse(arr[9])})
             this.pullModelData();
             this.setState({mount: true})
+            const leftTable = document.getElementById('leftTable')
+            const RMTable = document.getElementById('RMTable')
+            const CRMTable = document.getElementById('CRMTable')
+            leftTable.addEventListener('contextmenu', this.handleLeftContextMenu)
+            RMTable.addEventListener('contextmenu', this.handleRightContextMenu)
+            CRMTable.addEventListener('contextmenu', this.handleRightContextMenu)
+            leftTable.addEventListener('click', this.handleLeftActiveClick)
+            RMTable.addEventListener('click', this.handleRightActiveClick)
+            CRMTable.addEventListener('click', this.handleRightActiveClick)
+
+
         }).catch((err) => {
             console.log(err);
         })
@@ -192,51 +221,81 @@ export class ManageSpots extends React.Component {
     componentDidMount() {
         this.pullContent()
         document.addEventListener("click", this.handleClick);
-        document.addEventListener("contextmenu", this.handleContextMenu);
+    }
+    handleLeftActiveClick(event) {
+        if(this.state.leftTargetElement != null) {
+            this.state.leftTargetElement.classList.remove("active")
+        }
+        let childElements = event.target.parentElement.children;
+        for (let i = 0; i < childElements.length; i++) {
+            if (childElements[i].id == "name") {
+                this.setState({spotName: childElements[i].textContent.trim()})
+                this.setState({currentSpot: childElements[i]})
+            }
+        }
+        event.target.parentElement.classList.add("active")
+        this.setState({
+            leftTargetElement: event.target.parentElement,
+        })
+    }
+    handleRightActiveClick(event) {
+        if(this.state.rightTargetElement != null) {
+            this.state.rightTargetElement.classList.remove("active")
+        }
+        event.target.parentElement.classList.add("active")
+        this.setState({
+            rightTargetElement: event.target.parentElement,
+        })
     }
     componentWillUnmount() {
+        const leftTable = document.getElementById('leftTable')
+        const RMTable = document.getElementById('RMTable')
+        const CRMTable = document.getElementById('CRMTable')
+        leftTable.removeEventListener('contextmenu', this.handleLeftContextMenu)
+        RMTable.removeEventListener('contextmenu', this.handleRightContextMenu)
+        CRMTable.removeEventListener('contextmenu', this.handleRightContextMenu)
         document.removeEventListener("click", this.handleClick);
-        document.removeEventListener("contextmenu", this.handleContextMenu);
     }
-    handleContextMenu(event) {
-        //Check event target to ensure its an element
-        if (event.target != window) {
-            //Determine base-table associated with selected element
-            let isLeftTable = this.checkParentLeftTable(event.target)
-            //Place menu at the site of the click
-            if(isLeftTable) {
-                //Catches the standard context menu action
-                event.preventDefault();
-                //Iterate through children of the target's parent to identify the name-identifying element
-                let childElements = event.target.parentElement.children;
-                for(let i = 0; i < childElements.length; i++) {
-                    if(childElements[i].id=="name") {
-                        this.setState({spotName: childElements[i].textContent.trim()})
-                        this.setState({currentSpot: childElements[i]})
+    handleLeftContextMenu(event) {
+                if(event.target.parentElement.parentElement.id != "header") {
+                    //Catches the standard context menu action
+                    event.preventDefault();
+                    if(this.state.leftTargetElement != null) {
+                        this.state.leftTargetElement.classList.remove("active")
                     }
+                    event.target.parentElement.classList.add("active")
+                    //Iterate through children of the target's parent to identify the name-identifying element
+                    let childElements = event.target.parentElement.children;
+                    for (let i = 0; i < childElements.length; i++) {
+                        if (childElements[i].id == "name") {
+                            this.setState({spotName: childElements[i].textContent.trim()})
+                            this.setState({currentSpot: childElements[i]})
+                        }
+                    }
+                    this.setState({
+                        contextContent: ["Remove selected spot.", "Split Prawn file starting from this run, using original unedited and without duplicates notes.", "Split prawn file starting from this run, using this edited list with duplicates noted."],
+                        xPos: event.pageX + 'px',
+                        yPos: (event.pageY - 40) + 'px',
+                        leftTargetElement: event.target.parentElement,
+                        menuActive: true
+                    })
                 }
-                this.setState({
-                    xPos: event.pageX + 'px',
-                    yPos: (event.pageY - 40) + 'px',
-                    menuActive: true
-                })}
         }
-        }
-    checkParentLeftTable(target) {
-        //Check if the target is the header of the table
-        if(target.parentElement.id == "header" || target.id == "header") {
-            return false;
-        }
-        if(target.parentElement != null) {
-            if(target.parentElement.id != "leftTable") {
-                return this.checkParentLeftTable(target.parentElement)
+    handleRightContextMenu(event) {
+        if(event.target.parentElement.parentElement.id != "header") {
+            //Catches the standard context menu action
+            event.preventDefault();
+            if(this.state.rightTargetElement != null) {
+                this.state.rightTargetElement.classList.remove("active")
             }
-            else {
-                return true;
-            }
-        }
-        else {
-            return false;
+            event.target.parentElement.classList.add("active")
+            this.setState({
+                contextContent: ["Clear list."],
+                xPos: event.pageX + 'px',
+                yPos: (event.pageY - 40) + 'px',
+                rightTargetElement: event.target.parentElement,
+                menuActive: true
+            })
         }
     }
     handleClick(event) {
@@ -284,7 +343,7 @@ export class ManageSpots extends React.Component {
                 //Dont generate elements until project spots pull is complete for defaultVal generation
                 this.state.mount ?
             <WrapperComponent  style={{overflow: "scroll"}}history={this.props.history}>
-                <ContextMenu xPos={this.state.xPos} yPos={this.state.yPos} menuActive={this.state.menuActive}/>
+                <ContextMenu contextContent={this.state.contextContent}xPos={this.state.xPos} yPos={this.state.yPos} menuActive={this.state.menuActive}/>
                 <div style={{display: "flex", justifyContent: "center", alignItems: "center", width: "100%"}}>
                     <div className={cx('grid-container-spots')}>
                         <div className={cx('filter-spots-label')}>

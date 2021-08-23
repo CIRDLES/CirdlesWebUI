@@ -208,7 +208,9 @@
 tr:nth-child(even) {
   background-color: #dddddd;
 }
-
+.active{
+  background-color: #4982F4 !important;
+}
 table {
   font-family: arial, sans-serif;
   border-collapse: collapse;
