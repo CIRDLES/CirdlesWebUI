@@ -191,8 +191,8 @@ export class ManageSpots extends React.Component {
             this.setState({crmSpots: JSON.parse(arr[3].trim())})
             this.setState({rmCount: JSON.parse(arr[2].trim()).length})
             this.setState({crmCount: JSON.parse(arr[3].trim()).length})
-            this.setState({rmFilter: arr[4]})
-            this.setState({crmFilter: arr[5]})
+            this.setState({rmFilter: JSON.parse(arr[4])})
+            this.setState({crmFilter: JSON.parse(arr[5])})
             this.setState({maxSampleCount: JSON.parse(arr[1].trim()).length})
             this.setState({currentSampleCount: JSON.parse(arr[1].trim()).length})
             let model1 = arr[6].replace("\r", "").split("!@#")
@@ -304,15 +304,15 @@ export class ManageSpots extends React.Component {
             this.setState({menuActive: false})
         }
     }
-    buttonPost(event) {
-        return axios.post(SQUIDINK_ENDPOINT + '/spotstables', localStorage.getItem("user")+ "!@#" + event.target.id + "!@#" +this.filterSpotsSelector, {
+    buttonPost(event, arg) {
+        return axios.post(SQUIDINK_ENDPOINT + '/spotstables', localStorage.getItem("user")+ "!@#" + arg + "!@#" +this.state.filterSpotsSelector, {
             headers: {
                 'Content-Type': 'application/json'
             }
         })
     }
-    copyRMButton(event) {
-        this.buttonPost(event).then(() => {
+    copyRMButton(event, arg) {
+        this.buttonPost(event, arg).then(() => {
             this.pullModelData();
             this.setState({rmSpots: this.state.spotsTable})
             this.setState({rmCount: this.state.currentSampleCount})
@@ -321,8 +321,8 @@ export class ManageSpots extends React.Component {
             console.log(err);
         })
     }
-    copyCRMButton(event) {
-        this.buttonPost(event).then(() => {
+    copyCRMButton(event, arg) {
+        this.buttonPost(event, arg).then(() => {
             this.pullModelData();
             this.setState({crmSpots: this.state.spotsTable})
             this.setState({crmCount: this.state.currentSampleCount})
@@ -438,7 +438,7 @@ export class ManageSpots extends React.Component {
                             </div>
                                 <div className={cx('hint-wrapper')}>
                                     <p style={{fontSize: "smaller", display: "inline"}}>Hint: To clear the list, right mouse-click on it anywhere for menu.</p>
-                                    <Button id="RM"variant="contained" color="primary" onClick={this.copyRMButton}>Copy Filtered Spots to RM Spots.</Button>
+                                    <Button id="RM"variant="contained" color="primary" onClick={(event) => {this.copyRMButton(event, "RM")}}>Copy Filtered Spots to RM Spots.</Button>
                                 </div>
                             <div className={cx('hint-wrapper')}>
                                 <h5 style={{fontSize: "17px", paddingTop: "15px"}}>Concentration Reference Material (CRM) Spots</h5>
@@ -471,7 +471,7 @@ export class ManageSpots extends React.Component {
                             </div>
                             <div className={cx('hint-wrapper')}>
                                 <p style={{fontSize: "smaller", display: "inline"}}>Hint: To clear the list, right mouse-click on it anywhere for menu.</p>
-                                <Button id="CRM"variant="contained" color="primary" onClick={this.copyCRMButton}>Copy Filtered Spots to CRM Spots.</Button>
+                                <Button id="CRM"variant="contained" color="primary" onClick={(event) => {this.copyCRMButton(event, "CRM")}}>Copy Filtered Spots to CRM Spots.</Button>
                             </div>
                         </div>
                         <div className={cx('isotopic-rm-label')}>
