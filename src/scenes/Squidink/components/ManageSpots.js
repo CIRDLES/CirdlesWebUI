@@ -1,7 +1,7 @@
 import React from "react";
 import {connect} from "react-redux";
 import DropdownCustom from "./DropdownCustom";
-import {dropdownOptions} from "../util/constants";
+import {dropdownOptions, testFunction} from "../util/constants";
 import classNames from "classnames/bind";
 import style from "styles/Squidink/ManageSpots.scss";
 import Select from "@material-ui/core/Select";
@@ -72,6 +72,9 @@ export class ManageSpots extends React.Component {
         this.handleRightActiveClick = this.handleRightActiveClick.bind(this)
         this.handleLeftActiveClick = this.handleLeftActiveClick.bind(this)
         this.spotNameOnChange = this.spotNameOnChange.bind(this);
+        this.clearListRM = this.clearListRM.bind(this);
+        this.clearListCRM = this.clearListCRM.bind(this);
+        this.saveNameClick = this.saveNameClick.bind(this);
     }
     handleChange = (event) => {
         switch(event.target.name) {
@@ -206,6 +209,12 @@ export class ManageSpots extends React.Component {
             const leftTable = document.getElementById('leftTable')
             const RMTable = document.getElementById('RMTable')
             const CRMTable = document.getElementById('CRMTable')
+            leftTable.removeEventListener('contextmenu', this.handleLeftContextMenu)
+            RMTable.removeEventListener('contextmenu', this.handleRightContextMenu)
+            CRMTable.removeEventListener('contextmenu', this.handleRightContextMenu)
+            leftTable.removeEventListener('click', this.handleLeftActiveClick)
+            RMTable.removeEventListener('click', this.handleRightActiveClick)
+            CRMTable.removeEventListener('click', this.handleRightActiveClick)
             leftTable.addEventListener('contextmenu', this.handleLeftContextMenu)
             RMTable.addEventListener('contextmenu', this.handleRightContextMenu)
             CRMTable.addEventListener('contextmenu', this.handleRightContextMenu)
@@ -224,7 +233,7 @@ export class ManageSpots extends React.Component {
     }
     handleLeftActiveClick(event) {
         if(this.state.leftTargetElement != null) {
-            this.state.leftTargetElement.classList.remove("active")
+            this.state.leftTargetElement.classList.remove("activeSelection")
         }
         let childElements = event.target.parentElement.children;
         for (let i = 0; i < childElements.length; i++) {
@@ -233,16 +242,16 @@ export class ManageSpots extends React.Component {
                 this.setState({currentSpot: childElements[i]})
             }
         }
-        event.target.parentElement.classList.add("active")
+        event.target.parentElement.classList.add("activeSelection")
         this.setState({
             leftTargetElement: event.target.parentElement,
         })
     }
     handleRightActiveClick(event) {
         if(this.state.rightTargetElement != null) {
-            this.state.rightTargetElement.classList.remove("active")
+            this.state.rightTargetElement.classList.remove("activeSelection")
         }
-        event.target.parentElement.classList.add("active")
+        event.target.parentElement.classList.add("activeSelection")
         this.setState({
             rightTargetElement: event.target.parentElement,
         })
@@ -254,6 +263,9 @@ export class ManageSpots extends React.Component {
         leftTable.removeEventListener('contextmenu', this.handleLeftContextMenu)
         RMTable.removeEventListener('contextmenu', this.handleRightContextMenu)
         CRMTable.removeEventListener('contextmenu', this.handleRightContextMenu)
+        leftTable.removeEventListener('click', this.handleLeftActiveClick)
+        RMTable.removeEventListener('click', this.handleRightActiveClick)
+        CRMTable.removeEventListener('click', this.handleRightActiveClick)
         document.removeEventListener("click", this.handleClick);
     }
     handleLeftContextMenu(event) {
@@ -261,9 +273,9 @@ export class ManageSpots extends React.Component {
                     //Catches the standard context menu action
                     event.preventDefault();
                     if(this.state.leftTargetElement != null) {
-                        this.state.leftTargetElement.classList.remove("active")
+                        this.state.leftTargetElement.classList.remove("activeSelection")
                     }
-                    event.target.parentElement.classList.add("active")
+                    event.target.parentElement.classList.add("activeSelection")
                     //Iterate through children of the target's parent to identify the name-identifying element
                     let childElements = event.target.parentElement.children;
                     for (let i = 0; i < childElements.length; i++) {
@@ -272,6 +284,11 @@ export class ManageSpots extends React.Component {
                             this.setState({currentSpot: childElements[i]})
                         }
                     }
+                    let funcArr = [];
+                    funcArr.push(testFunction())
+                    funcArr.push(testFunction())
+                    funcArr.push(testFunction())
+                    this.setState({contextContentFunctions: funcArr})
                     this.setState({
                         contextContent: ["Remove selected spot.", "Split Prawn file starting from this run, using original unedited and without duplicates notes.", "Split prawn file starting from this run, using this edited list with duplicates noted."],
                         xPos: event.pageX + 'px',
@@ -283,12 +300,29 @@ export class ManageSpots extends React.Component {
         }
     handleRightContextMenu(event) {
         if(event.target.parentElement.parentElement.id != "header") {
+            let table = event.target.parentElement.parentElement.parentElement
             //Catches the standard context menu action
             event.preventDefault();
             if(this.state.rightTargetElement != null) {
-                this.state.rightTargetElement.classList.remove("active")
+                this.state.rightTargetElement.classList.remove("activeSelection")
             }
-            event.target.parentElement.classList.add("active")
+            event.target.parentElement.classList.add("activeSelection")
+            if(table.id=="RMTable") {
+                let funcArr = [];
+                let func = () => {
+                    this.clearListRM(null, "RM")
+                }
+                funcArr.push(func)
+                this.setState({contextContentFunctions: funcArr})
+            }
+            else {
+                let funcArr = [];
+                let func = () => {
+                    this.clearListCRM(null, "CRM")
+                }
+                funcArr.push(func)
+                this.setState({contextContentFunctions: funcArr})
+            }
             this.setState({
                 contextContent: ["Clear list."],
                 xPos: event.pageX + 'px',
@@ -304,7 +338,25 @@ export class ManageSpots extends React.Component {
             this.setState({menuActive: false})
         }
     }
-    buttonPost(event, arg) {
+    saveNameClick(event) {
+        if(this.state.spotName.length > 0) {
+            axios.post(SQUIDINK_ENDPOINT + '/spotsname', localStorage.getItem("user")+ "!@#" + this.state.currentSpot.textContent + "!@#" + this.state.spotName, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(() => {
+                this.pullContent();
+            })
+        }
+    }
+    buttonPost(event, arg, contentOpt) {
+        if(contentOpt != null && contentOpt == "clear") {
+            return axios.post(SQUIDINK_ENDPOINT + '/spotstables', localStorage.getItem("user")+ "!@#" + arg + "!@#" + contentOpt, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+        }
         return axios.post(SQUIDINK_ENDPOINT + '/spotstables', localStorage.getItem("user")+ "!@#" + arg + "!@#" +this.state.filterSpotsSelector, {
             headers: {
                 'Content-Type': 'application/json'
@@ -312,6 +364,7 @@ export class ManageSpots extends React.Component {
         })
     }
     copyRMButton(event, arg) {
+        if(this.state.filterSpotsSelector != "All Samples") {
         this.buttonPost(event, arg).then(() => {
             this.pullModelData();
             this.setState({rmSpots: this.state.spotsTable})
@@ -321,7 +374,9 @@ export class ManageSpots extends React.Component {
             console.log(err);
         })
     }
+    }
     copyCRMButton(event, arg) {
+        if(this.state.filterSpotsSelector != "All Samples") {
         this.buttonPost(event, arg).then(() => {
             this.pullModelData();
             this.setState({crmSpots: this.state.spotsTable})
@@ -330,7 +385,30 @@ export class ManageSpots extends React.Component {
         }).catch((err) => {
             console.log(err);
         })
+        }
     }
+    clearListRM(event, arg) {
+        this.buttonPost(event, arg, "clear").then(() => {
+            this.pullModelData();
+            this.setState({rmSpots: []})
+            this.setState({rmCount: 0})
+            this.setState({rmFilter: ""})
+        }).catch((err) => {
+            console.log(err);
+        })
+    }
+    clearListCRM(event, arg) {
+        console.log(arg)
+        this.buttonPost(event, arg, "clear").then(() => {
+            this.pullModelData();
+            this.setState({crmSpots: []})
+            this.setState({crmCount: 0})
+            this.setState({crmFilter: ""})
+        }).catch((err) => {
+            console.log(err);
+        })
+    }
+
     spotNameOnChange(event) {
         this.setState({spotName: event.target.value})
     }
@@ -343,7 +421,7 @@ export class ManageSpots extends React.Component {
                 //Dont generate elements until project spots pull is complete for defaultVal generation
                 this.state.mount ?
             <WrapperComponent  style={{overflow: "scroll"}}history={this.props.history}>
-                <ContextMenu contextContent={this.state.contextContent}xPos={this.state.xPos} yPos={this.state.yPos} menuActive={this.state.menuActive}/>
+                <ContextMenu functions={this.state.contextContentFunctions}contextContent={this.state.contextContent}xPos={this.state.xPos} yPos={this.state.yPos} menuActive={this.state.menuActive}/>
                 <div style={{display: "flex", justifyContent: "center", alignItems: "center", width: "100%"}}>
                     <div className={cx('grid-container-spots')}>
                         <div className={cx('filter-spots-label')}>
@@ -402,7 +480,7 @@ export class ManageSpots extends React.Component {
                                 </div>
                                 <h6 style={{display: "inline", paddingRight: "5%"}}> Edit Spot Name: </h6>
                                 <TextField value={this.state.spotName} onChange={this.spotNameOnChange} style={{paddingRight: "5%"}}/>
-                                <Button name="spotNameButton"variant="contained" color="primary" onClick={() => {this.state.currentSpot.textContent = this.state.spotName}}>
+                                <Button name="spotNameButton"variant="contained" color="primary" onClick={this.saveNameClick}>
                                     Save Name</Button>
                             </div>
                         </div>
