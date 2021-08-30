@@ -183,7 +183,6 @@ export class ManageSpots extends React.Component {
         axios.post(SQUIDINK_ENDPOINT + '/spotspull', localStorage.getItem("user"), {
             headers: {
                 'Content-Type': 'application/json',
-                "Access-Control-Allow-Origin":"*"
             }
         }).then((body) => {
             //Because all of the responses come from a single servlet, must split/remove new line
