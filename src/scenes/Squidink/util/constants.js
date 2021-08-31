@@ -69,6 +69,12 @@ async function clickActionPerScan() {
         body: localStorage.getItem("user") + ":PerScan"
     })
 }
+async function clickActionClose() {
+    const data = await fetch(SQUIDINK_ENDPOINT + '/close', {
+        method: "POST",
+        body: localStorage.getItem("user")
+    }).then(window.location.href="/squidink")
+}
 
 async function clickActionSave() {
     const data = await fetch(SQUIDINK_ENDPOINT + '/save/s', {
@@ -114,21 +120,21 @@ export const dropdownOptions = [
             onclick: testFunction,
             id: 2
         },
-        {
-            title: 'New SQUID RATIO Project BETA',
-            onclick: testFunction,
-            id: 3
-        },
+        //{
+        //    title: 'New SQUID RATIO Project BETA',
+        //    onclick: testFunction,
+        //    id: 3
+        //},
         {
             title: 'Open Squid Project',
             onclick: testFunction,
             id: 4
         },
-        {
-            title: 'Open Recent Squid Project',
-            onclick: testFunction,
-            id: 5
-        },
+        //{
+        //    title: 'Open Recent Squid Project',
+        //    onclick: testFunction,
+        //    id: 5
+        //},
         {
             title: 'Open Demonstration Squid Project',
             onclick: clickActionDemo,
@@ -143,7 +149,12 @@ export const dropdownOptions = [
             title: 'Save Squid Project as ...',
             onclick: testFunction,
             id: 8
-        }
+        },
+        {
+        title: 'Close Squid Project',
+        onclick: clickActionClose,
+        id: 5
+        },
     ],
     [
         {

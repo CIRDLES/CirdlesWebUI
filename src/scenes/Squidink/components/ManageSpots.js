@@ -108,6 +108,7 @@ export class ManageSpots extends React.Component {
                     window.alert("This reference material model is missing * key age(s), so Squid3 is temporarily substituting values (shown in red) and refreshing as follows\n\n" + response[0][1])
                     this.setState({auditChanges: JSON.parse(response[0])[1]})
                 }
+
                 this.setState({audit: JSON.parse(response[0])[1].includes("F")})
                 this.setState({data1: parseFloat(response[1].replace(/['"]+/g, '')).toFixed(3)})
                 this.setState({data2: parseFloat(response[2].replace(/['"]+/g, '')).toFixed(3)})
@@ -187,6 +188,7 @@ export class ManageSpots extends React.Component {
         }).then((body) => {
             //Because all of the responses come from a single servlet, must split/remove new line
             let arr = (body.data.split("\n"))
+            console.log(arr[4])
             this.setState({filterSpotsOptions: JSON.parse(arr[0].trim())})
             this.setState({spotsTable: JSON.parse(arr[1].trim())})
             this.setState({rmSpots: JSON.parse(arr[2].trim())})
