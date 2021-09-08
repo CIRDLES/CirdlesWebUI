@@ -55,6 +55,8 @@ export class ManageSpots extends React.Component {
             contextContent: [],
             leftTargetElement: null,
             rightTargetElement: null,
+            cleared: false,
+            isDeleted: false,
             mount: false,
 
 
@@ -75,6 +77,7 @@ export class ManageSpots extends React.Component {
         this.clearListRM = this.clearListRM.bind(this);
         this.clearListCRM = this.clearListCRM.bind(this);
         this.saveNameClick = this.saveNameClick.bind(this);
+        this.restoreSpot = this.restoreSpot.bind(this);
     }
     handleChange = (event) => {
         switch(event.target.name) {
@@ -181,30 +184,35 @@ export class ManageSpots extends React.Component {
         })
     }
     pullContent() {
-        axios.post(SQUIDINK_ENDPOINT + '/spotspull', localStorage.getItem("user"), {
+        return axios.post(SQUIDINK_ENDPOINT + '/spotspull', localStorage.getItem("user"), {
             headers: {
                 'Content-Type': 'application/json',
             }
         }).then((body) => {
             //Because all of the responses come from a single servlet, must split/remove new line
             let arr = (body.data.split("\n"))
-            console.log(arr[4])
             this.setState({filterSpotsOptions: JSON.parse(arr[0].trim())})
             this.setState({spotsTable: JSON.parse(arr[1].trim())})
-            this.setState({rmSpots: JSON.parse(arr[2].trim())})
-            this.setState({crmSpots: JSON.parse(arr[3].trim())})
-            this.setState({rmCount: JSON.parse(arr[2].trim()).length})
-            this.setState({crmCount: JSON.parse(arr[3].trim()).length})
             this.setState({rmFilter: JSON.parse(arr[4])})
             this.setState({crmFilter: JSON.parse(arr[5])})
+            if(this.state.rmFilter != "NO FILTER" && this.state.rmFilter.length != 0) {
+                this.setState({rmSpots: JSON.parse(arr[2].trim())})
+                this.setState({rmCount: JSON.parse(arr[2].trim()).length})
+            }
+            if(this.state.crmFilter != "NO FILTER" && this.state.crmFilter.length != 0) {
+                this.setState({crmSpots: JSON.parse(arr[3].trim())})
+                this.setState({crmCount: JSON.parse(arr[3].trim()).length})
+            }
             this.setState({maxSampleCount: JSON.parse(arr[1].trim()).length})
             this.setState({currentSampleCount: JSON.parse(arr[1].trim()).length})
             let model1 = arr[6].replace("\r", "").split("!@#")
             let model2 = arr[7].replace("\r", "").split("!@#")
+            model2.push("NONE v.1.0")
             this.setState({rmModels: model1})
             this.setState({crmModels: model2})
             this.setState({rmModel: JSON.parse(arr[8])})
             this.setState({crmModel: JSON.parse(arr[9])})
+            this.setState({isDeleted: !arr[10]})
             this.pullModelData();
             this.setState({mount: true})
             const leftTable = document.getElementById('leftTable')
@@ -285,18 +293,26 @@ export class ManageSpots extends React.Component {
                             this.setState({currentSpot: childElements[i]})
                         }
                     }
-                    let funcArr = [];
-                    funcArr.push(testFunction())
-                    funcArr.push(testFunction())
-                    funcArr.push(testFunction())
-                    this.setState({contextContentFunctions: funcArr})
+
+                        let funcArr = [];
+                        if(this.state.isDeleted) {
+                            funcArr.push(() => this.restoreSpot())
+                            funcArr.push(() => this.removeSpot(this.state.spotName))
+                        }
+                        else {
+                            funcArr.push(() => this.removeSpot(this.state.spotName))
+                        }
+                        funcArr.push(() => testFunction())
+                        funcArr.push(() => testFunction())
+                        this.setState({contextContentFunctions: funcArr})
                     this.setState({
-                        contextContent: ["Remove selected spot.", "Split Prawn file starting from this run, using original unedited and without duplicates notes.", "Split prawn file starting from this run, using this edited list with duplicates noted."],
+                        contextContent: this.state.isDeleted ? ["Restore removed spot(s)", "Remove selected spot.", "Split Prawn file starting from this run, using original unedited and without duplicates notes.", "Split prawn file starting from this run, using this edited list with duplicates noted."]: ["Remove selected spot.", "Split Prawn file starting from this run, using original unedited and without duplicates notes.", "Split prawn file starting from this run, using this edited list with duplicates noted."],
                         xPos: event.pageX + 'px',
                         yPos: (event.pageY - 40) + 'px',
                         leftTargetElement: event.target.parentElement,
                         menuActive: true
                     })
+
                 }
         }
     handleRightContextMenu(event) {
@@ -332,6 +348,32 @@ export class ManageSpots extends React.Component {
                 menuActive: true
             })
         }
+    }
+    removeSpot(name) {
+        document.body.style.cursor='wait'
+        axios.post(SQUIDINK_ENDPOINT + '/removespot', localStorage.getItem("user") + ":" + name, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(() => {
+            this.pullContent().then(() => {
+                document.body.style.cursor='default'
+                this.setState({isDeleted: true});
+            })
+        })
+    }
+    restoreSpot() {
+        document.body.style.cursor='wait'
+        axios.post(SQUIDINK_ENDPOINT + '/restorespot', localStorage.getItem("user"), {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(() => {
+            this.pullContent().then(() => {
+                document.body.style.cursor='default'
+                this.setState({isDeleted: false});
+            })
+        })
     }
     handleClick(event) {
         //on a click action hide the menu
@@ -390,21 +432,22 @@ export class ManageSpots extends React.Component {
     }
     clearListRM(event, arg) {
         this.buttonPost(event, arg, "clear").then(() => {
-            this.pullModelData();
-            this.setState({rmSpots: []})
-            this.setState({rmCount: 0})
-            this.setState({rmFilter: ""})
+            this.pullContent().then(() => {
+                this.setState({rmSpots: []})
+                this.setState({rmCount: 0})
+                this.setState({rmFilter: "NO FILTER"})
+            })
         }).catch((err) => {
             console.log(err);
         })
     }
     clearListCRM(event, arg) {
-        console.log(arg)
         this.buttonPost(event, arg, "clear").then(() => {
-            this.pullModelData();
-            this.setState({crmSpots: []})
-            this.setState({crmCount: 0})
-            this.setState({crmFilter: ""})
+            this.pullContent().then(() => {
+                this.setState({crmSpots: []})
+                this.setState({crmCount: 0})
+                this.setState({crmFilter: "NO FILTER"})
+            })
         }).catch((err) => {
             console.log(err);
         })
@@ -487,7 +530,7 @@ export class ManageSpots extends React.Component {
                         </div>
                         <div className={cx('rm-spots-label')}>
                             <div className={cx('hint-wrapper')}>
-                                <h5 style={{fontSize: "17px", paddingTop: "15px"}}>Isotopic Reference Material (RM) Spots</h5>
+                                <h5 style={{fontSize: "17px", paddingTop: "15px", width: "100%", display: "flex", justifyContent: "center"}}>Isotopic Reference Material (RM) Spots</h5>
                                 <h6 style={{color: "#000000"}}>
                                     <b>{this.state.rmCount + " "}</b>
                                     RM Spots selected using filter

@@ -9,6 +9,8 @@ import {dropdownOptions} from "../util/constants";
 import {FILEBROWSER_URL, SQUIDINK_ENDPOINT} from "constants/api";
 import Modal from "@material-ui/core/Modal";
 import axios from "axios";
+import TextField from "@material-ui/core/TextField";
+import Button from "@material-ui/core/Button";
 
 
 let cx = classNames.bind(style);
@@ -19,7 +21,9 @@ class WrapperComponent extends React.Component{
             showfbr: true,
             adragging: false,
             loading: false,
-            modalOpen: false
+            modalOpen: false,
+            saveAsModalOpen: false,
+            saveAsName: "",
         };
         this.hidediv = this.hidediv.bind(this);
         this.hideinternal = this.hideinternal.bind(this);
@@ -27,8 +31,10 @@ class WrapperComponent extends React.Component{
         this.handClose = this.handClose.bind(this);
         this.componentDidMount = this.componentDidMount.bind(this);
         this.openAction = this.openAction.bind(this);
-        this.messageFunction = this.messageFunction.bind(this)
-
+        this.saveAsAction = this.saveAsAction.bind(this);
+        this.messageFunction = this.messageFunction.bind(this);
+        this.saveAsNameOnChange = this.saveAsNameOnChange.bind(this);
+        this.saveAsClick = this.saveAsClick.bind(this);
 
     }
     messageFunction = (e) => {
@@ -46,6 +52,9 @@ class WrapperComponent extends React.Component{
                     this.setState({showfbr: false});
                     this.setState({loading: false});
                     localStorage.setItem("profileFilePath", e.data);
+                    //Remove .squid and / which we'll reinclude when sent to the server
+                    this.setState({saveAsName: localStorage.getItem("profileFilePath").replace(".squid", "").replace("/", "")})
+                    console.log(this.state.saveAsName)
                     this.props.history.push('/squidink/manageproject')
 
                 }).catch((er) => {
@@ -64,13 +73,28 @@ class WrapperComponent extends React.Component{
             }
         }
     }
+    saveAsClick() {
+        axios.post(SQUIDINK_ENDPOINT + '/saveAsServlet', localStorage.getItem("user")
+            + ":" + this.state.saveAsName + ".squid", {
+            headers: {
+                'Content-Type': 'text/plain'
+            }
+        })
+        this.setState({saveAsModalOpen: false})
+    }
     componentDidMount() {
         window.addEventListener('message', this.messageFunction, false)
+        this.setState({saveAsName: localStorage.getItem("profileFilePath").replace(".squid", "").replace("/", "")})
     }
     componentWillUnmount() {
         window.removeEventListener('message', this.messageFunction, false)
     }
-
+    saveAsNameOnChange(event) {
+        let regex = /[-_0-9a-zA-Z]+/g;
+        if (event.target.value == (event.target.value.match(regex) || []).join('') && event.target.value.length != 0) {
+                this.setState({saveAsName: event.target.value})
+        }
+    }
     async handClose() {
         this.setState({modalOpen: false})
     }
@@ -92,11 +116,15 @@ class WrapperComponent extends React.Component{
     async openAction() {
         this.setState({modalOpen: true})
     }
+    async saveAsAction() {
+        this.setState({saveAsModalOpen: true})
+    }
 
     render() {
         let fOvd = new Map();
         fOvd.set('2', {function: this.openAction})
         fOvd.set('4', {function: this.openAction})
+        fOvd.set('8', {function: this.saveAsAction})
         return(
             <>{this.state.loading ?
                 <div>
@@ -125,6 +153,22 @@ class WrapperComponent extends React.Component{
                 </div>
                 : <div className={cx('container-custom')} style={this.props.style}>
                     <Modal open={this.state.modalOpen} onClose={this.handClose}>{body}</Modal>
+                    <Modal open={this.state.saveAsModalOpen} onClose={this.saveAsAction}>{
+                        <div style={{position: 'absolute', width: '600px', height: "150px", top: '50%', left: '50%', transform: 'translate(-50%, -50%)', border: '2px solid #000', backgroundColor: 'white', padding: '4px'}} className={'paper'}>
+                        <div style={{display: "flex", justifyContent: "flex-start", alignItems: "center", height: "100%", width: "100%"}}>
+                            <p id="simple-modal-description" style={{paddingTop: "15px", paddingRight: "10px", width:"1fr"}}>
+                                Enter a file name:
+                            </p>
+                            <TextField value={this.state.saveAsName} onChange={this.saveAsNameOnChange} style={{width: "45%", paddingRight: "10px"}}/>
+                            <div style={{paddingRight: "10px"}}>
+                                <Button variant="contained" color="primary" onClick={this.saveAsClick}>Save</Button>
+                            </div>
+                            <Button variant="contained" color="primary" onClick={() => {
+                                this.setState({saveAsName: localStorage.getItem("profileFilePath").replace(".squid", "").replace("/", "")});
+                                this.setState({saveAsModalOpen: false});
+                            }}>Cancel</Button>
+                        </div>
+                    </div>}</Modal>
                     <div className={cx('body')}>
                         {this.state.showfbr ?
                             <ResizePanel onDragStart={this.hideinternal} onDragEnd={this.showinternal} direction="e"
