@@ -95,7 +95,7 @@ export class ManageSpots extends React.Component {
                 break;
         }
     }
-    pullModelData() {
+    pullModelData(arg) {
         axios.post(SQUIDINK_ENDPOINT + '/spotsdata', localStorage.getItem("user")+ "!@#" + this.state.rmModel + "!@#" + this.state.crmModel, {
             headers: {
                 'Content-Type': 'application/json'
@@ -103,26 +103,35 @@ export class ManageSpots extends React.Component {
         }).then((body) => {
             let response = body.data.split("\n")
             let parsedAudit = JSON.parse(response[0])[0]
+            console.log(parsedAudit)
+            document.body.style.cursor='default'
             if(parsedAudit.includes("F")) {
                 window.alert("This reference material model is missing meaningful age data. \n\nPlease choose another model")
+                this.setState({data1: 0})
+                this.setState({data2: 0})
+                this.setState({data3: 0})
+                this.setState({data4: 0})
             }
             else {
                 if (parsedAudit.includes(1)) {
                     window.alert("This reference material model is missing * key age(s), so Squid3 is temporarily substituting values (shown in red) and refreshing as follows\n\n" + response[0][1])
                     this.setState({auditChanges: JSON.parse(response[0])[1]})
                 }
-
-                this.setState({audit: JSON.parse(response[0])[1].includes("F")})
+                
                 this.setState({data1: parseFloat(response[1].replace(/['"]+/g, '')).toFixed(3)})
                 this.setState({data2: parseFloat(response[2].replace(/['"]+/g, '')).toFixed(3)})
                 this.setState({data3: parseFloat(response[3].replace(/['"]+/g, '')).toFixed(3)})
                 this.setState({data4: parseFloat(response[4].replace(/['"]+/g, '')).toFixed(3)})
-                this.setState({uppm: parseFloat(response[5].replace(/['"]+/g, '')).toFixed(3)})
-                this.setState({thppm: parseFloat(response[6].replace(/['"]+/g, '')).toFixed(3)})
+                if(arg != "CRM") {
+                    this.setState({uppm: parseFloat(response[5].replace(/['"]+/g, '')).toFixed(3)})
+                    this.setState({thppm: parseFloat(response[6].replace(/['"]+/g, '')).toFixed(3)})
+                }
             }
+
         })
     }
     updateModel(event, modelName) {
+        document.body.style.cursor='wait'
         return axios.post(SQUIDINK_ENDPOINT + '/spotsmodels', localStorage.getItem("user")+ "!@#" + event.target.name + "!@#" + modelName, {
             headers: {
                 'Content-Type': 'application/json'
@@ -183,7 +192,7 @@ export class ManageSpots extends React.Component {
             console.log(err)
         })
     }
-    pullContent() {
+    pullContent(arg) {
         return axios.post(SQUIDINK_ENDPOINT + '/spotspull', localStorage.getItem("user"), {
             headers: {
                 'Content-Type': 'application/json',
@@ -213,7 +222,7 @@ export class ManageSpots extends React.Component {
             this.setState({rmModel: JSON.parse(arr[8])})
             this.setState({crmModel: JSON.parse(arr[9])})
             this.setState({isDeleted: !arr[10]})
-            this.pullModelData();
+            this.pullModelData(arg);
             this.setState({mount: true})
             const leftTable = document.getElementById('leftTable')
             const RMTable = document.getElementById('RMTable')
@@ -293,7 +302,6 @@ export class ManageSpots extends React.Component {
                             this.setState({currentSpot: childElements[i]})
                         }
                     }
-
                         let funcArr = [];
                         if(this.state.isDeleted) {
                             funcArr.push(() => this.restoreSpot())
@@ -357,6 +365,9 @@ export class ManageSpots extends React.Component {
             }
         }).then(() => {
             this.pullContent().then(() => {
+                this.setState({
+                    filterSpotsSelector: "All Samples"
+                })
                 document.body.style.cursor='default'
                 this.setState({isDeleted: true});
             })
@@ -383,11 +394,13 @@ export class ManageSpots extends React.Component {
     }
     saveNameClick(event) {
         if(this.state.spotName.length > 0) {
+            document.body.style.cursor='wait'
             axios.post(SQUIDINK_ENDPOINT + '/spotsname', localStorage.getItem("user")+ "!@#" + this.state.currentSpot.textContent + "!@#" + this.state.spotName, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
             }).then(() => {
+                document.body.style.cursor='default'
                 this.pullContent();
             })
         }
@@ -443,11 +456,14 @@ export class ManageSpots extends React.Component {
     }
     clearListCRM(event, arg) {
         this.buttonPost(event, arg, "clear").then(() => {
-            this.pullContent().then(() => {
+            this.pullContent(arg).then(() => {
                 this.setState({crmSpots: []})
                 this.setState({crmCount: 0})
                 this.setState({crmFilter: "NO FILTER"})
+                this.setState({uppm: 0})
+                this.setState({thppm: 0})
             })
+
         }).catch((err) => {
             console.log(err);
         })
@@ -464,7 +480,7 @@ export class ManageSpots extends React.Component {
 
                 //Dont generate elements until project spots pull is complete for defaultVal generation
                 this.state.mount ?
-            <WrapperComponent  style={{overflow: "scroll"}}history={this.props.history}>
+            <WrapperComponent  style={{overflow: "scroll"}}history={this.props.history} stateNum={1}>
                 <ContextMenu functions={this.state.contextContentFunctions}contextContent={this.state.contextContent}xPos={this.state.xPos} yPos={this.state.yPos} menuActive={this.state.menuActive}/>
                 <div style={{display: "flex", justifyContent: "center", alignItems: "center", width: "100%"}}>
                     <div className={cx('grid-container-spots')}>
@@ -560,7 +576,8 @@ export class ManageSpots extends React.Component {
                             </div>
                                 <div className={cx('hint-wrapper')}>
                                     <p style={{fontSize: "smaller", display: "inline"}}>Hint: To clear the list, right mouse-click on it anywhere for menu.</p>
-                                    <Button id="RM"variant="contained" color="primary" onClick={(event) => {this.copyRMButton(event, "RM")}}>Copy Filtered Spots to RM Spots.</Button>
+                                    {this.state.rmModel != "NONE v.1.0" ?<Button id="RM"variant="contained" color="primary" onClick={(event) => {this.copyRMButton(event, "RM")}}>Copy Filtered Spots to RM Spots.</Button>
+                                        :<Button id="RM"variant="contained" color="grey" >Copy Filtered Spots to RM Spots.</Button>}
                                 </div>
                             <div className={cx('hint-wrapper')}>
                                 <h5 style={{fontSize: "17px", paddingTop: "15px"}}>Concentration Reference Material (CRM) Spots</h5>
@@ -593,8 +610,9 @@ export class ManageSpots extends React.Component {
                             </div>
                             <div className={cx('hint-wrapper')}>
                                 <p style={{fontSize: "smaller", display: "inline"}}>Hint: To clear the list, right mouse-click on it anywhere for menu.</p>
-                                <Button id="CRM"variant="contained" color="primary" onClick={(event) => {this.copyCRMButton(event, "CRM")}}>Copy Filtered Spots to CRM Spots.</Button>
-                            </div>
+                                {this.state.crmModel != "NONE v.1.0" ?<Button id="CRM"variant="contained" color="primary" onClick={(event) => {this.copyCRMButton(event, "CRM")}}>Copy Filtered Spots to CRM Spots.</Button>
+                                :<Button id="CRM"variant="contained" color="grey" >Copy Filtered Spots to CRM Spots.</Button>}
+                              </div>
                         </div>
                         <div className={cx('isotopic-rm-label')}>
                             <h6>Select Isotopic RM Model:</h6>
@@ -608,7 +626,11 @@ export class ManageSpots extends React.Component {
                                 >
                                     {
                                         this.state.rmModels.map((value) => {
-                                            return (<MenuItem value={value}>{value}</MenuItem>)
+                                            if(value != "NONE v.1.0")
+                                                return (<MenuItem value={value}>{value}</MenuItem>)
+                                            else {
+                                                return (<MenuItem disabled={true} value={value}>{value}</MenuItem>)
+                                            }
                                         })
                                     }
                                 </Select>
@@ -665,7 +687,12 @@ export class ManageSpots extends React.Component {
                                 >
                                     {
                                         this.state.crmModels.map((value) => {
-                                            return (<MenuItem value={value}>{value}</MenuItem>)
+                                            if(value != "NONE v.1.0") {
+                                                return (<MenuItem value={value}>{value}</MenuItem>)
+                                            }
+                                            else {
+                                                return (<MenuItem disabled={true} value={value}>{value}</MenuItem>)
+                                            }
                                         })
                                     }
                                 </Select>

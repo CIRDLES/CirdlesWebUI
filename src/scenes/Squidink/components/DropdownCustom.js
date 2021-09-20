@@ -1,5 +1,7 @@
 import React, {createRef, useRef, useState} from "react";
 import '../../../styles/Squidink/dropdown-custom.scss';
+import {dropdownState} from '../util/constants'
+import {dropdownOptions} from "../util/constants";
 export default class DropdownCustom extends React.Component {
     constructor(props) {
         super(props);
@@ -59,12 +61,19 @@ export default class DropdownCustom extends React.Component {
                 <nav className={`menu-custom ${this.state.isActive ? "active" : "inactive"}`}>
                     <ul onClick={this.clickAction}>
                         {
-
                             this.props.dropdownOptions.map((options) => {
-                                if(this.props.functionOverride != undefined) {
-                                    if(this.props.functionOverride.has(options.id.toString())) {
-                                        return(
+                                if(dropdownState[this.props.stateNum][options.id-1] == 0) {
+                                    return (
+                                        <li style={{backgroundColor: "#E7EAEF", cursor:"not-allowed"}}className={"dropdown-context-custom"}key={options.id}>
+                                            <a className={"dropdown-context-custom"}key={options.id}>{options.title} </a>
+                                        </li>
+                                    )
+                                }
 
+                                else if(this.props.functionOverride != undefined) {
+                                    if(this.props.functionOverride.has(options.id.toString())) {
+
+                                        return(
                                             <li className={"dropdown-context-custom"}key={options.id}>
                                                 <a className={"dropdown-context-custom"}key={options.id}onClick={this.props.functionOverride.get(options.id.toString()).function}>{options.title} </a>
                                             </li>

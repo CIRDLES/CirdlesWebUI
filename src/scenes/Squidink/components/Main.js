@@ -12,7 +12,7 @@ export class Main extends React.Component {
         return (
             //All functions are self-contained to the wrapper with the exception of the history.push to reroute the user, which requires a reference to the React-Router
             //Because WrapperComponent is not instantiated from the router but from its child, we have to pass in the history as a prop
-            <WrapperComponent history={this.props.history}/>
+            <WrapperComponent stateNum={0}history={this.props.history}/>
         )
 
     }
