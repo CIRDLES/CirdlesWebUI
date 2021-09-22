@@ -11,7 +11,7 @@ let cx = classNames.bind(style);
 export class ShowAbout extends React.Component {
     render() {
         return (
-            <WrapperComponent history={this.props.history}>
+            <WrapperComponent history={this.props.history} stateNum={1}>
                 <div className={cx('label-container-custom')}>
                     <h1></h1>
                     <p><img src={squidLogo} alt="SquidInkLogo" width="150" height="150"/>
