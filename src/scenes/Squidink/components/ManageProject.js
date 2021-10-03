@@ -15,6 +15,7 @@ import ButtonGroup from "@material-ui/core/ButtonGroup";
 import axios from "axios";
 import {FILEBROWSER_URL, SQUIDINK_ENDPOINT} from "constants/api";
 import WrapperComponent from "./WrapperComponent";
+import {requestSender} from "../util/constants";
 
 let cx = classNames.bind(style);
 //Fixes floating point arithmetic issues
@@ -46,6 +47,7 @@ export class ManageProject extends React.Component {
             loading: false,
             modalOpen: false,
             adragging: false,
+            sessionData: null,
             mount: false
         };
         //If a component requires 'this.' context, it's easiest to bind it, i.e.
@@ -141,7 +143,6 @@ export class ManageProject extends React.Component {
                 this.updateProject("minSigPbU")
             }, 200)
         }
-        console.log(this.state.minSigPbU);
     }
 
     thCounterUp() {
@@ -175,11 +176,8 @@ export class ManageProject extends React.Component {
     }
 
     pullFromServ() {
-        axios.post(SQUIDINK_ENDPOINT + '/pmpull', localStorage.getItem("user"), {
-            headers: {
-                'Content-Type': 'text/plain'
-            }
-        }).then((body) => {
+        requestSender("/pmpull",localStorage.getItem("user"))
+            .then((body) => {
             let arr = body.data.split('~!@')
             this.setState({projectName: arr[0]})
             this.setState({analystName: arr[1]})
@@ -208,10 +206,10 @@ export class ManageProject extends React.Component {
             this.setState({weightedMeans: arr[5].toString()})
             this.setState({defaultCommon: arr[8]})
             this.setState({physConstant: arr[9]})
-            this.setState({pbArr: arr[14].split('\*\&\^')})
-            this.setState({physArr: arr[15].split('\*\&\^')})
+            this.setState({sessionData: arr[14].split(';')})
+            this.setState({pbArr: arr[15].split('\*\&\^')})
+            this.setState({physArr: arr[16].split('\*\&\^')})
             this.setState({mount: true})
-            console.log(arr)
         }).catch(() => {
         })
     }
@@ -231,11 +229,7 @@ export class ManageProject extends React.Component {
     projectNameFilterandUpdate(event) {
         let regex = /[-._0-9a-zA-Z]+/g;
         if (event.target.value == (event.target.value.match(regex) || []).join('')) {
-            axios.post(SQUIDINK_ENDPOINT + '/pmset', localStorage.getItem("user") + ":" + "projectName" + ":" + event.target.value, {
-                headers: {
-                    'Content-Type': 'text/plain'
-                }
-            })
+            requestSender("/pmset", localStorage.getItem("user") + ":projectName:" + event.target.value)
             this.setState({projectName: event.target.value})
         } else {
             event.target.value = this.state.projectName;
@@ -245,11 +239,7 @@ export class ManageProject extends React.Component {
     analystNameUpdate(event) {
         let regex = /[-._0-9a-zA-Z]+/g;
         if (event.target.value == (event.target.value.match(regex) || []).join('')) {
-            axios.post(SQUIDINK_ENDPOINT + '/pmset', localStorage.getItem("user") + ":" + "analystName" + ":" + event.target.value, {
-                headers: {
-                    'Content-Type': 'text/plain'
-                }
-            })
+            requestSender("/pmset", localStorage.getItem("user") + ":analystName:" + event.target.value)
             this.setState({analystName: event.target.value})
         } else {
             event.target.value = this.state.analystName;
@@ -257,33 +247,21 @@ export class ManageProject extends React.Component {
     }
 
     notesUpdate(event) {
-        axios.post(SQUIDINK_ENDPOINT + '/pmset', localStorage.getItem("user") + ":" + "notes" + ":" + event.target.value, {
-            headers: {
-                'Content-Type': 'text/plain'
-            }
-        })
+        requestSender("/pmset", localStorage.getItem("user") + ":notes:" + event.target.value)
     }
 
     updateProject(updateType) {
+        let prefix = localStorage.getItem("user") + ":"
         switch (updateType) {
             case "SBM":
                 let str = "";
                 this.state.sbmVal == "Yes" ? str = "true" : str = "false"
-                axios.post(SQUIDINK_ENDPOINT + '/pmset', localStorage.getItem("user") + ":" + "SBM" + ":" + str, {
-                    headers: {
-                        'Content-Type': 'text/plain'
-                    }
-                })
+                requestSender("/pmset", prefix + "SBM:" + str)
                 break;
             case "ratioCalc":
                 str = "";
                 this.state.ratioCalc == "spot" ? str = "true" : str = "false"
-                console.log(str);
-                axios.post(SQUIDINK_ENDPOINT + '/pmset', localStorage.getItem("user") + ":" + "LinFit" + ":" + str, {
-                    headers: {
-                        'Content-Type': 'text/plain'
-                    }
-                })
+                requestSender("/pmset", prefix + "LinFit:" + str)
                 break;
             case "PrefIso":
                 str = "";
@@ -294,66 +272,34 @@ export class ManageProject extends React.Component {
                 } else {
                     str = "208Pb"
                 }
-                axios.post(SQUIDINK_ENDPOINT + '/pmset', localStorage.getItem("user") + ":" + "PrefIso" + ":" + str, {
-                    headers: {
-                        'Content-Type': 'text/plain'
-                    }
-                })
+                requestSender("/pmset", prefix + "PrefIso:" + str)
                 break;
             case "autoExclude":
                 str = "";
                 str = this.state.weightedMeans;
-                axios.post(SQUIDINK_ENDPOINT + '/pmset', localStorage.getItem("user") + ":" + "autoExclude" + ":" + str, {
-                    headers: {
-                        'Content-Type': 'text/plain'
-                    }
-                })
+                requestSender("/pmset", prefix + "autoExclude:" + str)
                 break;
             case "minSigPbU":
                 let out = this.state.minSigPbU;
-                axios.post(SQUIDINK_ENDPOINT + '/pmset', localStorage.getItem("user") + ":" + "minSig206" + ":" + out, {
-                    headers: {
-                        'Content-Type': 'text/plain'
-                    }
-                })
+                requestSender("/pmset", prefix + "minSig206:" + out)
                 break;
             case "minSigPbTh":
                 out = this.state.minSigPbTh
-                axios.post(SQUIDINK_ENDPOINT + '/pmset', localStorage.getItem("user") + ":" + "minSig208" + ":" + out, {
-                    headers: {
-                        'Content-Type': 'text/plain'
-                    }
-                })
+                requestSender("/pmset", prefix + "minSig208:" + out)
                 break;
             case "defaultCommonSelect":
                 str = this.state.defaultCommon;
-                axios.post(SQUIDINK_ENDPOINT + '/pmset', localStorage.getItem("user") + ":" + "commonPb" + ":" + str, {
-                    headers: {
-                        'Content-Type': 'text/plain'
-                    }
-                })
+                requestSender("/pmset", prefix + "commonPb:" + str)
                 break;
             case "physConstant":
                 str = this.state.physConstant;
-                axios.post(SQUIDINK_ENDPOINT + '/pmset', localStorage.getItem("user") + ":" + "physConstant" + ":" + str, {
-                    headers: {
-                        'Content-Type': 'text/plain'
-                    }
-                })
+                requestSender("/pmset", prefix + "physConstant:" + str)
                 break;
             case "setDefaultParam":
-                axios.post(SQUIDINK_ENDPOINT + '/pmset', localStorage.getItem("user") + ":" + "setDefaultParam", {
-                    headers: {
-                        'Content-Type': 'text/plain'
-                    }
-                })
+                requestSender("/pmset", prefix + "setDefaultParam")
                 break;
             case "refreshModel":
-                axios.post(SQUIDINK_ENDPOINT + '/pmset', localStorage.getItem("user") + ":" + "refreshModel", {
-                    headers: {
-                        'Content-Type': 'text/plain'
-                    }
-                })
+                requestSender("/pmset", prefix + "refreshModel")
                 break;
         }
     }
@@ -395,6 +341,15 @@ export class ManageProject extends React.Component {
                                 </div>
                                 <div className={cx('session-label')}>
                                     <h3>Session:</h3>
+                                </div>
+                                <div className={cx('session-content')}>
+                                    {this.state.sessionData.map((data) => {
+                                        return(
+                                            <h4>
+                                                {data}
+                                            </h4>
+                                        )
+                                    })}
                                 </div>
                                 <div className={cx('analyst-name-label')}>
                                     <h3>Analyst Name:</h3>
@@ -483,27 +438,33 @@ export class ManageProject extends React.Component {
                                                           name="weightedMeans"
                                                           label="Allow Squid to auto-reject spots"/>
                                     </FormControl>
-                                    <p style={{display: "inline"}}><b>Minimum external 1sigma % err for
-                                        206Pb/238U: </b></p>
+                                    <div style={{display: "inline"}}>
+                                        <p style={{bottomMargin: "0", marginTop: "7px", display:"inline-flex"}}><b>Minimum external 1sigma % err for
+                                            206Pb/238U: </b></p>
+                                    </div>
+
                                     <TextField value={this.state.minSigPbU}
                                                style={{width: "4ch", marginLeft: "1%", minWidth: "4ch"}}></TextField>
-                                    <ButtonGroup orientation="vertical" style={{maxHeight: "15px"}}>
-                                        <Button style={{maxHeight: "15px"}} name="incPbU"
-                                                onClick={this.pbCounterUp}>+</Button>
-                                        <Button style={{maxHeight: "15px"}} name="decPbU"
-                                                onClick={this.pbCounterDown}>-</Button>
-                                    </ButtonGroup>
+                                        <div style={{display: "inline", position: "relative", bottom: "10px"}}>
+                                            <ButtonGroup orientation="vertical" style={{maxHeight: "15px"}}>
+                                                <Button style={{maxHeight: "15px"}} name="incPbU"
+                                                        onClick={this.pbCounterUp}>+</Button>
+                                                <Button style={{maxHeight: "15px"}} name="decPbU"
+                                                        onClick={this.pbCounterDown}>-</Button>
+                                            </ButtonGroup>
+                                        </div>
                                     <p style={{display: "inline", marginLeft: "1%"}}><b>for
                                         208Pb/232Th: </b></p>
                                     <TextField value={this.state.minSigPbTh}
-                                               style={{width: "4ch", marginLeft: "1%", minWidth: "4ch"}}></TextField>
+                                               style={{maxWidth: "4ch", marginLeft: "1%", minWidth: "3ch"}}></TextField>
+                                    <div style={{display: "inline", position: "relative", bottom: "10px"}}>
                                     <ButtonGroup orientation="vertical" style={{maxHeight: "15px"}}>
                                         <Button style={{maxHeight: "15px"}} name="incPbTh"
                                                 onClick={this.thCounterUp}>+</Button>
                                         <Button style={{maxHeight: "15px"}} name="decPbTh"
                                                 onClick={this.thCounterDown}>-</Button>
                                     </ButtonGroup>
-
+                                    </div>
                                 </div>
                                 <div className={cx('parameters-content5')}>
                                     <p style={{
@@ -544,7 +505,7 @@ export class ManageProject extends React.Component {
                                     <p color={"#f59542"} style={{display: "inline", float: "left"}}>Specify
                                         Physical Constants Model:</p>
                                     <FormControl
-                                        style={{minWidth: "60%", clear: "both", paddingRight: "3%"}}>
+                                        style={{minWidth: "100%", clear: "both", paddingRight: "3%"}}>
                                         <Select
                                             labelId="physConstant-label"
                                             id="physConstant"

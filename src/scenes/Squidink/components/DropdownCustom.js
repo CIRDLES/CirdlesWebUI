@@ -24,23 +24,23 @@ export default class DropdownCustom extends React.Component {
         this.setState({isActive: !isActive})
     }
     clickAction() {
-        setTimeout(() =>{
             this.setIsActive(this.state.isActive);
             if(!this.state.listenerActive) {
-                this.setState({listenerActive: !this.state.listenerActive})
+                console.log("make event listener")
+                this.setState({listenerActive: true})
                 window.addEventListener('click', this.pageClick)
             }
             else {
-                this.setState({listenerActive: !this.state.listenerActive})
+                this.setState({listenerActive: false})
                 window.removeEventListener('click', this.pageClick)
             }
-        }, 100)
 
 
     }
     pageClick = (e) => {
         if (this.dropdownRef.current !== null && !this.dropdownRef.current.contains(e.target)) {
-            this.setIsActive(this.state.isActive);
+            this.setState({listenerActive: false})
+            this.setState({isActive: false});
             window.removeEventListener('click', this.pageClick)
         }
     }
@@ -65,35 +65,25 @@ export default class DropdownCustom extends React.Component {
                                 if(dropdownState[this.props.stateNum][options.id-1] == 0) {
                                     return (
                                         <li style={{backgroundColor: "#E7EAEF", cursor:"not-allowed"}}className={"dropdown-context-custom"}key={options.id}>
-                                            <a className={"dropdown-context-custom"}key={options.id}>{options.title} </a>
+                                            <a className={"dropdown-context-custom"}key={options.id}> <s>{options.title}</s> </a>
                                         </li>
                                     )
                                 }
 
-                                else if(this.props.functionOverride != undefined) {
-                                    if(this.props.functionOverride.has(options.id.toString())) {
-
+                                else if(this.props.functionOverride != undefined && this.props.functionOverride.has(options.id.toString())) {
                                         return(
                                             <li className={"dropdown-context-custom"}key={options.id}>
                                                 <a className={"dropdown-context-custom"}key={options.id}onClick={this.props.functionOverride.get(options.id.toString()).function}>{options.title} </a>
                                             </li>
-                                        );
-                                    }
-                                    else {
+                                        )}
+                                else {
                                         return(
                                             <li className={"dropdown-context-custom"}key={options.id}>
                                                 <a className={"dropdown-context-custom"}key={options.id}onClick={options.onclick}>{options.title}</a>
                                             </li>
                                         );
                                     }
-                                }
-                                else {
-                                    return(
-                                        <li className={"dropdown-context-custom"}key={options.id}>
-                                            <a className={"dropdown-context-custom"}key={options.id}onClick={options.onclick}>{options.title}</a>
-                                        </li>
-                                );
-                        }})}
+                                })}
                     </ul>
                 </nav>
             </div>

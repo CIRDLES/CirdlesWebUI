@@ -671,7 +671,7 @@ export class ManageSpots extends React.Component {
                             </div>
                             <div className={cx('grid-list-crm')}>
                                 <div className={cx('grid-list-button-crm')}>
-                                    <Button variant="contained" color="primary">Manage RM Model</Button>
+                                    <Button variant="contained" color="grey">Manage RM Model</Button>
                                 </div>
                             </div>
                         </div>
@@ -717,7 +717,7 @@ export class ManageSpots extends React.Component {
                             </div>
                             <div className={cx('grid-list-crm')}>
                                 <div className={cx('grid-list-button-crm')}>
-                                    <Button variant="contained" color="primary">Manage CRM Model</Button>
+                                    <Button variant="contained" color="grey">Manage CRM Model</Button>
                                 </div>
                             </div>
                         </div>

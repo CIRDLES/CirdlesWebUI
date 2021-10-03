@@ -56,6 +56,14 @@
   justify-self: center;
   align-self: start;
 }
+.session-content {
+  grid-column-start: c2-start;
+  grid-column-end: c2-end;
+  grid-row-start: r9-end;
+  grid-row-end: r-end;
+  justify-self: start;
+  align-self: start;
+}
 .analyst-name-label {
   grid-column-start: c3-start;
   grid-column-end: c3-end;

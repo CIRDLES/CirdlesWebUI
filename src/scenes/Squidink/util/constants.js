@@ -5,6 +5,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import React from "react";
+import axios from "axios";
 
 // project menu items functions+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 async function clickActionDemo() {
@@ -97,15 +98,22 @@ async function clickShowAbout() {
 export function testFunction() {
     console.log("This is a test function")
 }
+export function requestSender(endpoint, body) {
+    return axios.post(SQUIDINK_ENDPOINT + endpoint, body, {
+        headers: {
+            'Content-Type': 'text/plain'
+        }
+    })
+}
 export const dropdownState = [
     //State-Index
     //State 0, Fresh-Page, Unopened File
     [
         0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1
     ],
-    //State 1, Opened Demo File
+    //State 1, Opened Demo File, with current available functions
     [
-        1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1
+        1,1,1,1,1,1,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1
     ]
 ]
 export const dropdownOptions = [
