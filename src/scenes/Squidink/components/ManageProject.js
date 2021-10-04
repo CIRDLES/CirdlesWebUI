@@ -179,18 +179,24 @@ export class ManageProject extends React.Component {
         requestSender("/pmpull",localStorage.getItem("user"))
             .then((body) => {
             let arr = body.data.split('~!@')
-            this.setState({projectName: arr[0]})
-            this.setState({analystName: arr[1]})
-            if (arr[2] == "true") {
-                this.setState({sbmVal: "Yes"})
-            } else {
-                this.setState({sbmVal: "No"})
-            }
-            if (arr[3] == "true") {
-                this.setState({ratioCalc: "linear"})
-            } else {
-                this.setState({ratioCalc: "spot"})
-            }
+            this.setState({
+                projectName: arr[0],
+                analystName: arr[1],
+                sbmVal: arr[2] == "true" ? "Yes" : "No",
+                ratioCalc: arr[3] == "true" ? "linear" : "spot",
+                minSigPbU: parseFloat(arr[6]),
+                minSigPbTh: parseFloat(arr[7]),
+                version: arr[12],
+                dataFilePath: arr[13],
+                notes: arr[11],
+                weightedMeans: arr[5].toString(),
+                defaultCommon: arr[8],
+                physConstant: arr[9],
+                sessionData: arr[14].split(';'),
+                pbArr: arr[15].split('\*\&\^'),
+                physArr: arr[16].split('\*\&\^'),
+                mount: true
+            })
             if (arr[4].charAt(arr[4].length - 1) == '4') {
                 this.setState({prefIndex: "204Pb"})
             } else if (arr[4].charAt(arr[4].length - 1) == '7') {
@@ -198,18 +204,6 @@ export class ManageProject extends React.Component {
             } else {
                 this.setState({prefIndex: "208Pb"})
             }
-            this.setState({minSigPbU: parseFloat(arr[6])})
-            this.setState({minSigPbTh: parseFloat(arr[7])})
-            this.setState({version: arr[12]})
-            this.setState({dataFilePath: arr[13]})
-            this.setState({notes: arr[11]})
-            this.setState({weightedMeans: arr[5].toString()})
-            this.setState({defaultCommon: arr[8]})
-            this.setState({physConstant: arr[9]})
-            this.setState({sessionData: arr[14].split(';')})
-            this.setState({pbArr: arr[15].split('\*\&\^')})
-            this.setState({physArr: arr[16].split('\*\&\^')})
-            this.setState({mount: true})
         }).catch(() => {
         })
     }
