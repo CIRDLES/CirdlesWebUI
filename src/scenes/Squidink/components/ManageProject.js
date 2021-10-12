@@ -12,12 +12,11 @@ import Button from "@material-ui/core/Button";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import ButtonGroup from "@material-ui/core/ButtonGroup";
-import axios from "axios";
-import {FILEBROWSER_URL, SQUIDINK_ENDPOINT} from "constants/api";
 import WrapperComponent from "./WrapperComponent";
 import {requestSender} from "../util/constants";
 
 let cx = classNames.bind(style);
+
 //Fixes floating point arithmetic issues
 function strip(number) {
     return parseFloat(parseFloat(number).toPrecision(12));
@@ -116,13 +115,12 @@ export class ManageProject extends React.Component {
 
     //Can't resolve event by name because internal spans of buttons are unnamed
     pbCounterUp() {
-        if(this.state.minSigPbU + .05 >= 1) {
+        if (this.state.minSigPbU + .05 >= 1) {
             this.setState({minSigPbU: 1})
             setTimeout(() => {
                 this.updateProject("minSigPbU")
             }, 200)
-        }
-        else {
+        } else {
             this.setState({minSigPbU: strip(this.state.minSigPbU + .05)})
             setTimeout(() => {
                 this.updateProject("minSigPbU")
@@ -131,13 +129,12 @@ export class ManageProject extends React.Component {
     }
 
     pbCounterDown() {
-        if(this.state.minSigPbU - .05 <= 0) {
+        if (this.state.minSigPbU - .05 <= 0) {
             this.setState({minSigPbU: 0})
             setTimeout(() => {
                 this.updateProject("minSigPbU")
             }, 200)
-        }
-        else {
+        } else {
             this.setState({minSigPbU: strip(this.state.minSigPbU - .05)})
             setTimeout(() => {
                 this.updateProject("minSigPbU")
@@ -146,13 +143,12 @@ export class ManageProject extends React.Component {
     }
 
     thCounterUp() {
-        if(this.state.minSigPbTh + .05 >= 1) {
+        if (this.state.minSigPbTh + .05 >= 1) {
             this.setState({minSigPbTh: 1})
             setTimeout(() => {
                 this.updateProject("minSigPbTh")
             }, 200)
-        }
-        else {
+        } else {
             this.setState({minSigPbTh: strip(this.state.minSigPbTh + .05)})
             setTimeout(() => {
                 this.updateProject("minSigPbTh")
@@ -161,13 +157,12 @@ export class ManageProject extends React.Component {
     }
 
     thCounterDown() {
-        if(this.state.minSigPbTh - .05 <= 0) {
+        if (this.state.minSigPbTh - .05 <= 0) {
             this.setState({minSigPbTh: 0})
             setTimeout(() => {
                 this.updateProject("minSigPbTh")
             }, 200)
-        }
-        else {
+        } else {
             this.setState({minSigPbTh: strip(this.state.minSigPbTh - .05)})
             setTimeout(() => {
                 this.updateProject("minSigPbTh")
@@ -176,35 +171,36 @@ export class ManageProject extends React.Component {
     }
 
     pullFromServ() {
-        requestSender("/pmpull",localStorage.getItem("user"))
+        requestSender("/pmpull", localStorage.getItem("user"))
             .then((body) => {
-            let arr = body.data.split('~!@')
-            this.setState({
-                projectName: arr[0],
-                analystName: arr[1],
-                sbmVal: arr[2] == "true" ? "Yes" : "No",
-                ratioCalc: arr[3] == "true" ? "linear" : "spot",
-                minSigPbU: parseFloat(arr[6]),
-                minSigPbTh: parseFloat(arr[7]),
-                version: arr[12],
-                dataFilePath: arr[13],
-                notes: arr[11],
-                weightedMeans: arr[5].toString(),
-                defaultCommon: arr[8],
-                physConstant: arr[9],
-                sessionData: arr[14].split(';'),
-                pbArr: arr[15].split('\*\&\^'),
-                physArr: arr[16].split('\*\&\^'),
-                mount: true
-            })
-            if (arr[4].charAt(arr[4].length - 1) == '4') {
-                this.setState({prefIndex: "204Pb"})
-            } else if (arr[4].charAt(arr[4].length - 1) == '7') {
-                this.setState({prefIndex: "207Pb"})
-            } else {
-                this.setState({prefIndex: "208Pb"})
-            }
-        }).catch(() => {
+                let arr = body.data.split('~!@')
+                this.setState({
+                    projectName: arr[0],
+                    analystName: arr[1],
+                    sbmVal: arr[2] == "true" ? "Yes" : "No",
+                    ratioCalc: arr[3] == "true" ? "linear" : "spot",
+                    minSigPbU: parseFloat(arr[6]),
+                    minSigPbTh: parseFloat(arr[7]),
+                    version: arr[12],
+                    dataFilePath: arr[13],
+                    notes: arr[11],
+                    weightedMeans: arr[5].toString(),
+                    defaultCommon: arr[8],
+                    physConstant: arr[9],
+                    sessionData: arr[14].split(';'),
+                    pbArr: arr[15].split('\*\&\^'),
+                    physArr: arr[16].split('\*\&\^'),
+                    mount: true
+                })
+                if (arr[4].charAt(arr[4].length - 1) == '4') {
+                    this.setState({prefIndex: "204Pb"})
+                } else if (arr[4].charAt(arr[4].length - 1) == '7') {
+                    this.setState({prefIndex: "207Pb"})
+                } else {
+                    this.setState({prefIndex: "208Pb"})
+                }
+            }).catch(() => {
+
         })
     }
 
@@ -253,12 +249,10 @@ export class ManageProject extends React.Component {
                 requestSender("/pmset", prefix + "SBM:" + str)
                 break;
             case "ratioCalc":
-                str = "";
                 this.state.ratioCalc == "spot" ? str = "true" : str = "false"
                 requestSender("/pmset", prefix + "LinFit:" + str)
                 break;
             case "PrefIso":
-                str = "";
                 if (this.state.prefIndex == "204Pb") {
                     str = "204Pb"
                 } else if (this.state.prefIndex == "207Pb") {
@@ -269,17 +263,16 @@ export class ManageProject extends React.Component {
                 requestSender("/pmset", prefix + "PrefIso:" + str)
                 break;
             case "autoExclude":
-                str = "";
                 str = this.state.weightedMeans;
                 requestSender("/pmset", prefix + "autoExclude:" + str)
                 break;
             case "minSigPbU":
-                let out = this.state.minSigPbU;
-                requestSender("/pmset", prefix + "minSig206:" + out)
+                str = this.state.minSigPbU;
+                requestSender("/pmset", prefix + "minSig206:" + str)
                 break;
             case "minSigPbTh":
-                out = this.state.minSigPbTh
-                requestSender("/pmset", prefix + "minSig208:" + out)
+                str = this.state.minSigPbTh
+                requestSender("/pmset", prefix + "minSig208:" + str)
                 break;
             case "defaultCommonSelect":
                 str = this.state.defaultCommon;
@@ -338,7 +331,7 @@ export class ManageProject extends React.Component {
                                 </div>
                                 <div className={cx('session-content')}>
                                     {this.state.sessionData.map((data) => {
-                                        return(
+                                        return (
                                             <h4>
                                                 {data}
                                             </h4>
@@ -433,31 +426,32 @@ export class ManageProject extends React.Component {
                                                           label="Allow Squid to auto-reject spots"/>
                                     </FormControl>
                                     <div style={{display: "inline"}}>
-                                        <p style={{bottomMargin: "0", marginTop: "7px", display:"inline-flex"}}><b>Minimum external 1sigma % err for
+                                        <p style={{bottomMargin: "0", marginTop: "7px", display: "inline-flex"}}><b>Minimum
+                                            external 1sigma % err for
                                             206Pb/238U: </b></p>
                                     </div>
 
                                     <TextField value={this.state.minSigPbU}
                                                style={{width: "4ch", marginLeft: "1%", minWidth: "4ch"}}></TextField>
-                                        <div style={{display: "inline", position: "relative", bottom: "10px"}}>
-                                            <ButtonGroup orientation="vertical" style={{maxHeight: "15px"}}>
-                                                <Button style={{maxHeight: "15px"}} name="incPbU"
-                                                        onClick={this.pbCounterUp}>+</Button>
-                                                <Button style={{maxHeight: "15px"}} name="decPbU"
-                                                        onClick={this.pbCounterDown}>-</Button>
-                                            </ButtonGroup>
-                                        </div>
+                                    <div style={{display: "inline", position: "relative", bottom: "10px"}}>
+                                        <ButtonGroup orientation="vertical" style={{maxHeight: "15px"}}>
+                                            <Button style={{maxHeight: "15px"}} name="incPbU"
+                                                    onClick={this.pbCounterUp}>+</Button>
+                                            <Button style={{maxHeight: "15px"}} name="decPbU"
+                                                    onClick={this.pbCounterDown}>-</Button>
+                                        </ButtonGroup>
+                                    </div>
                                     <p style={{display: "inline", marginLeft: "1%"}}><b>for
                                         208Pb/232Th: </b></p>
                                     <TextField value={this.state.minSigPbTh}
                                                style={{maxWidth: "4ch", marginLeft: "1%", minWidth: "3ch"}}></TextField>
                                     <div style={{display: "inline", position: "relative", bottom: "10px"}}>
-                                    <ButtonGroup orientation="vertical" style={{maxHeight: "15px"}}>
-                                        <Button style={{maxHeight: "15px"}} name="incPbTh"
-                                                onClick={this.thCounterUp}>+</Button>
-                                        <Button style={{maxHeight: "15px"}} name="decPbTh"
-                                                onClick={this.thCounterDown}>-</Button>
-                                    </ButtonGroup>
+                                        <ButtonGroup orientation="vertical" style={{maxHeight: "15px"}}>
+                                            <Button style={{maxHeight: "15px"}} name="incPbTh"
+                                                    onClick={this.thCounterUp}>+</Button>
+                                            <Button style={{maxHeight: "15px"}} name="decPbTh"
+                                                    onClick={this.thCounterDown}>-</Button>
+                                        </ButtonGroup>
                                     </div>
                                 </div>
                                 <div className={cx('parameters-content5')}>
