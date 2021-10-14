@@ -55,7 +55,7 @@ class WrapperComponent extends React.Component{
                     //Remove .squid and / which we'll reinclude when sent to the server
                     this.setState({saveAsName: localStorage.getItem("profileFilePath").replace(".squid", "").replace("/", "")})
                     console.log(this.state.saveAsName)
-                    this.props.history.push('/squidink/manageproject')
+                    window.location.href = "/squidink/manageproject"
 
                 }).catch((er) => {
                     console.log(er)
