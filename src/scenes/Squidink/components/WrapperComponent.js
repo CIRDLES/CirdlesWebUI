@@ -86,12 +86,6 @@ class WrapperComponent extends React.Component{
                 }
                     this.setState({saveAsModalOpen: false})
             })
-        axios.post(SQUIDINK_ENDPOINT + '/saveAsServlet', localStorage.getItem("user")
-            + ":" + this.state.saveAsName + ".squid", {
-            headers: {
-                'Content-Type': 'text/plain'
-            }
-        })
         this.setState({saveAsModalOpen: false})
     }
     componentDidMount() {
