@@ -109,11 +109,11 @@ export const dropdownState = [
     //State-Index
     //State 0, Fresh-Page, Unopened File
     [
-        0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1
+        0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1
     ],
     //State 1, Opened Demo File, with current available functions
     [
-        1,1,1,1,1,1,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1
+        1,1,1,1,1,1,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1
     ]
 ]
 export const dropdownOptions = [
@@ -292,24 +292,19 @@ export const dropdownOptions = [
             id: 28
         },
         {
-            title: 'Project Audit',
+            title: 'Project & Task Audit',
             onclick: clickActionProjectAudit,
             id: 29
         },
         {
-            title: 'Task Audit',
-            onclick: clickActionTaskAudit,
-            id: 30
-        },
-        {
             title: 'Generate All Reports',
             onclick: clickActionGen,
-            id: 31
+            id: 30
         },
         {
             title: 'PerScan Reports Bundle',
             onclick: clickActionPerScan,
-            id: 32
+            id: 31
         },
 
     ],
@@ -317,56 +312,56 @@ export const dropdownOptions = [
         {
             title: 'Archiving',
             onclick: testFunction,
-            id: 33
+            id: 32
         }
     ],
     [
         {
             title: 'Reference Material Models',
             onclick: testFunction,
-            id: 34
+            id: 33
         },
         {
             title: 'Common Pb Models',
             onclick: testFunction,
-            id: 35
+            id: 34
         },
         {
             title: 'Physical Constants Models',
             onclick: testFunction,
-            id: 36
+            id: 35
         }
     ],
     [
         {
             title: 'About SquidInk',
             onclick: clickShowAbout,
-            id: 37
+            id: 36
         },
         {
             title: 'How to Cite Squid3',
             onclick: testFunction,
-            id: 38
+            id: 37
         },
         {
             title: 'Squid3 Github Repository',
             onclick: testFunction,
-            id: 39
+            id: 38
         },
         {
             title: 'CIRDLES.org',
             onclick: testFunction,
-            id: 40
+            id: 39
         },
         {
             title: 'Topsoil Github Repository',
             onclick: testFunction,
-            id: 41
+            id: 40
         },
         {
             title: 'Enjoy!',
             onclick: testFunction,
-            id: 42
+            id: 41
         }
     ]
 ];

@@ -5,7 +5,7 @@ import style from 'styles/Squidink/Main.scss';
 import classNames from 'classnames/bind';
 import DropdownCustom from "./DropdownCustom";
 import "constants/api";
-import {dropdownOptions} from "../util/constants";
+import {dropdownOptions, requestSender} from "../util/constants";
 import {FILEBROWSER_URL, SQUIDINK_ENDPOINT} from "constants/api";
 import Modal from "@material-ui/core/Modal";
 import axios from "axios";
@@ -74,6 +74,18 @@ class WrapperComponent extends React.Component{
         }
     }
     saveAsClick() {
+        requestSender('/sapreflight',localStorage.getItem("user")
+            + ":" + this.state.saveAsName + ".squid")
+            .then(
+                requestSender('/saveAsServlet',localStorage.getItem("user")
+                + ":" + this.state.saveAsName + ".squid").then(this.setState({saveAsModalOpen: false})))
+            .catch((e) => {
+                if(confirm("This file already exists, are you sure you want to overwrite it?")) {
+                    requestSender('/saveAsServlet',localStorage.getItem("user")
+                        + ":" + this.state.saveAsName + ".squid").then(this.setState({saveAsModalOpen: false}))
+                }
+                    this.setState({saveAsModalOpen: false})
+            })
         axios.post(SQUIDINK_ENDPOINT + '/saveAsServlet', localStorage.getItem("user")
             + ":" + this.state.saveAsName + ".squid", {
             headers: {
