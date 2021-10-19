@@ -84,9 +84,7 @@ class WrapperComponent extends React.Component{
                     requestSender('/saveAsServlet',localStorage.getItem("user")
                         + ":" + this.state.saveAsName + ".squid").then(this.setState({saveAsModalOpen: false}))
                 }
-                    this.setState({saveAsModalOpen: false})
             })
-        this.setState({saveAsModalOpen: false})
     }
     componentDidMount() {
         window.addEventListener('message', this.messageFunction, false)
