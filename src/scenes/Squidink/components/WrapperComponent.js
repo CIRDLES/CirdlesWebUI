@@ -76,16 +76,14 @@ class WrapperComponent extends React.Component{
     saveAsClick() {
         requestSender('/sapreflight',localStorage.getItem("user")
             + ":" + this.state.saveAsName + ".squid")
-            .then(
-                requestSender('/saveAsServlet',localStorage.getItem("user")
-                + ":" + this.state.saveAsName + ".squid").then(this.setState({saveAsModalOpen: false})))
-            .catch((e) => {
-                if(confirm("This file already exists, are you sure you want to overwrite it?")) {
+            .then((d) => {
                     requestSender('/saveAsServlet',localStorage.getItem("user")
                         + ":" + this.state.saveAsName + ".squid").then(this.setState({saveAsModalOpen: false}))
-                }
-            })
-    }
+            },(e) => {
+                    if(confirm("This file already exists, are you sure you want to overwrite it?")) {
+                        requestSender('/saveAsServlet',localStorage.getItem("user")
+                            + ":" + this.state.saveAsName + ".squid").then(this.setState({saveAsModalOpen: false}))
+                    }})}
     componentDidMount() {
         window.addEventListener('message', this.messageFunction, false)
         this.setState({saveAsName: localStorage.getItem("profileFilePath").replace(".squid", "").replace("/", "")})
