@@ -18,13 +18,13 @@ async function clickActionDemo() {
             localStorage.setItem("profileFilePath", "/SQUID3_demo_file.squid");
             window.location.reload();
         } else {
-            window.location.href = "/squidink/manageproject"
+            window.location.href = MANAGEPROJECT_ROUTE
         }
     })
 }
 
 async function clickManageProject() {
-    window.location.href = "/squidink/manageproject"
+    window.location.href = MANAGEPROJECT_ROUTE
 }
 
 // reports menu items functions+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -86,11 +86,11 @@ async function clickActionSave() {
 
 }
 async function clickManageSpots() {
-    window.location.href = "/squidink/managespots"
+    window.location.href = MANAGESPOTS_ROUTE
 }
 // about menu items functions+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 async function clickShowAbout() {
-        window.location.href = "/squidink/showabout"
+        window.location.href = SHOWABOUT_ROUTE
 }
 
 
@@ -365,3 +365,7 @@ export const dropdownOptions = [
         }
     ]
 ];
+export const BASE_ROUTE="/squidink"
+export const MANAGESPOTS_ROUTE= BASE_ROUTE + "/managespots";
+export const MANAGEPROJECT_ROUTE= BASE_ROUTE + "/manageproject"
+export const SHOWABOUT_ROUTE= BASE_ROUTE + "/showabout"
