@@ -9,17 +9,18 @@ import SkeletonExample from "./components/ManageProject"
 import ManageSpots from "./components/ManageSpots"
 import ShowAbout from "./components/ShowAbout"
 import 'styles/Squidink/Main.scss';
-
+//Constants
+import {BASE_ROUTE, MANAGEPROJECT_ROUTE, MANAGESPOTS_ROUTE, SHOWABOUT_ROUTE} from "./util/constants"
 
 class SquidInkPage extends Component {
     render() {
         return (
             <div className="squidink">
                 <main>
-                    <Route exact path="/squidink" component={Main}/>
-                    <Route exact path="/squidink/manageproject" component={SkeletonExample}/>
-                    <Route exact path="/squidink/managespots" component={ManageSpots}/>
-                    <Route exact path="/squidink/showabout" component={ShowAbout}/>
+                    <Route exact path={BASE_ROUTE} component={Main}/>
+                    <Route exact path={MANAGEPROJECT_ROUTE} component={SkeletonExample}/>
+                    <Route exact path={MANAGESPOTS_ROUTE} component={ManageSpots}/>
+                    <Route exact path={SHOWABOUT_ROUTE} component={ShowAbout}/>
                 </main>
             </div>
         );
