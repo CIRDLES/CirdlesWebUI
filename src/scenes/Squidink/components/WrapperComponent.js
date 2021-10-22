@@ -5,7 +5,7 @@ import style from 'styles/Squidink/Main.scss';
 import classNames from 'classnames/bind';
 import DropdownCustom from "./DropdownCustom";
 import "constants/api";
-import {dropdownOptions, requestSender} from "../util/constants";
+import {dropdownOptions, MANAGEPROJECT_ROUTE, requestSender} from "../util/constants";
 import {FILEBROWSER_URL, SQUIDINK_ENDPOINT} from "constants/api";
 import Modal from "@material-ui/core/Modal";
 import axios from "axios";
@@ -53,9 +53,9 @@ class WrapperComponent extends React.Component{
                     this.setState({loading: false});
                     localStorage.setItem("profileFilePath", e.data);
                     //Remove .squid and / which we'll reinclude when sent to the server
-                    this.setState({saveAsName: localStorage.getItem("profileFilePath").replace(".squid", "").replace("/", "")})
+                    this.setState({saveAsName: this.profilePathIsNull()})
                     console.log(this.state.saveAsName)
-                    window.location.href = "/squidink/manageproject"
+                    window.location.href = MANAGEPROJECT_ROUTE;
 
                 }).catch((er) => {
                     console.log(er)
@@ -86,9 +86,7 @@ class WrapperComponent extends React.Component{
                     }})}
     componentDidMount() {
         window.addEventListener('message', this.messageFunction, false);
-        this.setState({saveAsName:
-                this.isNull(localStorage.getItem("profileFilePath")) ? "" : localStorage.getItem("profileFilePath").replace(".squid", "").replace("/", "")
-        })
+        this.setState({saveAsName: this.profilePathIsNull()})
     }
     componentWillUnmount() {
         window.removeEventListener('message', this.messageFunction, false)
@@ -99,8 +97,15 @@ class WrapperComponent extends React.Component{
                 this.setState({saveAsName: event.target.value})
         }
     }
-    isNull(data) {
-        return data == null;
+    profilePathIsNull = () => {
+        try {
+            //Should catch the NullPointerE for profileFilePath.replace, meaning the item does not exist, in which case "" is fine, otherwise just
+            //return it
+            return localStorage.getItem("profileFilePath").replace(".squid", "").replace("/", "")
+        }
+        catch(e) {
+            return "";
+        }
     }
     async handClose() {
         this.setState({modalOpen: false})
