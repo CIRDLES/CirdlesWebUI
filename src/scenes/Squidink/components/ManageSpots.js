@@ -192,16 +192,26 @@ export class ManageSpots extends React.Component {
         })
     }
 
-    pullContent(arg) {
+    pullContent(arg, clearListAction) {
         return requestSender('/spotspull', localStorage.getItem("user")).then((body) => {
             //Because all of the responses come from a single servlet, must split/remove new line
             let arr = (body.data.split("\n"))
-            this.setState({
-                filterSpotsOptions: JSON.parse(arr[0].trim()),
-                spotsTable: JSON.parse(arr[1].trim()),
-                rmFilter: JSON.parse(arr[4]),
-                crmFilter: JSON.parse(arr[5])
-            })
+            console.log(arr)
+            if(clearListAction) {
+                this.setState({
+                    filterSpotsOptions: JSON.parse(arr[0].trim()),
+                    rmFilter: JSON.parse(arr[4]),
+                    crmFilter: JSON.parse(arr[5])
+                })
+            }
+            else {
+                this.setState({
+                    filterSpotsOptions: JSON.parse(arr[0].trim()),
+                    spotsTable: JSON.parse(arr[1].trim()),
+                    rmFilter: JSON.parse(arr[4]),
+                    crmFilter: JSON.parse(arr[5])
+                })
+            }
             if (this.state.rmFilter != "NO FILTER" && this.state.rmFilter.length != 0) {
                 this.setState({
                     rmSpots: JSON.parse(arr[2].trim()),
@@ -214,10 +224,12 @@ export class ManageSpots extends React.Component {
                     crmCount: JSON.parse(arr[3].trim()).length
                 })
             }
-            this.setState({
-                maxSampleCount: JSON.parse(arr[1].trim()).length,
-                currentSampleCount: JSON.parse(arr[1].trim()).length
-            })
+            if(!clearListAction) {
+                this.setState({
+                    maxSampleCount: JSON.parse(arr[1].trim()).length,
+                    currentSampleCount: JSON.parse(arr[1].trim()).length
+                })
+            }
             let model1 = arr[6].replace("\r", "").split("!@#")
             let model2 = arr[7].replace("\r", "").split("!@#")
             model2.push("NONE v.1.0")
@@ -448,7 +460,7 @@ export class ManageSpots extends React.Component {
 
     clearListRM(event, arg) {
         this.buttonPost(event, arg, "clear").then(() => {
-            this.pullContent().then(() => {
+            this.pullContent(arg, true).then(() => {
                 this.setState({
                     rmSpots: [],
                     rmCount: 0,
@@ -462,7 +474,7 @@ export class ManageSpots extends React.Component {
 
     clearListCRM(event, arg) {
         this.buttonPost(event, arg, "clear").then(() => {
-            this.pullContent(arg).then(() => {
+            this.pullContent(arg, true).then(() => {
                 this.setState({
                     crmSpots: [],
                     crmCount: 0,
@@ -608,14 +620,12 @@ export class ManageSpots extends React.Component {
                                         <div className={cx('hint-wrapper')}>
                                             <p style={{fontSize: "smaller", display: "inline"}}>Hint: To clear the list,
                                                 right mouse-click on it anywhere for menu.</p>
-                                            {this.state.rmModel != "NONE v.1.0" ?
+
                                                 <Button id="RM" variant="contained" color="primary"
                                                         onClick={(event) => {
                                                             this.copyRMButton(event, "RM")
                                                         }}>Copy Filtered Spots to RM Spots.</Button>
-                                                :
-                                                <Button id="RM" variant="contained" color="grey">Copy Filtered Spots to
-                                                    RM Spots.</Button>}
+
                                         </div>
                                         <div className={cx('hint-wrapper')}>
                                             <h5 style={{fontSize: "17px", paddingTop: "15px"}}>Concentration Reference
@@ -650,14 +660,12 @@ export class ManageSpots extends React.Component {
                                         <div className={cx('hint-wrapper')}>
                                             <p style={{fontSize: "smaller", display: "inline"}}>Hint: To clear the list,
                                                 right mouse-click on it anywhere for menu.</p>
-                                            {this.state.crmModel != "NONE v.1.0" ?
+
                                                 <Button id="CRM" variant="contained" color="primary"
                                                         onClick={(event) => {
                                                             this.copyCRMButton(event, "CRM")
                                                         }}>Copy Filtered Spots to CRM Spots.</Button>
-                                                :
-                                                <Button id="CRM" variant="contained" color="grey">Copy Filtered Spots to
-                                                    CRM Spots.</Button>}
+
                                         </div>
                                     </div>
                                     <div className={cx('isotopic-rm-label')}>
