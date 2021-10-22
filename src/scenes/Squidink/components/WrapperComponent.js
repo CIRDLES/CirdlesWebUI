@@ -85,8 +85,10 @@ class WrapperComponent extends React.Component{
                             + ":" + this.state.saveAsName + ".squid").then(this.setState({saveAsModalOpen: false}))
                     }})}
     componentDidMount() {
-        window.addEventListener('message', this.messageFunction, false)
-        this.setState({saveAsName: localStorage.getItem("profileFilePath").replace(".squid", "").replace("/", "")})
+        window.addEventListener('message', this.messageFunction, false);
+        this.setState({saveAsName:
+                this.isNull(localStorage.getItem("profileFilePath")) ? "" : localStorage.getItem("profileFilePath").replace(".squid", "").replace("/", "")
+        })
     }
     componentWillUnmount() {
         window.removeEventListener('message', this.messageFunction, false)
@@ -96,6 +98,9 @@ class WrapperComponent extends React.Component{
         if (event.target.value == (event.target.value.match(regex) || []).join('') && event.target.value.length != 0) {
                 this.setState({saveAsName: event.target.value})
         }
+    }
+    isNull(data) {
+        return data == null;
     }
     async handClose() {
         this.setState({modalOpen: false})
@@ -166,7 +171,7 @@ class WrapperComponent extends React.Component{
                                 <Button variant="contained" color="primary" onClick={this.saveAsClick}>Save</Button>
                             </div>
                             <Button variant="contained" color="primary" onClick={() => {
-                                this.setState({saveAsName: localStorage.getItem("profileFilePath").replace(".squid", "").replace("/", "")});
+                                this.setState({saveAsName:  this.isNull(localStorage.getItem("profileFilePath")) ? "" : localStorage.getItem("profileFilePath").replace(".squid", "").replace("/", "")});
                                 this.setState({saveAsModalOpen: false});
                             }}>Cancel</Button>
                         </div>
@@ -174,7 +179,7 @@ class WrapperComponent extends React.Component{
                     <div className={cx('body')}>
                         {this.state.showfbr ?
                             <ResizePanel onDragStart={this.hideinternal} onDragEnd={this.showinternal} direction="e"
-                                         style={{id: 'fbr', flexGrow: '1', minWidth: "15%"}}>
+                                         style={{id: 'fbr', flexGrow: '1'}}>
                                 <div className={cx('sidebar', 'withMargin', 'panel')}>
                                     <iframe id='iframee'
                                             style={{

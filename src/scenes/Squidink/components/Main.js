@@ -14,7 +14,6 @@ export class Main extends React.Component {
             //Because WrapperComponent is not instantiated from the router but from its child, we have to pass in the history as a prop
             <WrapperComponent stateNum={0}history={this.props.history}/>
         )
-
     }
 }
 
