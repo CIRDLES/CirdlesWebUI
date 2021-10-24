@@ -239,7 +239,6 @@ export class ManageProject extends React.Component {
     notesUpdate(event) {
         requestSender("/pmset", localStorage.getItem("user") + ":notes:" + event.target.value)
     }
-
     updateProject(updateType) {
         let prefix = localStorage.getItem("user") + ":"
         switch (updateType) {
@@ -351,7 +350,9 @@ export class ManageProject extends React.Component {
                                                style={{width: '100%'}}/>
                                 </div>
                                 <div className={cx('project-file-text')}>
-                                    <h5 style={{color: "#000000 !important"}}>{localStorage.getItem("user") + localStorage.getItem("profileFilePath")}</h5>
+                                    <h5 style={{color: "#000000 !important"}}>
+
+                                        {localStorage.getItem("profileFilePath").includes("NO_NAME") ? "" : localStorage.getItem("user") + localStorage.getItem("profileFilePath") }</h5>
                                 </div>
                                 <div className={cx('data-file-text')}>
                                     <h5 style={{color: "#000000 !important"}}>{this.state.dataFilePath}</h5>

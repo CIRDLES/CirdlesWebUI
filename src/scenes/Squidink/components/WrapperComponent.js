@@ -87,6 +87,10 @@ class WrapperComponent extends React.Component{
     componentDidMount() {
         window.addEventListener('message', this.messageFunction, false);
         this.setState({saveAsName: this.profilePathIsNull()})
+        if(localStorage.getItem("profileFilePath").includes("xml") || localStorage.getItem("profileFilePath").includes("zip")) {
+            this.setState({saveAsName:"NO_NAME.squid"})
+            localStorage.setItem("profileFilePath", "NO_NAME.squid")
+        }
     }
     componentWillUnmount() {
         window.removeEventListener('message', this.messageFunction, false)
@@ -176,8 +180,8 @@ class WrapperComponent extends React.Component{
                                 <Button variant="contained" color="primary" onClick={this.saveAsClick}>Save</Button>
                             </div>
                             <Button variant="contained" color="primary" onClick={() => {
-                                this.setState({saveAsName:  this.isNull(localStorage.getItem("profileFilePath")) ? "" : localStorage.getItem("profileFilePath").replace(".squid", "").replace("/", "")});
-                                this.setState({saveAsModalOpen: false});
+                                this.setState({saveAsModalOpen: false,
+                                                    saveAsName:  this.profilePathIsNull()});
                             }}>Cancel</Button>
                         </div>
                     </div>}</Modal>
