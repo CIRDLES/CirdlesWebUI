@@ -114,6 +114,10 @@ export const dropdownState = [
     //State 1, Opened Demo File, with current available functions
     [
         1,1,1,1,1,1,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1
+    ],
+    //State 2, xml or zip file
+    [
+        1,1,1,1,0,1,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1
     ]
 ]
 export const dropdownOptions = [

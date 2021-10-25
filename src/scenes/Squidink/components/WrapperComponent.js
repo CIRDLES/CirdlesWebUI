@@ -216,30 +216,30 @@ class WrapperComponent extends React.Component{
                             <div className={cx('header-custom', 'panel-custom')}
                                  style={{position: 'fixed', top: '40', zIndex: 10}}>
                                 <div className="rownav" style={{display: 'flex'}}>
-                                    <DropdownCustom stateNum={this.props.stateNum}dropdownName="Filebrowser"
+                                    <DropdownCustom stateNum={this.profilePathIsNull().includes("NO_NAME") ? 2 : this.props.stateNum} dropdownName="Filebrowser"
                                                     onClickOveride={this.hidediv}></DropdownCustom>
-                                    <DropdownCustom stateNum={this.props.stateNum}dropdownName="Project"
+                                    <DropdownCustom stateNum={this.profilePathIsNull().includes("NO_NAME") ? 2 : this.props.stateNum}dropdownName="Project"
                                                     dropdownOptions={dropdownOptions[0]}
                                                     functionOverride={fOvd}></DropdownCustom>
-                                    <DropdownCustom stateNum={this.props.stateNum}dropdownName="Data"
+                                    <DropdownCustom stateNum={this.profilePathIsNull().includes("NO_NAME") ? 2 : this.props.stateNum}dropdownName="Data"
                                                     dropdownOptions={dropdownOptions[1]}></DropdownCustom>
-                                    <DropdownCustom stateNum={this.props.stateNum}dropdownName="Task"
+                                    <DropdownCustom stateNum={this.profilePathIsNull().includes("NO_NAME") ? 2 : this.props.stateNum}dropdownName="Task"
                                                     dropdownOptions={dropdownOptions[2]}></DropdownCustom>
-                                    <DropdownCustom stateNum={this.props.stateNum}dropdownName="Isotopes"
+                                    <DropdownCustom stateNum={this.profilePathIsNull().includes("NO_NAME") ? 2 : this.props.stateNum}dropdownName="Isotopes"
                                                     dropdownOptions={dropdownOptions[3]}></DropdownCustom>
-                                    <DropdownCustom stateNum={this.props.stateNum}dropdownName="Expressions"
+                                    <DropdownCustom stateNum={this.profilePathIsNull().includes("NO_NAME") ? 2 : this.props.stateNum}dropdownName="Expressions"
                                                     dropdownOptions={dropdownOptions[4]}></DropdownCustom>
-                                    <DropdownCustom stateNum={this.props.stateNum}dropdownName="Common Pb"
+                                    <DropdownCustom stateNum={this.profilePathIsNull().includes("NO_NAME") ? 2 : this.props.stateNum}dropdownName="Common Pb"
                                                     dropdownOptions={dropdownOptions[5]}></DropdownCustom>
-                                    <DropdownCustom stateNum={this.props.stateNum}dropdownName="Interpretations"
+                                    <DropdownCustom stateNum={this.profilePathIsNull().includes("NO_NAME") ? 2 : this.props.stateNum}dropdownName="Interpretations"
                                                     dropdownOptions={dropdownOptions[6]}></DropdownCustom>
-                                    <DropdownCustom stateNum={this.props.stateNum}dropdownName="Reports"
+                                    <DropdownCustom stateNum={this.profilePathIsNull().includes("NO_NAME") ? 2 : this.props.stateNum}dropdownName="Reports"
                                                     dropdownOptions={dropdownOptions[7]}></DropdownCustom>
-                                    <DropdownCustom stateNum={this.props.stateNum}dropdownName="Archiving"
+                                    <DropdownCustom stateNum={this.profilePathIsNull().includes("NO_NAME") ? 2 : this.props.stateNum}dropdownName="Archiving"
                                                     dropdownOptions={dropdownOptions[8]}></DropdownCustom>
-                                    <DropdownCustom stateNum={this.props.stateNum}dropdownName="Parameter"
+                                    <DropdownCustom stateNum={this.profilePathIsNull().includes("NO_NAME") ? 2 : this.props.stateNum}dropdownName="Parameter"
                                                     dropdownOptions={dropdownOptions[9]}></DropdownCustom>
-                                    <DropdownCustom stateNum={this.props.stateNum}dropdownName="About"
+                                    <DropdownCustom stateNum={this.profilePathIsNull().includes("NO_NAME") ? 2 : this.props.stateNum}dropdownName="About"
                                                     dropdownOptions={dropdownOptions[10]}></DropdownCustom>
                                 </div>
                             </div>
