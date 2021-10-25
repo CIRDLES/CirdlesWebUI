@@ -77,19 +77,28 @@ class WrapperComponent extends React.Component{
         requestSender('/sapreflight',localStorage.getItem("user")
             + ":" + this.state.saveAsName + ".squid")
             .then((d) => {
-                    requestSender('/saveAsServlet',localStorage.getItem("user")
+                    return requestSender('/saveAsServlet',localStorage.getItem("user")
                         + ":" + this.state.saveAsName + ".squid").then(this.setState({saveAsModalOpen: false}))
             },(e) => {
                     if(confirm("This file already exists, are you sure you want to overwrite it?")) {
-                        requestSender('/saveAsServlet',localStorage.getItem("user")
+                        return requestSender('/saveAsServlet',localStorage.getItem("user")
                             + ":" + this.state.saveAsName + ".squid").then(this.setState({saveAsModalOpen: false}))
-                    }})}
+                    }
+                        return null;
+            }).then((d) => {
+                localStorage.setItem("profileFilePath", "/" + this.state.saveAsName + ".squid")
+                location.reload();
+            },
+            (e) => {
+
+            })
+    }
     componentDidMount() {
         window.addEventListener('message', this.messageFunction, false);
         this.setState({saveAsName: this.profilePathIsNull()})
         if(localStorage.getItem("profileFilePath").includes("xml") || localStorage.getItem("profileFilePath").includes("zip")) {
-            this.setState({saveAsName:"NO_NAME.squid"})
-            localStorage.setItem("profileFilePath", "NO_NAME.squid")
+            this.setState({saveAsName:"NO_NAME"})
+            localStorage.setItem("profileFilePath", "NO_NAME")
         }
     }
     componentWillUnmount() {
