@@ -132,7 +132,7 @@ export class ManageSpots extends React.Component {
                     })
                 }
             }
-            if(Number.isNaN(this.state.uppm)) {
+            if(Number.isNaN(parseInt(this.state.uppm)) || Number.isNaN(parseInt(this.state.thppm))) {
                 this.setState({
                     uppm: 0,
                     thppm: 0
