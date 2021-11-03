@@ -88,6 +88,18 @@ async function clickActionSave() {
 async function clickManageSpots() {
     window.location.href = MANAGESPOTS_ROUTE
 }
+// task menu items functions+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    async function clickViewCurTask() {
+        requestSender('/refwarning', localStorage.getItem("user")).then((d) => {
+            if(d === 'true') {
+                window.alert("Please be sure to Manage Reference Materials and Sample names using the Data menu.")
+            }
+            else {
+                //Redirect the user to the task page
+            }
+        })
+    }
+
 // about menu items functions+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 async function clickShowAbout() {
         window.location.href = SHOWABOUT_ROUTE
@@ -198,7 +210,7 @@ export const dropdownOptions = [
     [
         {
             title: 'View Current Task',
-            onclick: testFunction,
+            onclick: clickViewCurTask,
             id: 13
         },
         {
