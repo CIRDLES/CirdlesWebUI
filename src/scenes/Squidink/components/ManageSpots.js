@@ -102,7 +102,9 @@ export class ManageSpots extends React.Component {
             let parsedAudit = JSON.parse(response[0])[0]
             document.body.style.cursor = 'default'
             if (parsedAudit.includes("F")) {
-                window.alert("This reference material model is missing meaningful age data. \n\nPlease choose another model")
+                if(this.state.rmModel != "NONE v.1.0" && this.state.crmModel != "NONE v.1.0") {
+                    window.alert("This reference material model is missing meaningful age data. \n\nPlease choose another model")
+                }
                 this.setState({
                     data1: 0,
                     data2: 0,
@@ -111,7 +113,9 @@ export class ManageSpots extends React.Component {
                 })
             } else {
                 if (parsedAudit.includes(1)) {
-                    window.alert("This reference material model is missing * key age(s), so Squid3 is temporarily substituting values (shown in red) and refreshing as follows\n\n" + response[0][1])
+                    if(this.state.rmModel != "NONE v.1.0" && this.state.crmModel != "NONE v.1.0") {
+                        window.alert("This reference material model is missing * key age(s), so Squid3 is temporarily substituting values (shown in red) and refreshing as follows\n\n" + response[0][1])
+                    }
                     this.setState({auditChanges: JSON.parse(response[0])[1]})
                 }
 
