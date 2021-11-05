@@ -205,9 +205,10 @@ class WrapperComponent extends React.Component{
                                                 flexGrow: '1',
                                                 overflow: 'auto',
                                                 height: '100%',
-                                                width: '100%'
+                                                width: `100%`
                                             }}
                                             src={FILEBROWSER_URL}></iframe>
+
                                 </div>
                             </ResizePanel>
                             : null}

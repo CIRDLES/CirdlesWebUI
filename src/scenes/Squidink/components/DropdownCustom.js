@@ -63,27 +63,27 @@ export default class DropdownCustom extends React.Component {
                     <span>{this.props.dropdownName}</span>
                 </button>
                 <nav className={`menu-custom ${this.state.isActive ? "active" : "inactive"}`}>
-                    <ul onClick={this.clickAction}>
+                    <ul onClick={this.clickAction} key={1234*Math.random()}>
                         {
                             this.props.dropdownOptions.map((options) => {
                                 if(dropdownState[this.props.stateNum][options.id-1] == 0) {
                                     return (
-                                        <li style={{backgroundColor: "#E7EAEF", cursor:"not-allowed"}}className={"dropdown-context-custom"}key={options.id + 1000}>
-                                            <a className={"dropdown-context-custom"}key={options.id+2000}> <s>{options.title}</s> </a>
+                                        <li style={{backgroundColor: "#E7EAEF", cursor:"not-allowed"}}className={"dropdown-context-custom"}key={options.id + 1000*Math.random()}>
+                                            <a className={"dropdown-context-custom"}key={options.id+2000*Math.random()}> <s>{options.title}</s> </a>
                                         </li>
                                     )
                                 }
 
                                 else if(this.props.functionOverride != undefined && this.props.functionOverride.has(options.id.toString())) {
                                         return(
-                                            <li className={"dropdown-context-custom"}key={options.id+1000}>
-                                                <a className={"dropdown-context-custom"}key={options.id+2000}onClick={this.props.functionOverride.get(options.id.toString()).function}>{options.title} </a>
+                                            <li className={"dropdown-context-custom"}key={options.id+1000 * Math.random()}>
+                                                <a className={"dropdown-context-custom"}key={options.id+2000 * Math.random()}onClick={this.props.functionOverride.get(options.id.toString()).function}>{options.title} </a>
                                             </li>
                                         )}
                                 else {
                                         return(
-                                            <li className={"dropdown-context-custom"}key={options.id+1000}>
-                                                <a className={"dropdown-context-custom"}key={options.id+2000}onClick={options.onclick}>{options.title}</a>
+                                            <li className={"dropdown-context-custom"}key={options.id+1000*Math.random()}>
+                                                <a className={"dropdown-context-custom"}key={options.id+2000*Math.random()}onClick={options.onclick}>{options.title}</a>
                                             </li>
                                         );
                                     }

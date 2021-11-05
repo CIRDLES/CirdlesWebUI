@@ -22,10 +22,8 @@ class ResizePanel extends React.Component {
   componentDidMount() {
     const content = this.contentRef.current;
     const actualContent = content.children[0];
-    let initialSize = this.isHorizontal()
-      ? $(actualContent).outerWidth(true)
-      : $(actualContent).outerHeight(true);
 
+    let initialSize = document.cookie.length != 0 ? document.cookie.split(';')[0].split('=')[1] : $(actualContent).outerWidth(true)
     // Initialize the size value based on the content's current size
     this.setState({ size: initialSize });
     this.validateSize();
@@ -56,6 +54,9 @@ class ResizePanel extends React.Component {
         ...this.state,
         size: minSize
       });
+      let date = new Date();
+      date = date.setFullYear(date.getFullYear() + 1)
+      document.cookie = `fbw=${minSize}; expires="${date}`
     } else {
       // If our resizing has left the parent container's content overflowing
       // then we need to shrink back down to fit
@@ -82,6 +83,9 @@ class ResizePanel extends React.Component {
     // modify the size based on the drag delta
     let delta = this.isHorizontal() ? ui.deltaX : ui.deltaY;
     this.setState((s, p) => ({ size: Math.max(10, s.size - delta * factor) }));
+    let date = new Date();
+    date = date.setFullYear(date.getFullYear() + 1)
+    document.cookie = `fbw=${this.state.size}; expires="${date}`
     this.contentRef.current.style.visibility = "hidden"
   };
 
