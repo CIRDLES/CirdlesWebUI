@@ -8,15 +8,20 @@ export default class DropdownCustom extends React.Component {
         this.state = {
             isActive: false,
             listenerActive: false,
-            hoverState: false
+            hoverState: false,
+            keyCount: 0
         }
         this.dropdownRef = createRef();
         this.toggleHover = this.toggleHover.bind(this);
         this.setIsActive = this.setIsActive.bind(this);
         this.clickAction = this.clickAction.bind(this);
         this.pageClick = this.pageClick.bind(this);
+        this.incrementKey = this.incrementKey.bind(this);
     }
-
+    incrementKey() {
+        this.setState({keyCount: this.state.keyCount++})
+        return this.state.keyCount
+    }
     toggleHover() {
         this.setState({hoverState: !this.state.hoverState})
     }
@@ -63,22 +68,22 @@ export default class DropdownCustom extends React.Component {
                             this.props.dropdownOptions.map((options) => {
                                 if(dropdownState[this.props.stateNum][options.id-1] == 0) {
                                     return (
-                                        <li style={{backgroundColor: "#E7EAEF", cursor:"not-allowed"}}className={"dropdown-context-custom"}key={options.id}>
-                                            <a className={"dropdown-context-custom"}key={options.id}> <s>{options.title}</s> </a>
+                                        <li style={{backgroundColor: "#E7EAEF", cursor:"not-allowed"}}className={"dropdown-context-custom"}key={options.id + 1000}>
+                                            <a className={"dropdown-context-custom"}key={options.id+2000}> <s>{options.title}</s> </a>
                                         </li>
                                     )
                                 }
 
                                 else if(this.props.functionOverride != undefined && this.props.functionOverride.has(options.id.toString())) {
                                         return(
-                                            <li className={"dropdown-context-custom"}key={options.id}>
-                                                <a className={"dropdown-context-custom"}key={options.id}onClick={this.props.functionOverride.get(options.id.toString()).function}>{options.title} </a>
+                                            <li className={"dropdown-context-custom"}key={options.id+1000}>
+                                                <a className={"dropdown-context-custom"}key={options.id+2000}onClick={this.props.functionOverride.get(options.id.toString()).function}>{options.title} </a>
                                             </li>
                                         )}
                                 else {
                                         return(
-                                            <li className={"dropdown-context-custom"}key={options.id}>
-                                                <a className={"dropdown-context-custom"}key={options.id}onClick={options.onclick}>{options.title}</a>
+                                            <li className={"dropdown-context-custom"}key={options.id+1000}>
+                                                <a className={"dropdown-context-custom"}key={options.id+2000}onClick={options.onclick}>{options.title}</a>
                                             </li>
                                         );
                                     }

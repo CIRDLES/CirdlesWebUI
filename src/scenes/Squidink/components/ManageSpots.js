@@ -102,7 +102,7 @@ export class ManageSpots extends React.Component {
             let parsedAudit = JSON.parse(response[0])[0]
             document.body.style.cursor = 'default'
             if (parsedAudit.includes("F")) {
-                if(this.state.rmModel != "NONE v.1.0" && this.state.crmModel != "NONE v.1.0") {
+                if(this.state.rmModel != "NONE v.1.0 <Built-in>" && this.state.crmModel != "NONE v.1.0 <Built-in>") {
                     window.alert("This reference material model is missing meaningful age data. \n\nPlease choose another model")
                 }
                 this.setState({
@@ -113,7 +113,7 @@ export class ManageSpots extends React.Component {
                 })
             } else {
                 if (parsedAudit.includes(1)) {
-                    if(this.state.rmModel != "NONE v.1.0" && this.state.crmModel != "NONE v.1.0") {
+                    if(this.state.rmModel != "NONE v.1.0 <Built-in>" && this.state.crmModel != "NONE v.1.0 <Built-in>") {
                         window.alert("This reference material model is missing * key age(s), so Squid3 is temporarily substituting values (shown in red) and refreshing as follows\n\n" + response[0][1])
                     }
                     this.setState({auditChanges: JSON.parse(response[0])[1]})
@@ -242,7 +242,7 @@ export class ManageSpots extends React.Component {
             }
             let model1 = arr[6].replace("\r", "").split("!@#")
             let model2 = arr[7].replace("\r", "").split("!@#")
-            model2.push("NONE v.1.0")
+            model2.push("NONE v.1.0 <Built-in>")
             this.setState({
                 rmModels: model1,
                 crmModels: model2,
@@ -690,7 +690,7 @@ export class ManageSpots extends React.Component {
                                             >
                                                 {
                                                     this.state.rmModels.map((value) => {
-                                                        if (value != "NONE v.1.0")
+                                                        if (value != "NONE v.1.0 <Built-in>")
                                                             return (<MenuItem value={value}>{value}</MenuItem>)
                                                         else {
                                                             return (<MenuItem disabled={true}
@@ -752,7 +752,7 @@ export class ManageSpots extends React.Component {
                                             >
                                                 {
                                                     this.state.crmModels.map((value) => {
-                                                        if (value != "NONE v.1.0") {
+                                                        if (value != "NONE v.1.0 <Built-in>") {
                                                             return (<MenuItem value={value}>{value}</MenuItem>)
                                                         } else {
                                                             return (<MenuItem disabled={true}
