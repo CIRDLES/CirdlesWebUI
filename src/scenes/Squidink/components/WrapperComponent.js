@@ -71,6 +71,13 @@ class WrapperComponent extends React.Component{
                     console.log(er)
                 })
             }
+            else {
+                requestSender('/close',localStorage.getItem("user")).then((d) => {
+                    if(d == 1) {
+                        location.reload()
+                    }
+                })
+            }
         }
     }
     saveAsClick() {
