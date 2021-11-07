@@ -73,7 +73,7 @@ class WrapperComponent extends React.Component{
             }
             else {
                 requestSender('/close',localStorage.getItem("user")).then((d) => {
-                    if(d == 1) {
+                    if(d.data == 1) {
                         location.reload()
                     }
                 })
