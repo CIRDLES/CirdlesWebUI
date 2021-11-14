@@ -10,7 +10,8 @@ import ManageSpots from "./components/ManageSpots"
 import ShowAbout from "./components/ShowAbout"
 import 'styles/Squidink/Main.scss';
 //Constants
-import {BASE_ROUTE, MANAGEPROJECT_ROUTE, MANAGESPOTS_ROUTE, SHOWABOUT_ROUTE} from "./util/constants"
+import {BASE_ROUTE, CURRENTTASK_ROUTE, MANAGEPROJECT_ROUTE, MANAGESPOTS_ROUTE, SHOWABOUT_ROUTE} from "./util/constants"
+import {CurrentTask} from "./components/CurrentTask";
 
 class SquidInkPage extends Component {
     render() {
@@ -21,6 +22,7 @@ class SquidInkPage extends Component {
                     <Route exact path={MANAGEPROJECT_ROUTE} component={SkeletonExample}/>
                     <Route exact path={MANAGESPOTS_ROUTE} component={ManageSpots}/>
                     <Route exact path={SHOWABOUT_ROUTE} component={ShowAbout}/>
+                    <Route exact path={CURRENTTASK_ROUTE} component={CurrentTask}/>
                 </main>
             </div>
         );

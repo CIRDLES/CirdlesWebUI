@@ -5,7 +5,7 @@ import style from 'styles/Squidink/Main.scss';
 import classNames from 'classnames/bind';
 import DropdownCustom from "./DropdownCustom";
 import "constants/api";
-import {dropdownOptions, MANAGEPROJECT_ROUTE, requestSender} from "../util/constants";
+import {BASE_ROUTE, dropdownOptions, MANAGEPROJECT_ROUTE, requestSender} from "../util/constants";
 import {FILEBROWSER_URL, SQUIDINK_ENDPOINT} from "constants/api";
 import Modal from "@material-ui/core/Modal";
 import axios from "axios";
@@ -74,7 +74,8 @@ class WrapperComponent extends React.Component{
             else {
                 requestSender('/close',localStorage.getItem("user")).then((d) => {
                     if(d.data == 1) {
-                        location.reload()
+                        localStorage.setItem("user", "")
+                        window.location.href = BASE_ROUTE;
                     }
                 })
             }
