@@ -20,7 +20,7 @@ async function clickActionDemo() {
                 window.location.reload();
             } else {
                 window.location.href = MANAGEPROJECT_ROUTE
-            }c
+            }
         })
     }
 }
