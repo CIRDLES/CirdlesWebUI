@@ -38,32 +38,32 @@ export class CurrentTask extends React.Component {
                         <h3>Task Name:</h3>
                     </div>
                     <div className={cx('task-name-text')}>
-                        <TextField style={{width: '80%'}}/>
+                        <TextField label="Task name"style={{width: '80%'}}/>
                         <h5 className={cx('geochron-label')} style={{display: "inline", paddingTop: "10px", paddingLeft: "30px"}}>Geochron Mode</h5>
                     </div>
                     <div className={cx('description-label')}>
                         <h3>Description:</h3>
                     </div>
                     <div className={cx('description-text')}>
-                        <TextField style={{width: '100%'}}/>
+                        <TextField label="Task Description"style={{width: '100%'}}/>
                     </div>
                     <div className={cx('author-lab-label')}>
                         <h3>Author & Lab:</h3>
                     </div>
                     <div className={cx('author-name-text')}>
-                        <TextField style={{width: '100%'}}/>
+                        <TextField label="Author's Name"style={{width: '100%'}}/>
                     </div>
                     <div className={cx('lab-name-label')}>
                         <h3>Lab Name:</h3>
                     </div>
                     <div className={cx('lab-name-text')}>
-                        <TextField style={{width: '85%'}}/>
+                        <TextField label="Lab Name"style={{width: '85%'}}/>
                     </div>
                     <div className={cx('provenance-label')}>
                         <h3>Provenance:</h3>
                     </div>
                     <div className={cx('provenance-text')}>
-                        <TextField style={{width: '95%'}}/>
+                        <TextField label="Provenance"style={{width: '95%'}}/>
                     </div>
                     <div className={cx('directives-label')}>
                         <h3>Directives:</h3>
