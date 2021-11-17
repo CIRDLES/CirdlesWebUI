@@ -97,7 +97,7 @@ async function clickManageSpots() {
                 window.alert("Please be sure to Manage Reference Materials and Sample names using the Data menu.")
             }
             else {
-                //Redirect the user to the task page
+                window.location.href = CURRENTTASK_ROUTE;
             }
         })
     }
