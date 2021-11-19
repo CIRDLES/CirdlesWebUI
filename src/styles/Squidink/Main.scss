@@ -4,6 +4,9 @@ body {
 }
 
 .container-custom {
+  .body{
+    overflow: hidden;
+  }
   position: fixed;
   top: 5%;
   width: 100%;

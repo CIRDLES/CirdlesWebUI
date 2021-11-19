@@ -14,6 +14,7 @@ import Checkbox from "@material-ui/core/Checkbox";
 import ButtonGroup from "@material-ui/core/ButtonGroup";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
+import {requestSender} from "../util/constants";
 
 let cx = classNames.bind(style);
 
@@ -22,11 +23,49 @@ export class CurrentTask extends React.Component {
         super(props);
         this.state = {
             //State-initializer, initialize state vars here for reference from html
-            mount: true,
+            mount: false,
+            taskName: "",
+            taskDesc: "",
+            taskAuthor: "",
+            taskLab: "",
+            taskProv: "",
+            taskParentNuc: "",
+            taskDirect: "",
+            audit: ""
         };
         //If a component requires 'this.' context, it's easiest to bind it, i.e.
+        this.pullStrings = this.pullStrings.bind(this)
+        this.componentDidMount = this.componentDidMount.bind(this)
 
     }
+    componentDidMount() {
+        this.pullStrings()
+    }
+    pullStrings() {
+        requestSender('/curtaskstrings', localStorage.getItem('user')).then((response) => {
+            let body = response.data.replace('[', "").replace("]", "").split(',')
+            this.setState({
+                taskName: body[0],
+                taskDesc: body[1],
+                taskAuthor: body[2],
+                taskLab: body[3],
+                taskProv: body[4],
+                taskParentNuc: body[5],
+                taskDirect: body[6],
+                mount: true
+            })
+            let audit = "";
+
+            for(let i = 7; i < body.length; i++) {
+                audit += body[i]
+                if(i != body.length - 1) {
+                    audit += ","
+                }
+            }
+            this.setState({audit: audit})
+        })
+    }
+
     render() {
         return (
             this.state.mount ?
@@ -38,32 +77,37 @@ export class CurrentTask extends React.Component {
                         <h3>Task Name:</h3>
                     </div>
                     <div className={cx('task-name-text')}>
-                        <TextField label="Task name"style={{width: '80%'}}/>
+                        <TextField defaultValue={this.state.taskName}
+                                   label="Task name"style={{width: '80%'}}/>
                         <h5 className={cx('geochron-label')} style={{display: "inline", paddingTop: "10px", paddingLeft: "30px"}}>Geochron Mode</h5>
                     </div>
                     <div className={cx('description-label')}>
                         <h3>Description:</h3>
                     </div>
                     <div className={cx('description-text')}>
-                        <TextField label="Task Description"style={{width: '100%'}}/>
+                        <TextField defaultValue={this.state.taskDesc}
+                                   label="Task Description"style={{width: '100%'}}/>
                     </div>
                     <div className={cx('author-lab-label')}>
                         <h3>Author & Lab:</h3>
                     </div>
                     <div className={cx('author-name-text')}>
-                        <TextField label="Author's Name"style={{width: '100%'}}/>
+                        <TextField defaultValue={this.state.taskAuthor}
+                                   label="Author's Name"style={{width: '100%'}}/>
                     </div>
                     <div className={cx('lab-name-label')}>
                         <h3>Lab Name:</h3>
                     </div>
                     <div className={cx('lab-name-text')}>
-                        <TextField label="Lab Name"style={{width: '85%'}}/>
+                        <TextField defaultValue={this.state.taskLab}
+                                   label="Lab Name"style={{width: '85%'}}/>
                     </div>
                     <div className={cx('provenance-label')}>
                         <h3>Provenance:</h3>
                     </div>
                     <div className={cx('provenance-text')}>
-                        <TextField label="Provenance"style={{width: '95%'}}/>
+                        <TextField defaultValue={this.state.taskProv}
+                                   label="Provenance"style={{width: '95%'}}/>
                     </div>
                     <div className={cx('directives-label')}>
                         <h3>Directives:</h3>
@@ -118,7 +162,11 @@ export class CurrentTask extends React.Component {
                         <h3>Task Audit:</h3>
                     </div>
                     <div className={cx('task-audit-content')}>
-
+                        <div style={{overflow: "scroll", width: "100%", height:"100%"}}>
+                            <p style={{wordWrap: "break-word", whiteSpace: "pre-wrap"}}>
+                                {this.state.audit}
+                            </p>
+                        </div>
                     </div>
                     <div className={cx('actions-label')}>
                         <h3>Actions:</h3>
