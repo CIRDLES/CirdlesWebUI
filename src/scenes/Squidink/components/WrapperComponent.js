@@ -38,76 +38,92 @@ class WrapperComponent extends React.Component{
 
     }
     messageFunction = (e) => {
-        let apiCheck = e.data.toString().split(':');
+        try {
+            let apiCheck = e.data.toString().split(':');
+            if (e.origin == FILEBROWSER_URL) {
+                if (e.data.toString().length != 0 && apiCheck[0] != "api") {
+                    this.setState({loading: true})
+                    axios.post(SQUIDINK_ENDPOINT + '/OpenServlet/O', localStorage.getItem("user")
+                        + ":" + e.data, {
+                        headers: {
+                            'Content-Type': 'text/plain'
+                        }
+                    }).then(() => {
+                        this.setState({showfbr: false});
+                        this.setState({loading: false});
+                        localStorage.setItem("profileFilePath", e.data);
+                        //Remove .squid and / which we'll reinclude when sent to the server
+                        this.setState({saveAsName: this.profilePathIsNull()})
+                        console.log(this.state.saveAsName)
+                        window.location.href = MANAGEPROJECT_ROUTE;
 
-        if (e.origin == FILEBROWSER_URL) {
-            if (e.data.toString().length != 0 && apiCheck[0] != "api") {
-                this.setState({loading: true})
-                axios.post(SQUIDINK_ENDPOINT + '/OpenServlet/O', localStorage.getItem("user")
-                    + ":" + e.data, {
-                    headers: {
-                        'Content-Type': 'text/plain'
-                    }
-                }).then(() => {
-                    this.setState({showfbr: false});
-                    this.setState({loading: false});
-                    localStorage.setItem("profileFilePath", e.data);
-                    //Remove .squid and / which we'll reinclude when sent to the server
-                    this.setState({saveAsName: this.profilePathIsNull()})
-                    console.log(this.state.saveAsName)
-                    window.location.href = MANAGEPROJECT_ROUTE;
-
-                }).catch((er) => {
-                    console.log(er)
-                    this.setState({loading: false});
-                })
-            } else if (apiCheck[0] == "api") {
-                localStorage.setItem("user", apiCheck[1]);
-                axios.post(SQUIDINK_ENDPOINT + '/api', apiCheck[1], {
-                    headers: {
-                        'Content-Type': 'text/plain'
-                    }
-                }).catch((er) => {
-                    console.log(er)
-                })
+                    }).catch((er) => {
+                        console.log(er)
+                        this.setState({loading: false});
+                    })
+                } else if (apiCheck[0] == "api") {
+                    localStorage.setItem("user", apiCheck[1]);
+                    axios.post(SQUIDINK_ENDPOINT + '/api', apiCheck[1], {
+                        headers: {
+                            'Content-Type': 'text/plain'
+                        }
+                    }).catch((er) => {
+                        console.log(er)
+                    })
+                } else {
+                    requestSender('/close', localStorage.getItem("user")).then((d) => {
+                        if (d.data == 1) {
+                            localStorage.setItem("user", "")
+                            window.location.href = BASE_ROUTE;
+                        }
+                    })
+                }
             }
-            else {
-                requestSender('/close',localStorage.getItem("user")).then((d) => {
-                    if(d.data == 1) {
-                        localStorage.setItem("user", "")
-                        window.location.href = BASE_ROUTE;
-                    }
-                })
-            }
+        }
+        catch(e) {
+            console.log(e)
+            localStorage.setItem("user", "")
         }
     }
     saveAsClick() {
-        requestSender('/sapreflight',localStorage.getItem("user")
-            + ":" + this.state.saveAsName + ".squid")
-            .then((d) => {
+        try {
+            requestSender('/sapreflight',localStorage.getItem("user")
+                + ":" + this.state.saveAsName + ".squid")
+                .then((d) => {
                     return requestSender('/saveAsServlet',localStorage.getItem("user")
                         + ":" + this.state.saveAsName + ".squid").then(this.setState({saveAsModalOpen: false}))
-            },(e) => {
+                },(e) => {
                     if(confirm("This file already exists, are you sure you want to overwrite it?")) {
                         return requestSender('/saveAsServlet',localStorage.getItem("user")
                             + ":" + this.state.saveAsName + ".squid").then(this.setState({saveAsModalOpen: false}))
                     }
-                        return null;
-            }).then((d) => {
-                localStorage.setItem("profileFilePath", "/" + this.state.saveAsName + ".squid")
-                location.reload();
-            },
-            (e) => {
+                    return null;
+                }).then((d) => {
+                    localStorage.setItem("profileFilePath", "/" + this.state.saveAsName + ".squid")
+                    location.reload();
+                },
+                (e) => {
 
-            })
+                })
+        }
+        catch(e) {
+            console.log(e)
+            localStorage.setItem("user", "")
+        }
     }
     componentDidMount() {
-        window.addEventListener('message', this.messageFunction, false);
-        this.setState({saveAsName: this.profilePathIsNull()})
-        if(localStorage.getItem("profileFilePath").includes("xml") || localStorage.getItem("profileFilePath").includes("zip")) {
-            this.setState({saveAsName:"NO_NAME"})
-            localStorage.setItem("profileFilePath", "NO_NAME")
-        }
+        try {
+            window.addEventListener('message', this.messageFunction, false);
+            this.setState({saveAsName: this.profilePathIsNull()})
+            if (localStorage.getItem("profileFilePath").includes("xml") || localStorage.getItem("profileFilePath").includes("zip")) {
+                this.setState({saveAsName: "NO_NAME"})
+                localStorage.setItem("profileFilePath", "NO_NAME")
+            }
+        } catch (e)
+            {
+                localStorage.setItem("profileFilePath", "NO_NAME")
+                console.log(e)
+            }
     }
     componentWillUnmount() {
         window.removeEventListener('message', this.messageFunction, false)
