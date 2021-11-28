@@ -31,7 +31,18 @@ export class CurrentTask extends React.Component {
             taskProv: "",
             taskParentNuc: "",
             taskDirect: "",
-            audit: ""
+            audit: "",
+            primaryRadio: "232",
+            secondaryRadio: "direct",
+            Uncor206: "",
+            Uncor208: "",
+            THU: "",
+            ParEle: "",
+            Uncor206Styling: true,
+            Uncor208Styling: true,
+            THUStyling: true,
+            ParEleStyling: true
+
         };
         //If a component requires 'this.' context, it's easiest to bind it, i.e.
         this.pullStrings = this.pullStrings.bind(this)
@@ -50,13 +61,24 @@ export class CurrentTask extends React.Component {
                 taskAuthor: body[2],
                 taskLab: body[3],
                 taskProv: body[4],
-                taskParentNuc: body[5],
-                taskDirect: body[6],
+                primaryRadio: body[5].toString().trim(),
+                secondaryRadio: body[6].trim(),
+                Uncor206: body[7],
+                Uncor208: body[8],
+                THU: body[9],
+                ParEle: body[10],
+                Uncor206Styling: body[11],
+                Uncor208Styling: body[12],
+                THUStyling: body[13],
+                ParEleStyling: body[14],
                 mount: true
             })
+            console.log(body[11])
+            console.log(body[12])
+
             let audit = "";
 
-            for(let i = 7; i < body.length; i++) {
+            for(let i = 15; i < body.length; i++) {
                 audit += body[i]
                 if(i != body.length - 1) {
                     audit += ","
@@ -65,7 +87,30 @@ export class CurrentTask extends React.Component {
             this.setState({audit: audit})
         })
     }
-
+    flipPrimary = () => {
+        if(this.state.primaryRadio == "238") {
+            this.setState({primaryRadio: "232"}, this.saveStrings)
+        }
+        else {
+            this.setState({primaryRadio: "238"}, this.saveStrings)
+        }
+    }
+    flipSecondary = () => {
+        if(this.state.secondaryRadio == "direct") {
+            this.setState({secondaryRadio: "indirect"}, this.saveStrings)
+        }
+        else {
+            this.setState({secondaryRadio: "direct"}, this.saveStrings)
+        }
+    }
+    saveStrings = () => {
+        let bodyData = localStorage.getItem("user") + "!@#" + this.state.taskName + "!@#" + this.state.taskDesc + "!@#" + this.state.taskAuthor + "!@#" +
+            this.state.taskLab + "!@#" + this.state.taskProv + "!@#" + this.state.primaryRadio + "!@#" + this.state.secondaryRadio
+        requestSender('/settaskstrings', bodyData).then((r) => {
+            this.pullStrings()
+            console.log(r)
+        })
+    }
     render() {
         return (
             this.state.mount ?
@@ -78,7 +123,9 @@ export class CurrentTask extends React.Component {
                     </div>
                     <div className={cx('task-name-text')}>
                         <TextField defaultValue={this.state.taskName}
-                                   label="Task name"style={{width: '80%'}}/>
+                                   label="Task name"style={{width: '80%'}} onChange={(e) => {
+                                      this.setState({taskName: e.target.value}, this.saveStrings)
+                        }}/>
                         <h5 className={cx('geochron-label')} style={{display: "inline", paddingTop: "10px", paddingLeft: "30px"}}>Geochron Mode</h5>
                     </div>
                     <div className={cx('description-label')}>
@@ -86,28 +133,36 @@ export class CurrentTask extends React.Component {
                     </div>
                     <div className={cx('description-text')}>
                         <TextField defaultValue={this.state.taskDesc}
-                                   label="Task Description"style={{width: '100%'}}/>
+                                   label="Task Description"style={{width: '100%'}} onChange={(e) => {
+                            this.setState({taskDesc: e.target.value}, this.saveStrings)
+                        }}/>
                     </div>
                     <div className={cx('author-lab-label')}>
                         <h3>Author & Lab:</h3>
                     </div>
                     <div className={cx('author-name-text')}>
                         <TextField defaultValue={this.state.taskAuthor}
-                                   label="Author's Name"style={{width: '100%'}}/>
+                                   label="Author's Name"style={{width: '100%'}} onChange={(e) => {
+                            this.setState({taskAuthor: e.target.value}, this.saveStrings)
+                        }}/>
                     </div>
                     <div className={cx('lab-name-label')}>
                         <h3>Lab Name:</h3>
                     </div>
                     <div className={cx('lab-name-text')}>
                         <TextField defaultValue={this.state.taskLab}
-                                   label="Lab Name"style={{width: '85%'}}/>
+                                   label="Lab Name"style={{width: '85%'}} onChange={(e) => {
+                            this.setState({taskLab: e.target.value}, this.saveStrings)
+                        }}/>
                     </div>
                     <div className={cx('provenance-label')}>
                         <h3>Provenance:</h3>
                     </div>
                     <div className={cx('provenance-text')}>
                         <TextField defaultValue={this.state.taskProv}
-                                   label="Provenance"style={{width: '95%'}}/>
+                                   label="Provenance"style={{width: '95%'}} onChange={(e) => {
+                            this.setState({taskProv: e.target.value}, this.saveStrings)
+                        }}/>
                     </div>
                     <div className={cx('directives-label')}>
                         <h3>Directives:</h3>
@@ -119,42 +174,70 @@ export class CurrentTask extends React.Component {
                                     <p style={{margin: "0 0 0 0 !important", fontSize: "14px"}}>Primary daughter/parent ratio:</p>
                                 </div>
                             </div>
+                            <div className={cx('primary-radio')}>
+                                <FormControl component="fieldset">
+                                    <RadioGroup
+                                        row
+                                        aria-label="primary-radio"
+                                        name="controlled-radio-buttons-group"
+                                        value={this.state.primaryRadio}
+                                        onChange={this.flipPrimary}
+                                    >
+                                        <FormControlLabel value="238" control={<Radio />} label="206Pb/238U" />
+                                        <FormControlLabel value="232" control={<Radio />} label="208Pb/232Th" />
+                                    </RadioGroup>
+                                </FormControl>
+                            </div>
                             <div className={cx('secondary-ratio')}>
                                 <div style={{display: "inline"}}>
                                     <p style={{margin: "0 0 0 0 !important", fontSize: "14px"}}>Calculate secondary d/p ratio:</p>
                                 </div>
+                            </div>
+                            <div className={cx('secondary-radio')}>
+                                <FormControl component="fieldset">
+                                    <RadioGroup
+                                        row
+                                        aria-label="primary-radio"
+                                        name="controlled-radio-buttons-group"
+                                        value={this.state.secondaryRadio}
+                                        onChange={this.flipSecondary}
+                                    >
+                                        <FormControlLabel value="direct" control={<Radio />} label="Directly" />
+                                        <FormControlLabel value="indirect" control={<Radio />} label="Indirectly" />
+                                    </RadioGroup>
+                                </FormControl>
                             </div>
                             <div className={cx('uranium-check')}>
                                 <div style={{display: "inline"}}>
                                     <p style={{margin: "0 0 0 0 !important", fontSize: "12px", display: "inline"}}>Uncor_206PB238U_CalibConst:</p>
                                 </div>
                             </div>
-                            <div className={cx('uncor-uranium-box')}>
-
+                            <div className={cx('uncor-uranium-box')} style={{backgroundColor: !this.state.Uncor206Styling ? "rgba(255, 0, 0, 0.3)" : "rgba(0, 255, 0, 0.3)"}}>
+                                <div className={cx('center-flex')}><p style={{fontSize: "12px"}}>{this.state.Uncor206}</p></div>
                             </div>
                             <div className={cx('thorium-uranium-check')}>
                                 <div style={{display: "inline"}}>
                                     <p style={{margin: "0 0 0 0 !important", fontSize: "12px"}}>232Th238U_RM:</p>
                                 </div>
                             </div>
-                            <div className={cx('thor-ur-box')}>
-
+                            <div className={cx('thor-ur-box')} style={{backgroundColor: !this.state.THUStyling ? "rgba(255, 0, 0, 0.3)" : "rgba(0, 255, 0, 0.3)"}}>
+                                <div className={cx('center-flex')}><p style={{fontSize: "12px"}}>{this.state.THU}</p></div>
                             </div>
                             <div className={cx('thorium-check')}>
                                 <div style={{display: "inline"}}>
                                     <p style={{margin: "0 0 0 0 !important", fontSize: "12px"}}>Uncor_208Pb232Th_CalibConst:</p>
                                 </div>
                             </div>
-                            <div className={cx('uncor-thor-box')}>
-
+                            <div className={cx('uncor-thor-box')} style={{backgroundColor: !this.state.Uncor208Styling ? "rgba(255, 0, 0, 0.3)" : "rgba(0, 255, 0, 0.3)"}}>
+                                <div className={cx('center-flex')}><p style={{fontSize: "12px"}}>{this.state.Uncor208}</p></div>
                             </div>
                             <div className={cx('parent-check')}>
                                 <div style={{display: "inline"}}>
                                     <p style={{margin: "0 0 0 0 !important", fontSize: "12px"}}>ParentElement_ConcenConst:</p>
                                 </div>
                             </div>
-                            <div className={cx('p-ele-const-box')}>
-
+                            <div className={cx('p-ele-const-box')} style={{backgroundColor: !this.state.parEleStyling ? "rgba(255, 0, 0, 0.3)" : "rgba(0, 255, 0, 0.3)"}}>
+                                <div className={cx('center-flex')}><p style={{fontSize: "12px"}}>{this.state.ParEle}</p></div>
                             </div>
                         </div>
                     </div>
