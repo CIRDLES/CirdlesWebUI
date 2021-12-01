@@ -53,7 +53,7 @@ export class CurrentTask extends React.Component {
         this.pullStrings()
     }
     pullStrings() {
-        requestSender('/curtaskstrings', localStorage.getItem('user')).then((response) => {
+        return requestSender('/curtaskstrings', localStorage.getItem('user')).then((response) => {
             let body = response.data.replace('[', "").replace("]", "").split(',')
             this.setState({
                 taskName: body[0],
@@ -67,14 +67,12 @@ export class CurrentTask extends React.Component {
                 Uncor208: body[8],
                 THU: body[9],
                 ParEle: body[10],
-                Uncor206Styling: body[11],
-                Uncor208Styling: body[12],
-                THUStyling: body[13],
-                ParEleStyling: body[14],
+                Uncor206Styling: eval(body[11].trim()),
+                Uncor208Styling: eval(body[12].trim()),
+                THUStyling: eval(body[13].trim()),
+                ParEleStyling: eval(body[14].trim()),
                 mount: true
             })
-            console.log(body[11])
-            console.log(body[12])
 
             let audit = "";
 
@@ -107,9 +105,22 @@ export class CurrentTask extends React.Component {
         let bodyData = localStorage.getItem("user") + "!@#" + this.state.taskName + "!@#" + this.state.taskDesc + "!@#" + this.state.taskAuthor + "!@#" +
             this.state.taskLab + "!@#" + this.state.taskProv + "!@#" + this.state.primaryRadio + "!@#" + this.state.secondaryRadio
         requestSender('/settaskstrings', bodyData).then((r) => {
-            this.pullStrings()
-            console.log(r)
+            this.pullStrings().then(() => {
+                this.changeBoxStyling()
+            })
+
         })
+    }
+
+    changeBoxStyling = () => {
+
+        document.getElementsByClassName("uncor-uranium-box")[0].style.backgroundColor = (this.state.Uncor206Styling ? "#00FF0033" : "#ff00004d")
+        document.getElementsByClassName("uncor-thor-box")[0].style.backgroundColor = (this.state.Uncor208Styling ? "#00FF0033" : "#ff00004d")
+        document.getElementsByClassName("thor-ur-box")[0].style.backgroundColor = (this.state.THUStyling ? "#00FF0033" : "#ff00004d")
+        document.getElementsByClassName("p-ele-const-box")[0].style.backgroundColor = (this.state.ParEleStyling ? "#00FF0033" : "#ff00004d")
+
+
+
     }
     render() {
         return (
@@ -212,32 +223,32 @@ export class CurrentTask extends React.Component {
                                     <p style={{margin: "0 0 0 0 !important", fontSize: "12px", display: "inline"}}>Uncor_206PB238U_CalibConst:</p>
                                 </div>
                             </div>
-                            <div className={cx('uncor-uranium-box')} style={{backgroundColor: !this.state.Uncor206Styling ? "rgba(255, 0, 0, 0.3)" : "rgba(0, 255, 0, 0.3)"}}>
-                                <div className={cx('center-flex')}><p style={{fontSize: "12px"}}>{this.state.Uncor206}</p></div>
+                            <div className={cx('uncor-uranium-box')}  style={{backgroundColor: (this.state.Uncor206Styling ? "#00FF0033" : "#ff00004d")}}>
+                                <div className={cx('center-flex')}><p style={{fontSize: "12px", fontFamily: "monospace"}}>{this.state.Uncor206}</p></div>
                             </div>
                             <div className={cx('thorium-uranium-check')}>
                                 <div style={{display: "inline"}}>
                                     <p style={{margin: "0 0 0 0 !important", fontSize: "12px"}}>232Th238U_RM:</p>
                                 </div>
                             </div>
-                            <div className={cx('thor-ur-box')} style={{backgroundColor: !this.state.THUStyling ? "rgba(255, 0, 0, 0.3)" : "rgba(0, 255, 0, 0.3)"}}>
-                                <div className={cx('center-flex')}><p style={{fontSize: "12px"}}>{this.state.THU}</p></div>
+                            <div className={cx('thor-ur-box')}  style={{backgroundColor: (this.state.THUStyling ? "#00FF0033" : "#ff00004d")}}>
+                                <div className={cx('center-flex')}><p style={{fontSize: "12px", fontFamily: "monospace"}}>{this.state.THU}</p></div>
                             </div>
                             <div className={cx('thorium-check')}>
                                 <div style={{display: "inline"}}>
                                     <p style={{margin: "0 0 0 0 !important", fontSize: "12px"}}>Uncor_208Pb232Th_CalibConst:</p>
                                 </div>
                             </div>
-                            <div className={cx('uncor-thor-box')} style={{backgroundColor: !this.state.Uncor208Styling ? "rgba(255, 0, 0, 0.3)" : "rgba(0, 255, 0, 0.3)"}}>
-                                <div className={cx('center-flex')}><p style={{fontSize: "12px"}}>{this.state.Uncor208}</p></div>
+                            <div className={cx('uncor-thor-box')}  style={{backgroundColor: (this.state.Uncor208Styling ? "#00FF0033" : "#ff00004d")}}>
+                                <div className={cx('center-flex')}><p style={{fontSize: "12px", fontFamily: "monospace"}}>{this.state.Uncor208}</p></div>
                             </div>
                             <div className={cx('parent-check')}>
                                 <div style={{display: "inline"}}>
                                     <p style={{margin: "0 0 0 0 !important", fontSize: "12px"}}>ParentElement_ConcenConst:</p>
                                 </div>
                             </div>
-                            <div className={cx('p-ele-const-box')} style={{backgroundColor: !this.state.parEleStyling ? "rgba(255, 0, 0, 0.3)" : "rgba(0, 255, 0, 0.3)"}}>
-                                <div className={cx('center-flex')}><p style={{fontSize: "12px"}}>{this.state.ParEle}</p></div>
+                            <div className={cx('p-ele-const-box')}  style={{backgroundColor: (this.state.ParEleStyling ? "#00FF0033" : "#ff00004d")}}>
+                                <div className={cx('center-flex')}><p style={{fontSize: "12px", fontFamily: "monospace"}}>{this.state.ParEle}</p></div>
                             </div>
                         </div>
                     </div>
@@ -246,7 +257,7 @@ export class CurrentTask extends React.Component {
                     </div>
                     <div className={cx('task-audit-content')}>
                         <div style={{overflow: "scroll", width: "100%", height:"100%"}}>
-                            <p style={{wordWrap: "break-word", whiteSpace: "pre-wrap"}}>
+                            <p style={{wordWrap: "break-word", whiteSpace: "pre-wrap", fontFamily: "monospace"}}>
                                 {this.state.audit}
                             </p>
                         </div>
