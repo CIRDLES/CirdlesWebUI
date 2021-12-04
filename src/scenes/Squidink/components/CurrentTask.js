@@ -54,7 +54,7 @@ export class CurrentTask extends React.Component {
     }
     pullStrings() {
         return requestSender('/curtaskstrings', localStorage.getItem('user')).then((response) => {
-            let body = response.data.replace('[', "").replace("]", "").split(',')
+            let body = response.data.substring(1, response.data.length - 1).split(',')
             this.setState({
                 taskName: body[0],
                 taskDesc: body[1],
@@ -71,18 +71,11 @@ export class CurrentTask extends React.Component {
                 Uncor208Styling: eval(body[12].trim()),
                 THUStyling: eval(body[13].trim()),
                 ParEleStyling: eval(body[14].trim()),
-                mount: true
             })
-
-            let audit = "";
-
-            for(let i = 15; i < body.length; i++) {
-                audit += body[i]
-                if(i != body.length - 1) {
-                    audit += ","
-                }
-            }
-            this.setState({audit: audit})
+            requestSender('/curtaskaudit', localStorage.getItem('user')).then((response) => {
+                let body = response.data.replace("�", "±").replace("�","±")
+                this.setState({audit: body, mount: true})
+            })
         })
     }
     flipPrimary = () => {
