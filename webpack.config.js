@@ -14,7 +14,8 @@ const endpoints = [
     "squidink/manageproject",
     "squidink/managespots",
     "squidink/showabout",
-    "squidink/currenttask"
+    "squidink/currenttask",
+    "squidink/tasklibrary"
 ];
 const HtmlWebpackPluginList = [];
 for (let endpoint of endpoints) {

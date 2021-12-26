@@ -388,3 +388,4 @@ export const MANAGESPOTS_ROUTE= BASE_ROUTE + "/managespots";
 export const MANAGEPROJECT_ROUTE= BASE_ROUTE + "/manageproject";
 export const CURRENTTASK_ROUTE = BASE_ROUTE + "/currenttask";
 export const SHOWABOUT_ROUTE= BASE_ROUTE + "/showabout";
+export const VIEWTASK_ROUTE = BASE_ROUTE + "/tasklibrary"
