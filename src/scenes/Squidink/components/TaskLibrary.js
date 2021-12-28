@@ -40,6 +40,9 @@ export class TaskLibrary extends React.Component {
             ParEleStyling: true,
             taskList: [],
             selectedTask: null,
+            mass: [],
+            ratios: [],
+            selected: false,
 
         };
         //If a component requires 'this.' context, it's easiest to bind it, i.e.
@@ -55,23 +58,6 @@ export class TaskLibrary extends React.Component {
             let body = response.data.substring(1, response.data.length - 1).split(',')
             console.log(body)
             this.setState({mount: true, taskList: body})
-            //this.setState({
-            //    taskName: body[0],
-            //    taskDesc: body[1],
-            //    taskAuthor: body[2],
-            //    taskLab: body[3],
-            //    taskProv: body[4],
-            //    primaryRadio: body[5].toString().trim(),
-            //    secondaryRadio: body[6].trim(),
-            //    Uncor206: body[7],
-            //    Uncor208: body[8],
-            //    THU: body[9],
-            //    ParEle: body[10],
-            //    Uncor206Styling: eval(body[11].trim()),
-            //    Uncor208Styling: eval(body[12].trim()),
-            //    THUStyling: eval(body[13].trim()),
-            //    ParEleStyling: eval(body[14].trim()),
-            //})
             //requestSender('/curtaskaudit', localStorage.getItem('user')).then((response) => {
             //    let body = response.data.replace("�", "±").replace("�","±")
             //    this.setState({audit: body, mount: true})
@@ -101,8 +87,138 @@ export class TaskLibrary extends React.Component {
         if(this.state.selectedTask) {
             document.getElementById(this.state.selectedTask).style.backgroundColor = ""
         }
-        this.setState({selectedTask: e.target.id})
+        this.setState({selectedTask: e.target.id, selected: false})
         document.getElementById(e.target.id).style.backgroundColor = "#4982F4"
+        requestSender('/tasklibrarydata', localStorage.getItem("user") + ":" + e.target.id).then((data) => {
+            data = data.data.split('\n')
+            if(data.length == 1) {
+                data = data[0].split(',')
+                //pulling mass and ratios
+                let massArr = new Array();
+                let ratioArr = new Array();
+                let mass = true;
+                for(let i = 7; i < data.length-4; i++) {
+                    if(mass) {
+                        if(data[i].includes('/')) {
+                            mass = false;
+                            ratioArr.push(data[i].trimStart().replace('[','').replace(']',''))
+                        }
+                        else {
+                            massArr.push(data[i].trimStart().replace('[','').replace(']',''))
+                        }
+                    }
+                    else {
+                        ratioArr.push(data[i].trimStart().replace('[','').replace(']',''))
+                    }
+
+                }
+                this.setState({mass: massArr, ratios: ratioArr})
+                this.setState({
+                    taskName: data[0].substring(1),
+                    taskDesc: data[1],
+                    taskAuthor: data[2],
+                    taskLab: data[3],
+                    taskProv: data[4],
+                    primaryRadio: data[5].toString().trim(),
+                    secondaryRadio: data[6].trim(),
+                    Uncor206: data[data.length-4].trim().trimStart(),
+                    Uncor208: data[data.length-3].trim().trimStart(),
+                    THU: data[data.length-2].trim().trimStart(),
+                    ParEle: data[data.length-1].trim().trimStart(),
+                //    Uncor206Styling: eval(data[11].trim()),
+                //    Uncor208Styling: eval(data[12].trim()),
+                //    THUStyling: eval(data[13].trim()),
+                //    ParEleStyling: eval(data[14].trim()),
+                    selected: true
+                })
+            }
+        else {
+                //Isolate name and description due to long-descrption
+                let nameAndDesc = "";
+
+                for(let i = 0; i < data.length - 1; i++) {
+                    nameAndDesc += data[i];
+                }
+                nameAndDesc = nameAndDesc.split(',')
+                let desc = "";
+                for(let i = 1; i < nameAndDesc.length; i++) {
+                    desc += nameAndDesc[i];
+                }
+
+                data = data[data.length-1].split(',');
+                //pulling mass and ratios
+                let massArr = new Array();
+                let ratioArr = new Array();
+                let mass = true;
+                for(let i = 6; i < data.length-4; i++) {
+                    if(mass) {
+                        if(data[i].includes('/')) {
+                            mass = false;
+                            ratioArr.push(data[i].trimStart().replace('[','').replace(']',''))
+                        }
+                        else {
+                            massArr.push(data[i].trimStart().replace('[','').replace(']',''))
+                        }
+                    }
+                    else {
+                        ratioArr.push(data[i].trimStart().replace('[','').replace(']',''))
+                    }
+
+                }
+                this.setState({mass: massArr, ratios: ratioArr})
+                //Generic Task stuff
+                this.setState({
+                    taskName: nameAndDesc[0].substring(1),
+                    taskDesc: desc,
+                    taskAuthor: data[1],
+                    taskLab: data[2],
+                    taskProv: data[3],
+                    primaryRadio: data[4].toString().trim(),
+                    secondaryRadio: data[5].trim(),
+                    Uncor206: data[data.length-4].trim().trimStart(),
+                    Uncor208: data[data.length-3].trim().trimStart(),
+                    THU: data[data.length-2].trim().trimStart(),
+                    ParEle: data[data.length-1].trim().trimStart(),
+                    selected: true
+                })
+            }
+            this.state.Uncor206 != "Not Used" ?document.getElementsByClassName('box-206238')[0].style.border = "2px solid red" : ""
+            this.state.Uncor208 != "Not Used" ?document.getElementsByClassName('box-208232')[0].style.border = "2px solid red":""
+            this.state.THU != "Not Used" ?document.getElementsByClassName('box-232238')[0].style.border = "2px solid red":""
+            this.state.ParEle != "Not Used" ?document.getElementsByClassName('box-parele')[0].style.border = "2px solid red":""
+            this.generateMassLabels()
+            this.generateRatios()
+        })
+    }
+
+    generateMassLabels = () => {
+        let massBox = document.getElementById("massbox").getBoundingClientRect();
+        let curX = 25
+        for(let massVal in this.state.mass) {
+            document.getElementById("massbox").innerHTML += `<svg style="height:${parseInt(massBox.height)}; width: 51px">
+            <ellipse style="fill:white; stroke: black; stroke-width: 1px"cx=${curX} cy=${massBox.height/2} rx=${25} ry=${Math.round(parseInt(massBox.height)/2)} />
+            <text x=${curX} y=${massBox.height/2}
+          text-anchor="middle" 
+          stroke="black" 
+          stroke-width="1px"
+          font-size="14px" dy="5px">${this.state.mass[massVal]}</text>
+            </svg>`
+        }
+    }
+
+    generateRatios = () => {
+        let massBox = document.getElementById("ratiobox").getBoundingClientRect();
+        for(let ratioVal in this.state.ratios) {
+            let splitRatio = this.state.ratios[ratioVal].split('/')
+            document.getElementById("ratiobox").innerHTML += `<svg style="height:${parseInt(massBox.height)}; width: 51px">
+            <rect style="fill:white; stroke: black; stroke-width: 2px"x=${0} y=${0} width=${50} height=${parseInt(massBox.height)} />
+                        <text x="50%" y="50%"
+          text-anchor="middle" 
+          stroke="black" 
+          stroke-width="1px"
+          font-size="14px"><tspan y="14"x="25">${splitRatio[0]}</tspan><tspan x="25" dy=".6em">⸻</tspan><tspan x="25"dy=".6em">${splitRatio[1]}</tspan></text>
+            </svg>`
+        }
     }
 
     render() {
@@ -111,6 +227,7 @@ export class TaskLibrary extends React.Component {
                 //All functions are self-contained to the wrapper with the exception of the history.push to reroute the user, which requires a reference to the React-Router
                 //Because WrapperComponent is not instantiated from the router but from its child, we have to pass in the history as a prop
                 <WrapperComponent stateNum={1}history={this.props.history}>
+
                     <div className={cx('grid-container-custom-tl')}>
                         <div className={cx('task-list')}>
                             {this.state.taskList.map((entry) => {
@@ -121,39 +238,47 @@ export class TaskLibrary extends React.Component {
                                 )
                             })}
                         </div>
-                        <div className={cx('task-info')}>
+                        { !this.state.selected ? null :
+                            <div className={cx('task-info')}>
                             <div className={cx('task-name-label-t')}>
                                 <h5>Task Name:</h5>
                             </div>
                             <div className={cx('task-name-text-t')}>
-                                <TextField style={{width: "75%"}} defaultValue={this.state.taskName} disabled={true}></TextField>
+                                <TextField style={{width: "75%"}} defaultValue={this.state.taskName}
+                                           disabled={true}></TextField>
                                 <div style={{display: "inline", paddingLeft: "50px", paddingTop: "10px"}}>
-                                    <h5 className={cx('geochron-text')} style={{display: "inline", color: "#ff9800 !important"}}>GEOCHRON</h5>
+                                    <h5 className={cx('geochron-text')}
+                                        style={{display: "inline", color: "#ff9800 !important"}}>GEOCHRON</h5>
                                 </div>
                             </div>
                             <div className={cx('description-label-t')}>
                                 <h5>Description:</h5>
                             </div>
                             <div className={cx('description-text-t')}>
-                                <TextField style={{width: "100%"}} defaultValue={this.state.taskDesc} disabled={true}></TextField>
+                                <TextField style={{width: "100%"}} defaultValue={this.state.taskDesc}
+                                           inputProps = {this.state.taskDesc.length > 80 ? {style: {fontSize: "15px"}}: ""}
+                                           disabled={true}></TextField>
                             </div>
                             <div className={cx('author-lab-label-t')}>
                                 <h5>Author & Lab:</h5>
                             </div>
                             <div className={cx('author-name-text-t')}>
-                                <TextField style={{width: "100%"}} defaultValue={this.state.taskDesc} disabled={true}></TextField>
+                                <TextField style={{width: "100%"}} defaultValue={this.state.taskAuthor}
+                                           disabled={true}></TextField>
                             </div>
                             <div className={cx('lab-name-label-t')}>
                                 <h5>Lab Name:</h5>
                             </div>
                             <div className={cx('lab-name-text-t')}>
-                                <TextField style={{width: "75%"}} defaultValue={this.state.taskDesc} disabled={true}></TextField>
+                                <TextField style={{width: "75%"}} defaultValue={this.state.taskLab}
+                                           disabled={true}></TextField>
                             </div>
                             <div className={cx('provenance-label-t')}>
                                 <h5>Provenance:</h5>
                             </div>
                             <div className={cx('provenance-text-t')}>
-                                <TextField style={{width: "100%"}} defaultValue={this.state.taskDesc} disabled={true}></TextField>
+                                <TextField style={{width: "100%"}} defaultValue={this.state.taskProv}
+                                           disabled={true}></TextField>
                             </div>
                             <div className={cx('directives-label-t')}>
                                 <h5>Directives:</h5>
@@ -161,60 +286,82 @@ export class TaskLibrary extends React.Component {
                             <div className={cx('directives-content-t')}>
                                 <div className={cx('directives-internal-grid')}>
                                     <p className={cx('pd-ratio')}>Primary daughter / parent ratio:</p>
-                                        <div className={cx('pd-ratio-content')}>
-                                            <FormControl component="fieldset">
-                                                <RadioGroup
-                                                    row
-                                                    aria-label="primary-radio"
-                                                    name="controlled-radio-buttons-group"
-                                                    value={this.state.primaryRadio}
-                                                    onChange={() => {}}
-                                                >
-                                                    <FormControlLabel disabled={this.state.primaryRadio == "238" ? false: true}value="238" control={<Radio />} label="206Pb/238U" />
-                                                    <FormControlLabel disabled={this.state.primaryRadio == "232" ? false: true}value="232" control={<Radio />} label="208Pb/232Th" />
-                                                </RadioGroup>
-                                            </FormControl>
-                                        </div>
-                                        <div className={cx('spd-ratio-content')}>
-                                            <FormControl component="fieldset">
-                                                <RadioGroup
-                                                    row
-                                                    aria-label="primary-radio"
-                                                    name="controlled-radio-buttons-group"
-                                                    value={this.state.secondaryRadio}
-                                                    onChange={() => {}}
-                                                >
-                                                    <FormControlLabel disabled={this.state.secondaryRadio == "direct" ? false: true}value="direct" control={<Radio />} label="Directly" />
-                                                    <FormControlLabel disabled={this.state.secondaryRadio == "indirect" ? false: true}value="indirect" control={<Radio />} label="Indirectly" />
-                                                </RadioGroup>
-                                            </FormControl>
-                                        </div>
+                                    <div className={cx('pd-ratio-content')}>
+                                        <FormControl component="fieldset">
+                                            <RadioGroup
+                                                row
+                                                aria-label="primary-radio"
+                                                name="controlled-radio-buttons-group"
+                                                value={this.state.primaryRadio}
+                                                onChange={() => {
+                                                }}
+                                            >
+                                                <FormControlLabel
+                                                    disabled={this.state.primaryRadio == "238" ? false : true}
+                                                    value="238" control={<Radio/>} label="206Pb/238U"/>
+                                                <FormControlLabel
+                                                    disabled={this.state.primaryRadio == "232" ? false : true}
+                                                    value="232" control={<Radio/>} label="208Pb/232Th"/>
+                                            </RadioGroup>
+                                        </FormControl>
+                                    </div>
+                                    <div className={cx('spd-ratio-content')}>
+                                        <FormControl component="fieldset">
+                                            <RadioGroup
+                                                row
+                                                aria-label="primary-radio"
+                                                name="controlled-radio-buttons-group"
+                                                value={this.state.secondaryRadio}
+                                                onChange={() => {
+                                                }}
+                                            >
+                                                <FormControlLabel
+                                                    disabled={this.state.secondaryRadio == "direct" ? false : true}
+                                                    value="direct" control={<Radio/>} label="Directly"/>
+                                                <FormControlLabel
+                                                    disabled={this.state.secondaryRadio == "indirect" ? false : true}
+                                                    value="indirect" control={<Radio/>} label="Indirectly"/>
+                                            </RadioGroup>
+                                        </FormControl>
+                                    </div>
 
                                     <p className={cx('value-206238')}>Uncor_206Pb238U_CalibConst:</p>
 
-                                    <div className={cx('generic-box box-206238')}/>
+                                    <div className={cx('generic-box box-206238')}>
+                                        <div className={cx('center-flex')}><p style={{fontSize: "12px", fontFamily: "monospace"}}>{this.state.Uncor206}</p></div>
+                                    </div>
 
                                     <p className={cx('value-208232')}>Uncor_208Pb232Th_CalibConst:</p>
 
-                                    <div className={cx('generic-box box-208232')}/>
+                                    <div className={cx('generic-box box-208232')}>
+                                        <div className={cx('center-flex')}><p style={{fontSize: "12px", fontFamily: "monospace"}}>{this.state.Uncor208}</p></div>
+                                    </div>
 
                                     <p className={cx('sdp-ratio')}>Calculate secondary d/p ratio:</p>
 
 
                                     <p className={cx('value-232238')}>232Th238U_RM:</p>
 
-                                    <div className={cx('generic-box  box-232238')}/>
+                                    <div className={cx('generic-box  box-232238')}>
+                                        <div className={cx('center-flex')}><p style={{fontSize: "12px", fontFamily: "monospace"}}>{this.state.THU}</p></div>
+                                    </div>
 
                                     <p className={cx('value-parele')}>ParentElement_ConcenConst:</p>
 
-                                    <div className={cx('generic-box box-parele')}/>
+                                    <div className={cx('generic-box box-parele')}>
+                                        <div className={cx('center-flex')}><p style={{fontSize: "12px", fontFamily: "monospace"}}>{this.state.ParEle}</p></div>
+                                    </div>
 
                                 </div>
                             </div>
                             <div className={cx('mass-label-t')}>
                                 <h5>Mass Labels:</h5>
                             </div>
-                            <div className={cx('mass-box-t')}/>
+                                <div id="massbox"className={cx('mass-box-t')}>
+                                    <div>
+
+                                    </div>
+                                </div>
                             <div className={cx('mass-box-grey-t')}/>
 
 
@@ -222,7 +369,7 @@ export class TaskLibrary extends React.Component {
                                 <h5>Ratios:</h5>
                             </div>
 
-                            <div className={cx('ratio-box-t')}/>
+                            <div id="ratiobox"className={cx('ratio-box-t')}/>
                             <div className={cx('ratio-box-grey-t')}/>
 
                             <div className={cx('custom-exp-label-t')}>
@@ -235,18 +382,22 @@ export class TaskLibrary extends React.Component {
                                 <h5>Actions:</h5>
                             </div>
                             <div className={cx('actions-content')}>
-                                <div style={{paddingRight: "10px",display: "inline"}}>
+                                <div style={{paddingRight: "10px", display: "inline"}}>
                                     <Button variant="contained" color={"primary"}
-                                            onClick={() => {console.log("")}}>
+                                            onClick={() => {
+                                                console.log("")
+                                            }}>
                                         Edit Task
                                     </Button>
                                 </div>
                                 <Button variant="contained" color={"primary"} style={{display: "inline"}}
-                                        onClick={() => {console.log("")}}>
+                                        onClick={() => {
+                                            console.log("")
+                                        }}>
                                     Save Current Task as a Squid3 Task '.xml' file
                                 </Button>
                             </div>
-                        </div>
+                        </div>}
                     </div>
                 </WrapperComponent>
                 :
