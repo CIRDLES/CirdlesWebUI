@@ -74,6 +74,7 @@
   grid-column-end: label-end;
   justify-self: end;
   align-self: end;
+  padding-bottom: 10px;
 }
 .box-206238 {
   grid-row-start: gr2-start;
@@ -118,7 +119,8 @@
   grid-row-start: gr4-start;
   grid-row-end: gr4-end;
   grid-column-start: value-start;
-  place-self: center;
+  justify-self: center;
+  place-self: end;
 }
 .value-232238 {
   grid-row-start: gr5-start;
@@ -505,9 +507,10 @@
 p {
   margin: 0 0 0 0 !important;
 }
-h5 {
+.tasklibrary-labels {
   color: #3D83CC !important;
 }
+
 .geochron-label {
   color: #c53d13;
 }

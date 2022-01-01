@@ -56,7 +56,6 @@ export class TaskLibrary extends React.Component {
     pullTaskList() {
         return requestSender('/tasklibrary', localStorage.getItem('user')).then((response) => {
             let body = response.data.substring(1, response.data.length - 1).split(',')
-            console.log(body)
             this.setState({mount: true, taskList: body})
             //requestSender('/curtaskaudit', localStorage.getItem('user')).then((response) => {
             //    let body = response.data.replace("�", "±").replace("�","±")
@@ -112,6 +111,8 @@ export class TaskLibrary extends React.Component {
                     }
 
                 }
+                console.log(data[data.length-4].trim().trimStart())
+
                 this.setState({mass: massArr, ratios: ratioArr})
                 this.setState({
                     taskName: data[0].substring(1),
@@ -167,6 +168,7 @@ export class TaskLibrary extends React.Component {
                 }
                 this.setState({mass: massArr, ratios: ratioArr})
                 //Generic Task stuff
+                console.log(data[data.length-4].trim().trimStart())
                 this.setState({
                     taskName: nameAndDesc[0].substring(1),
                     taskDesc: desc,
@@ -195,7 +197,28 @@ export class TaskLibrary extends React.Component {
         let massBox = document.getElementById("massbox").getBoundingClientRect();
         let curX = 25
         for(let massVal in this.state.mass) {
-            document.getElementById("massbox").innerHTML += `<svg style="height:${parseInt(massBox.height)}; width: 51px">
+            if(this.state.mass[massVal] == 204 || this.state.mass[massVal] == 206 || this.state.mass[massVal] == 207 || this.state.mass[massVal] == 208) {
+                document.getElementById("massbox").innerHTML += `<svg style="height:${parseInt(massBox.height)}; width: 51px">
+            <ellipse style="fill:#ff00004d; stroke: black; stroke-width: 1px"cx=${curX} cy=${massBox.height/2} rx=${25} ry=${Math.round(parseInt(massBox.height)/2)} />
+            <text x=${curX} y=${massBox.height/2}
+          text-anchor="middle" 
+          stroke="black" 
+          stroke-width="1px"
+          font-size="14px" dy="5px">${this.state.mass[massVal]}</text>
+            </svg>`
+            }
+            else if(this.state.mass[massVal] == 204.1) {
+                document.getElementById("massbox").innerHTML += `<svg style="height:${parseInt(massBox.height)}; width: 51px">
+            <ellipse style="fill: #00FF0033; stroke: black; stroke-width: 1px"cx=${curX} cy=${massBox.height/2} rx=${25} ry=${Math.round(parseInt(massBox.height)/2)} />
+            <text x=${curX} y=${massBox.height/2}
+          text-anchor="middle" 
+          stroke="black" 
+          stroke-width="1px"
+          font-size="14px" dy="5px">${this.state.mass[massVal]}</text>
+            </svg>`
+            }
+            else {
+                document.getElementById("massbox").innerHTML += `<svg style="height:${parseInt(massBox.height)}; width: 51px">
             <ellipse style="fill:white; stroke: black; stroke-width: 1px"cx=${curX} cy=${massBox.height/2} rx=${25} ry=${Math.round(parseInt(massBox.height)/2)} />
             <text x=${curX} y=${massBox.height/2}
           text-anchor="middle" 
@@ -203,6 +226,7 @@ export class TaskLibrary extends React.Component {
           stroke-width="1px"
           font-size="14px" dy="5px">${this.state.mass[massVal]}</text>
             </svg>`
+            }
         }
     }
 
@@ -210,7 +234,18 @@ export class TaskLibrary extends React.Component {
         let massBox = document.getElementById("ratiobox").getBoundingClientRect();
         for(let ratioVal in this.state.ratios) {
             let splitRatio = this.state.ratios[ratioVal].split('/')
-            document.getElementById("ratiobox").innerHTML += `<svg style="height:${parseInt(massBox.height)}; width: 51px">
+            if(splitRatio[0] == 204 && splitRatio[1] == 206 || splitRatio[0] == 207 && splitRatio[1] == 206 || splitRatio[0] == 208 && splitRatio[1] == 206) {
+                document.getElementById("ratiobox").innerHTML += `<svg style="height:${parseInt(massBox.height)}; width: 51px">
+            <rect style="fill:#ff00004d; stroke: black; stroke-width: 2px"x=${0} y=${0} width=${50} height=${parseInt(massBox.height)} />
+                        <text x="50%" y="50%"
+          text-anchor="middle" 
+          stroke="black" 
+          stroke-width="1px"
+          font-size="14px"><tspan y="14"x="25">${splitRatio[0]}</tspan><tspan x="25" dy=".6em">⸻</tspan><tspan x="25"dy=".6em">${splitRatio[1]}</tspan></text>
+            </svg>`
+            }
+        else {
+                document.getElementById("ratiobox").innerHTML += `<svg style="height:${parseInt(massBox.height)}; width: 51px">
             <rect style="fill:white; stroke: black; stroke-width: 2px"x=${0} y=${0} width=${50} height=${parseInt(massBox.height)} />
                         <text x="50%" y="50%"
           text-anchor="middle" 
@@ -218,7 +253,13 @@ export class TaskLibrary extends React.Component {
           stroke-width="1px"
           font-size="14px"><tspan y="14"x="25">${splitRatio[0]}</tspan><tspan x="25" dy=".6em">⸻</tspan><tspan x="25"dy=".6em">${splitRatio[1]}</tspan></text>
             </svg>`
+            }
         }
+        requestSender('/curtaskaudit', localStorage.getItem('user')).then((response) => {
+            let body = response.data.replace("�", "±").replace("�","±")
+            console.log(body.substring(body.indexOf('Custom Expressions:')))
+            this.setState({audit: body.substring(body.indexOf('Custom Expressions:')), mount: true})
+        })
     }
 
     render() {
@@ -241,7 +282,7 @@ export class TaskLibrary extends React.Component {
                         { !this.state.selected ? null :
                             <div className={cx('task-info')}>
                             <div className={cx('task-name-label-t')}>
-                                <h5>Task Name:</h5>
+                                <h5 className={cx('tasklibrary-labels')}>Task Name:</h5>
                             </div>
                             <div className={cx('task-name-text-t')}>
                                 <TextField style={{width: "75%"}} defaultValue={this.state.taskName}
@@ -252,7 +293,7 @@ export class TaskLibrary extends React.Component {
                                 </div>
                             </div>
                             <div className={cx('description-label-t')}>
-                                <h5>Description:</h5>
+                                <h5 className={cx('tasklibrary-labels')}>Description:</h5>
                             </div>
                             <div className={cx('description-text-t')}>
                                 <TextField style={{width: "100%"}} defaultValue={this.state.taskDesc}
@@ -260,28 +301,28 @@ export class TaskLibrary extends React.Component {
                                            disabled={true}></TextField>
                             </div>
                             <div className={cx('author-lab-label-t')}>
-                                <h5>Author & Lab:</h5>
+                                <h5 className={cx('tasklibrary-labels')}>Author & Lab:</h5>
                             </div>
                             <div className={cx('author-name-text-t')}>
                                 <TextField style={{width: "100%"}} defaultValue={this.state.taskAuthor}
                                            disabled={true}></TextField>
                             </div>
                             <div className={cx('lab-name-label-t')}>
-                                <h5>Lab Name:</h5>
+                                <h5 className={cx('tasklibrary-labels')}>Lab Name:</h5>
                             </div>
                             <div className={cx('lab-name-text-t')}>
                                 <TextField style={{width: "75%"}} defaultValue={this.state.taskLab}
                                            disabled={true}></TextField>
                             </div>
                             <div className={cx('provenance-label-t')}>
-                                <h5>Provenance:</h5>
+                                <h5 className={cx('tasklibrary-labels')}>Provenance:</h5>
                             </div>
                             <div className={cx('provenance-text-t')}>
                                 <TextField style={{width: "100%"}} defaultValue={this.state.taskProv}
                                            disabled={true}></TextField>
                             </div>
                             <div className={cx('directives-label-t')}>
-                                <h5>Directives:</h5>
+                                <h5 className={cx('tasklibrary-labels')}>Directives:</h5>
                             </div>
                             <div className={cx('directives-content-t')}>
                                 <div className={cx('directives-internal-grid')}>
@@ -292,6 +333,7 @@ export class TaskLibrary extends React.Component {
                                                 row
                                                 aria-label="primary-radio"
                                                 name="controlled-radio-buttons-group"
+                                                sx={{marginTop: "10px"}}
                                                 value={this.state.primaryRadio}
                                                 onChange={() => {
                                                 }}
@@ -355,7 +397,7 @@ export class TaskLibrary extends React.Component {
                                 </div>
                             </div>
                             <div className={cx('mass-label-t')}>
-                                <h5>Mass Labels:</h5>
+                                <h5 className={cx('tasklibrary-labels')}>Mass Labels:</h5>
                             </div>
                                 <div id="massbox"className={cx('mass-box-t')}>
                                     <div>
@@ -366,20 +408,26 @@ export class TaskLibrary extends React.Component {
 
 
                             <div className={cx('ratio-label-t')}>
-                                <h5>Ratios:</h5>
+                                <h5 className={cx('tasklibrary-labels')}>Ratios:</h5>
                             </div>
 
                             <div id="ratiobox"className={cx('ratio-box-t')}/>
                             <div className={cx('ratio-box-grey-t')}/>
 
                             <div className={cx('custom-exp-label-t')}>
-                                <h5>Custom Exp:</h5>
+                                <h5 className={cx('tasklibrary-labels')}>Custom Exp:</h5>
                             </div>
 
-                            <div className={cx('custom-exp-box-t')}/>
+                                <div className={cx('custom-exp-box-t')}style={{overflow: "scroll", width: "100%", height:"100%"}}>
+                                    <div>
+                                        <p style={{wordWrap: "break-word", whiteSpace: "pre-wrap", fontFamily: "monospace"}}>
+                                            {this.state.audit}
+                                        </p>
+                                    </div>
+                                </div>
 
                             <div className={cx('actions-label-t')}>
-                                <h5>Actions:</h5>
+                                <h5 className={cx('tasklibrary-labels')}>Actions:</h5>
                             </div>
                             <div className={cx('actions-content')}>
                                 <div style={{paddingRight: "10px", display: "inline"}}>
@@ -390,6 +438,15 @@ export class TaskLibrary extends React.Component {
                                         Edit Task
                                     </Button>
                                 </div>
+                                <div style={{paddingRight: "10px", display: "inline"}}>
+                                    <Button variant="contained" color={"primary"} style={{display: "inline"}}
+                                            onClick={() => {
+                                                console.log("")
+                                            }}>
+                                        Use to Replace Current Task
+                                    </Button>
+                                </div>
+
                                 <Button variant="contained" color={"primary"} style={{display: "inline"}}
                                         onClick={() => {
                                             console.log("")
