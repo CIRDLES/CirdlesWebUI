@@ -1,6 +1,7 @@
 .menu-container-custom {
   position: relative;
-  padding: 10px
+  padding: 10px;
+  z-index: 6;
 }
 
 .menu-custom {
@@ -10,6 +11,7 @@
   top: 60px;
   right: 0;
   width: 300px;
+  cursor: pointer;
   box-shadow: 0 1px 8px rgba(0, 0, 0, 0.3);
   opacity: 0;
   visibility: hidden;
