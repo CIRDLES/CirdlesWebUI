@@ -27,7 +27,7 @@ export class TaskLibrary extends React.Component {
             taskProv: "",
             taskParentNuc: "",
             taskDirect: "",
-            audit: "",
+            audit: ["List of Custom Expression Names: "],
             primaryRadio: "232",
             secondaryRadio: "direct",
             Uncor206: "",
@@ -86,9 +86,10 @@ export class TaskLibrary extends React.Component {
         if(this.state.selectedTask) {
             document.getElementById(this.state.selectedTask).style.backgroundColor = ""
         }
-        this.setState({selectedTask: e.target.id, selected: false})
-        document.getElementById(e.target.id).style.backgroundColor = "#4982F4"
-        requestSender('/tasklibrarydata', localStorage.getItem("user") + ":" + e.target.id).then((data) => {
+        let targetId = e.target.id
+        this.setState({selectedTask: targetId, selected: false})
+        document.getElementById(targetId).style.backgroundColor = "#4982F4"
+        requestSender('/tasklibrarydata', localStorage.getItem("user") + ":" + targetId).then((data) => {
             data = data.data.split('\n')
             if(data.length == 1) {
                 data = data[0].split(',')
@@ -189,7 +190,7 @@ export class TaskLibrary extends React.Component {
             this.state.THU != "Not Used" ?document.getElementsByClassName('box-232238')[0].style.border = "2px solid red":""
             this.state.ParEle != "Not Used" ?document.getElementsByClassName('box-parele')[0].style.border = "2px solid red":""
             this.generateMassLabels()
-            this.generateRatios()
+            this.generateRatios(localStorage.getItem("user") + ":" + targetId)
         })
     }
 
@@ -230,7 +231,7 @@ export class TaskLibrary extends React.Component {
         }
     }
 
-    generateRatios = () => {
+    generateRatios = (customExpTarget) => {
         let massBox = document.getElementById("ratiobox").getBoundingClientRect();
         for(let ratioVal in this.state.ratios) {
             let splitRatio = this.state.ratios[ratioVal].split('/')
@@ -255,10 +256,8 @@ export class TaskLibrary extends React.Component {
             </svg>`
             }
         }
-        requestSender('/curtaskaudit', localStorage.getItem('user')).then((response) => {
-            let body = response.data.replace("�", "±").replace("�","±")
-            console.log(body.substring(body.indexOf('Custom Expressions:')))
-            this.setState({audit: body.substring(body.indexOf('Custom Expressions:')), mount: true})
+        requestSender('/customexp', customExpTarget).then((response) => {
+            this.setState({audit: ["List of Custom Expression Names: "].concat(response.data.replace('[','').replace(']','').split(',')), mount: true})
         })
     }
 
@@ -421,7 +420,7 @@ export class TaskLibrary extends React.Component {
                                 <div className={cx('custom-exp-box-t')}style={{overflow: "scroll", width: "100%", height:"100%"}}>
                                     <div>
                                         <p style={{wordWrap: "break-word", whiteSpace: "pre-wrap", fontFamily: "monospace"}}>
-                                            {this.state.audit}
+                                            {this.state.audit.map((data) => {return data;})}
                                         </p>
                                     </div>
                                 </div>
