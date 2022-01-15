@@ -56,11 +56,7 @@ export class TaskLibrary extends React.Component {
     pullTaskList() {
         return requestSender('/tasklibrary', localStorage.getItem('user')).then((response) => {
             let body = response.data.substring(1, response.data.length - 1).split(',')
-            this.setState({mount: true, taskList: body})
-            //requestSender('/curtaskaudit', localStorage.getItem('user')).then((response) => {
-            //    let body = response.data.replace("�", "±").replace("�","±")
-            //    this.setState({audit: body, mount: true})
-            //})
+            this.setState({mount: true, taskList: body}, () => {this.taskListSelect(null, this.state.taskList[0].trimStart().trim())})
         })
     }
 
@@ -82,11 +78,16 @@ export class TaskLibrary extends React.Component {
         document.getElementsByClassName("p-ele-const-box")[0].style.backgroundColor = (this.state.ParEleStyling ? "#00FF0033" : "#ff00004d")
     }
 
-    taskListSelect = (e) => {
+    taskListSelect = (e, initialCall) => {
         if(this.state.selectedTask) {
             document.getElementById(this.state.selectedTask).style.backgroundColor = ""
         }
-        let targetId = e.target.id
+        let targetId;
+        if(initialCall) {
+            targetId = initialCall;
+        } else {
+            targetId = e.target.id
+        }
         this.setState({selectedTask: targetId, selected: false})
         document.getElementById(targetId).style.backgroundColor = "#4982F4"
         requestSender('/tasklibrarydata', localStorage.getItem("user") + ":" + targetId).then((data) => {
