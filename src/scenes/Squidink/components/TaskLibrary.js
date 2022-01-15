@@ -420,7 +420,12 @@ export class TaskLibrary extends React.Component {
                                 <div className={cx('custom-exp-box-t')}style={{overflow: "scroll", width: "100%", height:"100%"}}>
                                     <div>
                                         <p style={{wordWrap: "break-word", whiteSpace: "pre-wrap", fontFamily: "monospace"}}>
-                                            {this.state.audit.map((data) => {return data;})}
+                                            {this.state.audit.map((data, index) => {
+                                                if(index == 0) {
+                                                    return <div style={{width: "100%", display: "block"}}>{data}</div>
+                                                }
+                                                return <div style={{width: "30%", display: "inline-block"}}>{data.trim()}</div>
+                                            })}
                                         </p>
                                     </div>
                                 </div>
