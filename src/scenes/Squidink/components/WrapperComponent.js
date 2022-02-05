@@ -40,8 +40,6 @@ class WrapperComponent extends React.Component{
     messageFunction = (e) => {
         try {
             let apiCheck = e.data.toString().split(':');
-            console.log(e.origin)
-            console.log(FILEBROWSER_URL.includes(e.origin))
             if (FILEBROWSER_URL.includes(e.origin)) {
                 if (e.data.toString().length != 0 && apiCheck[0] != "api") {
                     this.setState({loading: true})
