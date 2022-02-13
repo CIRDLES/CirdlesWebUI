@@ -465,9 +465,7 @@ export class ManageProject extends React.Component {
                                     <p color={"#f59542"} style={{display: "inline"}}>Specify Default Common
                                         Pb Model:</p>
                                     <FormControl style={{
-                                        minWidth: "50%",
-                                        float: "right",
-                                        right: "32%",
+                                        width: "60%",
                                         clear: "both"
                                     }}>
                                         <Select
@@ -494,7 +492,7 @@ export class ManageProject extends React.Component {
                                     <p color={"#f59542"} style={{display: "inline", float: "left"}}>Specify
                                         Physical Constants Model:</p>
                                     <FormControl
-                                        style={{minWidth: "100%", clear: "both", paddingRight: "3%"}}>
+                                        style={{width: "100%", clear: "both", paddingRight: "3%"}}>
                                         <Select
                                             labelId="physConstant-label"
                                             id="physConstant"
