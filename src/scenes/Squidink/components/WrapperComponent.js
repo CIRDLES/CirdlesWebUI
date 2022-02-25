@@ -44,6 +44,7 @@ class WrapperComponent extends React.Component{
     messageFunction = (e) => {
         try {
             let apiCheck = e.data.toString().split(':');
+            console.log(apiCheck)
             if (FILEBROWSER_URL.includes(e.origin)) {
                 if (e.data.toString().length != 0 && apiCheck[0] != "api" && apiCheck[0] != "selected") {
                     this.setState({loading: true})
@@ -75,12 +76,19 @@ class WrapperComponent extends React.Component{
                         console.log(er)
                     })
                 } else if(apiCheck[0] == "selected") {
-                    let selectedString = apiCheck[2].substring(7) + apiCheck[1]
-                    localStorage.setItem("selected", selectedString)
-                    this.setState({
-                        curSelected: selectedString
-                    })
-                    console.log(selectedString)
+                    let selectedString = apiCheck[2].split("/")
+                    let placeString = "";
+                    for(let i = 3; i < selectedString.length; i++) {
+                        placeString += selectedString[i]
+                    }
+                    placeString += apiCheck[1]
+                    if(!apiCheck[apiCheck.length - 1].includes(".")) {
+                        localStorage.setItem("selected", placeString)
+                        this.setState({
+                            curSelected: placeString
+                        })
+                    }
+                    console.log(placeString)
                 }
                 else{
                     requestSender('/close', localStorage.getItem("user")).then((d) => {
