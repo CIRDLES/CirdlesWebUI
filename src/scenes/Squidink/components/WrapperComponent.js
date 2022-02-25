@@ -5,7 +5,7 @@ import style from 'styles/Squidink/Main.scss';
 import classNames from 'classnames/bind';
 import DropdownCustom from "./DropdownCustom";
 import "constants/api";
-import {BASE_ROUTE, dropdownOptions, MANAGEPROJECT_ROUTE, requestSender} from "../util/constants";
+import {BASE_ROUTE, CUSTOMLIBRARY_ROUTE, dropdownOptions, MANAGEPROJECT_ROUTE, requestSender} from "../util/constants";
 import {FILEBROWSER_URL, SQUIDINK_ENDPOINT} from "constants/api";
 import Modal from "@material-ui/core/Modal";
 import axios from "axios";
@@ -24,6 +24,8 @@ class WrapperComponent extends React.Component{
             modalOpen: false,
             saveAsModalOpen: false,
             saveAsName: "",
+            browseModal: false,
+            curSelected: "",
         };
         this.hidediv = this.hidediv.bind(this);
         this.hideinternal = this.hideinternal.bind(this);
@@ -35,13 +37,16 @@ class WrapperComponent extends React.Component{
         this.messageFunction = this.messageFunction.bind(this);
         this.saveAsNameOnChange = this.saveAsNameOnChange.bind(this);
         this.saveAsClick = this.saveAsClick.bind(this);
-
+        this.closeBrowseAction = this.closeBrowseAction.bind(this)
+        this.browseModalAction = this.browseModalAction.bind(this)
+        this.openTaskFolder = this.openTaskFolder.bind(this)
     }
     messageFunction = (e) => {
         try {
             let apiCheck = e.data.toString().split(':');
+            console.log(apiCheck)
             if (FILEBROWSER_URL.includes(e.origin)) {
-                if (e.data.toString().length != 0 && apiCheck[0] != "api") {
+                if (e.data.toString().length != 0 && apiCheck[0] != "api" && apiCheck[0] != "selected") {
                     this.setState({loading: true})
                     axios.post(SQUIDINK_ENDPOINT + '/OpenServlet/O', localStorage.getItem("user")
                         + ":" + e.data, {
@@ -70,7 +75,22 @@ class WrapperComponent extends React.Component{
                     }).catch((er) => {
                         console.log(er)
                     })
-                } else {
+                } else if(apiCheck[0] == "selected") {
+                    let selectedString = apiCheck[2].split("/")
+                    let placeString = "";
+                    for(let i = 3; i < selectedString.length; i++) {
+                        placeString += selectedString[i]
+                    }
+                    placeString += apiCheck[1]
+                    if(!apiCheck[apiCheck.length - 1].includes(".")) {
+                        localStorage.setItem("selected", placeString)
+                        this.setState({
+                            curSelected: placeString
+                        })
+                    }
+                    console.log(placeString)
+                }
+                else{
                     requestSender('/close', localStorage.getItem("user")).then((d) => {
                         if (d.data == 1) {
                             localStorage.setItem("user", "")
@@ -168,12 +188,22 @@ class WrapperComponent extends React.Component{
     async saveAsAction() {
         this.setState({saveAsModalOpen: true})
     }
+    async browseModalAction() {
+        this.setState({browseModal: true})
+    }
+    async closeBrowseAction() {
+        this.setState({browseModal: false})
+    }
+    openTaskFolder() {
+        window.location.href = CUSTOMLIBRARY_ROUTE
+    }
 
     render() {
         let fOvd = new Map();
         fOvd.set('2', {function: this.openAction})
         fOvd.set('3', {function: this.openAction})
         fOvd.set('6', {function: this.saveAsAction})
+        fOvd.set('16', {function: this.browseModalAction})
         return(
             <>{this.state.loading ?
                 <div>
@@ -218,6 +248,27 @@ class WrapperComponent extends React.Component{
                             }}>Cancel</Button>
                         </div>
                     </div>}</Modal>
+                    <Modal open={this.state.browseModal} onClose={this.browseModalAction}>{
+                        <div style={{position: 'absolute', width: '600px', height: "70%", top: '50%', left: '50%', transform: 'translate(-50%, -50%)', border: '2px solid #000', backgroundColor: 'white', padding: '4px'}} className={'paper'}>
+                            <div style={{height: "90%", width: "100%"}}>
+                                <div>
+                                    <iframe id='iframeee'
+                                            style={{
+                                                display: 'flex',
+                                                flexGrow: '1',
+                                                overflow: 'auto',
+                                                height: '100%',
+                                                width: `100%`
+                                            }}
+                                            src={FILEBROWSER_URL}></iframe>
+                                </div>
+                                <div style={{paddingRight: "10px", display: "inline"}}>
+                                    <Button variant="contained" color="primary" onClick={this.openTaskFolder}>Save</Button>
+                                </div>
+                                <Button variant="contained" color="primary"
+                                        onClick={()=>this.setState({browseModal: false})}>Cancel</Button>
+                            </div>
+                        </div>}</Modal>
                     <div className={cx('body')}>
                         {this.state.showfbr ?
                             <ResizePanel onDragStart={this.hideinternal} onDragEnd={this.showinternal} direction="e"
@@ -249,7 +300,8 @@ class WrapperComponent extends React.Component{
                                     <DropdownCustom stateNum={this.profilePathIsNull().includes("NO_NAME") ? 2 : this.props.stateNum}dropdownName="Data"
                                                     dropdownOptions={dropdownOptions[1]}></DropdownCustom>
                                     <DropdownCustom stateNum={this.profilePathIsNull().includes("NO_NAME") ? 2 : this.props.stateNum}dropdownName="Task"
-                                                    dropdownOptions={dropdownOptions[2]}></DropdownCustom>
+                                                    dropdownOptions={dropdownOptions[2]}
+                                                    functionOverride={fOvd}></DropdownCustom>
                                     <DropdownCustom stateNum={this.profilePathIsNull().includes("NO_NAME") ? 2 : this.props.stateNum}dropdownName="Isotopes"
                                                     dropdownOptions={dropdownOptions[3]}></DropdownCustom>
                                     <DropdownCustom stateNum={this.profilePathIsNull().includes("NO_NAME") ? 2 : this.props.stateNum}dropdownName="Expressions"
