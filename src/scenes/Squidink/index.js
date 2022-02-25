@@ -12,7 +12,7 @@ import 'styles/Squidink/Main.scss';
 //Constants
 import {
     BASE_ROUTE,
-    CURRENTTASK_ROUTE,
+    CURRENTTASK_ROUTE, CUSTOMLIBRARY_ROUTE,
     MANAGEPROJECT_ROUTE,
     MANAGESPOTS_ROUTE,
     SHOWABOUT_ROUTE,
@@ -20,6 +20,7 @@ import {
 } from "./util/constants"
 import {CurrentTask} from "./components/CurrentTask";
 import TaskLibrary from "./components/TaskLibrary";
+import {CustomLibrary} from "./components/CustomLibrary";
 
 class SquidInkPage extends Component {
     render() {
@@ -32,6 +33,7 @@ class SquidInkPage extends Component {
                     <Route exact path={SHOWABOUT_ROUTE} component={ShowAbout}/>
                     <Route exact path={CURRENTTASK_ROUTE} component={CurrentTask}/>
                     <Route exact path={VIEWTASK_ROUTE} component={TaskLibrary}/>
+                    <Route exact path={CUSTOMLIBRARY_ROUTE} component={CustomLibrary}/>
                 </main>
             </div>
         );

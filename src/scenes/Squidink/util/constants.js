@@ -123,15 +123,15 @@ export const dropdownState = [
     //State-Index
     //State 0, Fresh-Page, Unopened File
     [
-        0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1
+        0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1
     ],
     //State 1, Opened Demo File, with current available functions
     [
-        1,1,1,1,1,1,1,0,1,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1
+        1,1,1,1,1,1,1,0,1,0,0,0,1,0,1,1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1
     ],
     //State 2, xml or zip file
     [
-        1,1,1,1,0,1,1,0,1,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1
+        1,1,1,1,0,1,1,0,1,0,0,0,1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1
     ]
 ]
 export const dropdownOptions = [
@@ -224,6 +224,11 @@ export const dropdownOptions = [
             title: 'Browse Squid3 Built-in Tasks Library',
             onclick: () => {window.location.href = VIEWTASK_ROUTE;},
             id: 15
+        },
+        {
+            title: 'Browse Squid3 Custom Task Folder',
+            onclick: () => {window.location.href = VIEWTASK_ROUTE;},
+            id: 16
         }
     ],
     [
@@ -231,7 +236,7 @@ export const dropdownOptions = [
         {
             title: 'Map Isotopes from Data to Task',
             onclick: testFunction,
-            id: 16
+            id: 17
         }
 
     ],
@@ -240,39 +245,30 @@ export const dropdownOptions = [
         {
             title: 'Manage Expressions',
             onclick: testFunction,
-            id: 17
+            id: 18
         },
         {
             title: 'Load Expression from Library',
             onclick: testFunction,
-            id: 18
+            id: 19
         },
         {
             title: 'Load Expression from xml File',
             onclick: testFunction,
-            id: 19
+            id: 20
         },
         {
             title: 'Load Recent Expression from xml File',
             onclick: testFunction,
-            id: 20
+            id: 21
         },
         {
             title: 'Import Custom Expressions from Folder',
             onclick: testFunction,
-            id: 21
+            id: 22
         },
         {
             title: 'Export Custom Expressions to Folder',
-            onclick: testFunction,
-            id: 22
-        }
-
-    ],
-    [
-
-        {
-            title: 'Unknowns: 204 Count Corrections & Assign Common Lead Ratios',
             onclick: testFunction,
             id: 23
         }
@@ -281,14 +277,23 @@ export const dropdownOptions = [
     [
 
         {
-            title: 'Reference Materials',
+            title: 'Unknowns: 204 Count Corrections & Assign Common Lead Ratios',
             onclick: testFunction,
             id: 24
+        }
+
+    ],
+    [
+
+        {
+            title: 'Reference Materials',
+            onclick: testFunction,
+            id: 25
         },
         {
             title: 'Unknowns',
             onclick: testFunction,
-            id: 25
+            id: 26
         }
 
     ],
@@ -297,32 +302,32 @@ export const dropdownOptions = [
         {
             title: 'Custom Report Builder',
             onclick: testFunction,
-            id: 26
+            id: 27
         },
         {
             title: 'Reference Materials',
             onclick: clickActionRefMat,
-            id: 27
+            id: 28
         },
         {
             title: 'Unknowns',
             onclick: clickActionUnknown,
-            id: 28
+            id: 29
         },
         {
             title: 'Project & Task Audit',
             onclick: clickActionProjectAudit,
-            id: 29
+            id: 30
         },
         {
             title: 'Generate All Reports',
             onclick: clickActionGen,
-            id: 30
+            id: 31
         },
         {
             title: 'PerScan Reports Bundle',
             onclick: clickActionPerScan,
-            id: 31
+            id: 32
         },
 
     ],
@@ -330,56 +335,56 @@ export const dropdownOptions = [
         {
             title: 'Archiving',
             onclick: testFunction,
-            id: 32
+            id: 33
         }
     ],
     [
         {
             title: 'Reference Material Models',
             onclick: testFunction,
-            id: 33
+            id: 34
         },
         {
             title: 'Common Pb Models',
             onclick: testFunction,
-            id: 34
+            id: 35
         },
         {
             title: 'Physical Constants Models',
             onclick: testFunction,
-            id: 35
+            id: 36
         }
     ],
     [
         {
             title: 'About SquidInk',
             onclick: clickShowAbout,
-            id: 36
+            id: 37
         },
         {
             title: 'How to Cite Squid3',
             onclick: testFunction,
-            id: 37
+            id: 38
         },
         {
             title: 'Squid3 Github Repository',
             onclick: testFunction,
-            id: 38
+            id: 39
         },
         {
             title: 'CIRDLES.org',
             onclick: testFunction,
-            id: 39
+            id: 40
         },
         {
             title: 'Topsoil Github Repository',
             onclick: testFunction,
-            id: 40
+            id: 41
         },
         {
             title: 'Enjoy!',
             onclick: testFunction,
-            id: 41
+            id: 42
         }
     ]
 ];
@@ -389,3 +394,4 @@ export const MANAGEPROJECT_ROUTE= BASE_ROUTE + "/manageproject";
 export const CURRENTTASK_ROUTE = BASE_ROUTE + "/currenttask";
 export const SHOWABOUT_ROUTE= BASE_ROUTE + "/showabout";
 export const VIEWTASK_ROUTE = BASE_ROUTE + "/tasklibrary"
+export const CUSTOMLIBRARY_ROUTE = BASE_ROUTE + "/customlibrary"
