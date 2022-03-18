@@ -44,9 +44,12 @@ class WrapperComponent extends React.Component{
     messageFunction = (e) => {
         try {
             let apiCheck = e.data.toString().split(':');
-            console.log(apiCheck)
             if (FILEBROWSER_URL.includes(e.origin)) {
-                if (e.data.toString().length != 0 && apiCheck[0] != "api" && apiCheck[0] != "selected") {
+                if (apiCheck[0] == "origin") {
+                    let path = e.data.toString().match(/\/files\/[[a-zA-Z/.0-9\-_]*/g)
+                    localStorage.setItem("fborigin", path[0].substring('/files/'.length))
+                }
+                else if (e.data.toString().length != 0 && apiCheck[0] != "api" && apiCheck[0] != "selected") {
                     this.setState({loading: true})
                     axios.post(SQUIDINK_ENDPOINT + '/OpenServlet/O', localStorage.getItem("user")
                         + ":" + e.data, {
@@ -84,11 +87,12 @@ class WrapperComponent extends React.Component{
                     placeString += apiCheck[1]
                     if(!apiCheck[apiCheck.length - 1].includes(".")) {
                         localStorage.setItem("selected", placeString)
+                        localStorage.setItem("finroute", apiCheck[apiCheck.length - 1])
                         this.setState({
                             curSelected: placeString
                         })
                     }
-                    console.log(placeString)
+
                 }
                 else{
                     requestSender('/close', localStorage.getItem("user")).then((d) => {
@@ -263,7 +267,7 @@ class WrapperComponent extends React.Component{
                                             src={FILEBROWSER_URL}></iframe>
                                 </div>
                                 <div style={{paddingRight: "10px", display: "inline"}}>
-                                    <Button variant="contained" color="primary" onClick={this.openTaskFolder}>Save</Button>
+                                    <Button variant="contained" color="primary" onClick={this.openTaskFolder}>Select</Button>
                                 </div>
                                 <Button variant="contained" color="primary"
                                         onClick={()=>this.setState({browseModal: false})}>Cancel</Button>
