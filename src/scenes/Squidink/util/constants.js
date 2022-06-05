@@ -127,11 +127,11 @@ export const dropdownState = [
     ],
     //State 1, Opened Demo File, with current available functions
     [
-        1,1,1,1,1,1,1,0,1,0,0,0,1,0,1,1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1
+        1,1,1,1,1,1,1,0,1,0,0,0,1,0,1,1,1,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1
     ],
     //State 2, xml or zip file
     [
-        1,1,1,1,0,1,1,0,1,0,0,0,1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1
+        1,1,1,1,0,1,1,0,1,0,0,0,1,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1
     ]
 ]
 export const dropdownOptions = [
@@ -235,7 +235,7 @@ export const dropdownOptions = [
 
         {
             title: 'Map Isotopes from Data to Task',
-            onclick: testFunction,
+            onclick: () => {window.location.href = ISOTOPE_ROUTE;},
             id: 17
         }
 
@@ -395,3 +395,4 @@ export const CURRENTTASK_ROUTE = BASE_ROUTE + "/currenttask";
 export const SHOWABOUT_ROUTE= BASE_ROUTE + "/showabout";
 export const VIEWTASK_ROUTE = BASE_ROUTE + "/tasklibrary"
 export const CUSTOMLIBRARY_ROUTE = BASE_ROUTE + "/customlibrary"
+export const ISOTOPE_ROUTE = BASE_ROUTE + "/isotopes"
