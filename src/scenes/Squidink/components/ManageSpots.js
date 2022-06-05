@@ -519,7 +519,7 @@ export class ManageSpots extends React.Component {
                                 alignItems: "center",
                                 width: "100%"
                             }}>
-                                <div className={cx('grid-container-spots')}>
+                                <div className={cx('grid-container-spots')} style={{margin: "120px 120px 0px 120px"}}>
                                     <div className={cx('filter-spots-label')}>
                                         <h6 style={{display: "inline"}}>Filter Spots by Sample name:</h6>
                                         <FormControl style={{padding: "0 0 0 40px"}}>

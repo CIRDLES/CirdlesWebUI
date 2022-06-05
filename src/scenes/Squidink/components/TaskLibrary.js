@@ -72,9 +72,7 @@ export class TaskLibrary extends React.Component {
         let presentRoute = localStorage.getItem("fborigin")
         //If present route has a legitimate value, concat with filename, otherwise just leave filename raw
         let finalRoute = presentRoute ? presentRoute + this.state.routeVal + ".xml" : this.state.routeVal + ".xml"
-        requestSender('/savexml', localStorage.getItem('user') + ":" + finalRoute).then((response) => {
-
-        }).then(() => {
+        requestSender('/savexml', localStorage.getItem('user') + ":" + finalRoute).then(() => {
             this.closeBrowseAction();
         })
 

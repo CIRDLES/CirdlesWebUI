@@ -292,10 +292,10 @@ class WrapperComponent extends React.Component{
                             </ResizePanel>
                             : null}
                         <div className={cx('content')}
-                             style={{display: 'flex', overflow: 'scroll !important'}}>
+                             style={{display: 'flex', overflow: 'scroll'}}>
                             <div className={cx('header-custom', 'panel-custom')}
                                  style={{position: 'fixed', top: '40', zIndex: 10}}>
-                                <div className="rownav" style={{display: 'flex'}}>
+                                <div className="rownav" style={{display: 'flex', flexWrap: "wrap"}}>
                                     <DropdownCustom stateNum={this.profilePathIsNull().includes("NO_NAME") ? 2 : this.props.stateNum} dropdownName="Filebrowser"
                                                     onClickOveride={this.hidediv}></DropdownCustom>
                                     <DropdownCustom stateNum={this.profilePathIsNull().includes("NO_NAME") ? 2 : this.props.stateNum}dropdownName="Project"

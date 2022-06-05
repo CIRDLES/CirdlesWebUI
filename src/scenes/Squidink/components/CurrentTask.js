@@ -91,9 +91,7 @@ export class CurrentTask extends React.Component {
         let presentRoute = localStorage.getItem("fborigin")
         //If present route has a legitimate value, concat with filename, otherwise just leave filename raw
         let finalRoute = presentRoute ? presentRoute + this.state.routeVal + ".xml" : this.state.routeVal + ".xml"
-        requestSender('/savexml', localStorage.getItem('user') + ":" + finalRoute + ":current").then((response) => {
-
-        }).then(() => {
+        requestSender('/savexml', localStorage.getItem('user') + ":" + finalRoute + ":current").then(() => {
             this.closeBrowseAction();
         })
 
@@ -181,10 +179,10 @@ export class CurrentTask extends React.Component {
                     </div>
                     <div className={cx('task-name-text')}>
                         <TextField defaultValue={this.state.taskName}
-                                   label="Task name"style={{width: '80%'}} onChange={(e) => {
+                                   label="Task name"style={{width: '70%'}} onChange={(e) => {
                                       this.setState({taskName: e.target.value}, this.saveStrings)
                         }}/>
-                        <h5 className={cx('geochron-label')} style={{display: "inline", paddingTop: "10px", paddingLeft: "30px"}}>Geochron Mode</h5>
+                        <h5 className={cx('geochron-label')} style={{display: "inline", paddingTop: "10px", paddingLeft: "30px", fontSize: "2.5vmin"}}>Geochron Mode</h5>
                     </div>
                     <div className={cx('description-label')}>
                         <h3>Description:</h3>

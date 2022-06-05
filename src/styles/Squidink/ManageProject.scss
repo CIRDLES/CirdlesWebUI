@@ -199,4 +199,21 @@
 }
 h3 {
   color: #3D83CC !important;
+  font-size: 3.2vmin !important;
+}
+h4 {
+  font-size: 2vmin !important;
+}
+h5 {
+  font-size: 2vmin !important;
+}
+.session-content > h4 {
+  font-size: 1rem !important;
+}
+
+@media (max-width: 768px) {
+  .MuiSvgIcon-root {
+    width: .5em !important;
+    height: .5em !important;
+  }
 }

@@ -296,8 +296,12 @@ export class ManageProject extends React.Component {
                 {
                     //Dont generate elements until project management pull is complete for defaultVal generation
                     this.state.mount ?
-                        <WrapperComponent style={{overflow: "scroll"}} history={this.props.history} stateNum={1}>
-                            <div className={cx('grid-container-custom')}>
+                        <WrapperComponent history={this.props.history} stateNum={1}>
+                            <div className={cx('grid-container-custom')}
+                                 //old one, minus the margin
+                                 //style={{height: "100%", width: "100%", marginTop: "25%"}}
+                                 style={{height: "100%", width: "100%", position: "relative", top: "10%"}}
+                            >
                                 <div className={cx('project-name-label')}>
                                     <h3>Project Name:</h3>
                                 </div>
@@ -427,7 +431,7 @@ export class ManageProject extends React.Component {
                                                           label="Allow Squid to auto-reject spots"/>
                                     </FormControl>
                                     <div style={{display: "inline"}}>
-                                        <p style={{bottomMargin: "0", marginTop: "7px", display: "inline-flex"}}><b>Minimum
+                                        <p style={{bottomMargin: "0", marginTop: "7px", display: "inline-flex", fontSize:"small"}}><b>Minimum
                                             external 1sigma % err for
                                             206Pb/238U: </b></p>
                                     </div>
@@ -442,7 +446,7 @@ export class ManageProject extends React.Component {
                                                     onClick={this.pbCounterDown}>-</Button>
                                         </ButtonGroup>
                                     </div>
-                                    <p style={{display: "inline", marginLeft: "1%"}}><b>for
+                                    <p style={{fontSize:"small",display: "inline", marginLeft: "1%"}}><b>for
                                         208Pb/232Th: </b></p>
                                     <TextField value={this.state.minSigPbTh}
                                                style={{maxWidth: "4ch", marginLeft: "1%", minWidth: "3ch"}}></TextField>
