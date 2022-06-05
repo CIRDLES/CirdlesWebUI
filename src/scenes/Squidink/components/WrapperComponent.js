@@ -44,12 +44,14 @@ class WrapperComponent extends React.Component{
     messageFunction = (e) => {
         try {
             let apiCheck = e.data.toString().split(':');
+            console.log(apiCheck)
             if (FILEBROWSER_URL.includes(e.origin)) {
                 if (apiCheck[0] == "origin") {
                     let path = e.data.toString().match(/\/files\/[[a-zA-Z/.0-9\-_]*/g)
                     localStorage.setItem("fborigin", path[0].substring('/files/'.length))
                 }
                 else if (e.data.toString().length != 0 && apiCheck[0] != "api" && apiCheck[0] != "selected") {
+                if (e.data.toString().length != 0 && apiCheck[0] != "api" && apiCheck[0] != "selected") {
                     this.setState({loading: true})
                     axios.post(SQUIDINK_ENDPOINT + '/OpenServlet/O', localStorage.getItem("user")
                         + ":" + e.data, {
@@ -92,7 +94,7 @@ class WrapperComponent extends React.Component{
                             curSelected: placeString
                         })
                     }
-
+                    console.log(placeString)
                 }
                 else{
                     requestSender('/close', localStorage.getItem("user")).then((d) => {
@@ -103,7 +105,7 @@ class WrapperComponent extends React.Component{
                     })
                 }
             }
-        }
+        }}
         catch(e) {
             console.log(e)
             localStorage.setItem("user", "")

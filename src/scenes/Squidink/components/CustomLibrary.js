@@ -11,8 +11,10 @@ import RadioGroup from "@material-ui/core/RadioGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Radio from "@material-ui/core/Radio";
 import Button from "@material-ui/core/Button";
+
 import Modal from "@material-ui/core/Modal";
 import {FILEBROWSER_URL} from "constants/api";
+
 
 let cx = classNames.bind(style);
 
@@ -47,7 +49,6 @@ export class CustomLibrary extends React.Component {
             selected: false,
             modal: false,
             routeVal: "",
-
         };
         //If a component requires 'this.' context, it's easiest to bind it, i.e.
         this.pullTaskList = this.pullTaskList.bind(this)
@@ -55,7 +56,6 @@ export class CustomLibrary extends React.Component {
         this.saveCurrentXML = this.saveCurrentXML.bind(this)
         this.modal = this.modal.bind(this)
         this.closeBrowseAction = this.closeBrowseAction.bind(this)
-
     }
     componentDidMount() {
         this.pullTaskList()
@@ -100,6 +100,7 @@ export class CustomLibrary extends React.Component {
     async closeBrowseAction() {
         this.setState({modal: false})
     }
+
     taskListSelect = (e, initialCall) => {
         if(this.state.selectedTask) {
             document.getElementById(this.state.selectedTask).style.backgroundColor = ""
@@ -507,6 +508,9 @@ export class CustomLibrary extends React.Component {
 
                                     <Button variant="contained" color={"primary"} style={{display: "inline"}}
                                             onClick={this.modal}>
+                                            onClick={() => {
+                                                console.log("")
+                                            }}>
                                         Save Current Task as a Squid3 Task '.xml' file
                                     </Button>
                                 </div>
