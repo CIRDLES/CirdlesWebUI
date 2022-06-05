@@ -12,6 +12,10 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Radio from "@material-ui/core/Radio";
 import Button from "@material-ui/core/Button";
 
+import Modal from "@material-ui/core/Modal";
+import {FILEBROWSER_URL} from "constants/api";
+
+
 let cx = classNames.bind(style);
 
 export class CustomLibrary extends React.Component {
@@ -43,12 +47,15 @@ export class CustomLibrary extends React.Component {
             mass: [],
             ratios: [],
             selected: false,
-
+            modal: false,
+            routeVal: "",
         };
         //If a component requires 'this.' context, it's easiest to bind it, i.e.
         this.pullTaskList = this.pullTaskList.bind(this)
         this.componentDidMount = this.componentDidMount.bind(this)
-
+        this.saveCurrentXML = this.saveCurrentXML.bind(this)
+        this.modal = this.modal.bind(this)
+        this.closeBrowseAction = this.closeBrowseAction.bind(this)
     }
     componentDidMount() {
         this.pullTaskList()
@@ -58,6 +65,16 @@ export class CustomLibrary extends React.Component {
             let body = response.data.substring(1, response.data.length - 1).split(',')
             this.setState({mount: true, taskList: body}, () => {this.taskListSelect(null, this.state.taskList[0].trimStart().trim())})
         })
+    }
+    saveCurrentXML(fileRoute) {
+
+        //Pulls Filebrowser route from WrapperComponent, trims off everything from /files/ and before to get the raw path
+       let presentRoute = localStorage.getItem("fborigin")
+       //If present route has a legitimate value, concat with filename, otherwise just leave filename raw
+       let finalRoute = presentRoute ? presentRoute + this.state.routeVal + ".xml" : this.state.routeVal + ".xml"
+       requestSender('/savexml', localStorage.getItem('user') + ":" + finalRoute).then(() => {
+           this.closeBrowseAction();
+       })
     }
 
     saveStrings = () => {
@@ -76,6 +93,12 @@ export class CustomLibrary extends React.Component {
         document.getElementsByClassName("uncor-thor-box")[0].style.backgroundColor = (this.state.Uncor208Styling ? "#00FF0033" : "#ff00004d")
         document.getElementsByClassName("thor-ur-box")[0].style.backgroundColor = (this.state.THUStyling ? "#00FF0033" : "#ff00004d")
         document.getElementsByClassName("p-ele-const-box")[0].style.backgroundColor = (this.state.ParEleStyling ? "#00FF0033" : "#ff00004d")
+    }
+    async modal() {
+        this.setState({modal: true})
+    }
+    async closeBrowseAction() {
+        this.setState({modal: false})
     }
 
     taskListSelect = (e, initialCall) => {
@@ -272,7 +295,34 @@ export class CustomLibrary extends React.Component {
                 //All functions are self-contained to the wrapper with the exception of the history.push to reroute the user, which requires a reference to the React-Router
                 //Because WrapperComponent is not instantiated from the router but from its child, we have to pass in the history as a prop
                 <WrapperComponent stateNum={1}history={this.props.history}>
-
+                <Modal open={this.state.modal} onClose={this.modal}>{
+                    <div style={{position: 'absolute', width: '600px', height: "70%", top: '50%', left: '50%', transform: 'translate(-50%, -50%)', border: '2px solid #000', backgroundColor: 'white', padding: '4px'}} className={'paper'}>
+                        <div style={{height: "90%", width: "100%"}}>
+                            <div>
+                                <iframe id='iframeee'
+                                        style={{
+                                            display: 'flex',
+                                            flexGrow: '1',
+                                            overflow: 'auto',
+                                            height: '100%',
+                                            width: `100%`
+                                        }}
+                                        src={FILEBROWSER_URL}></iframe>
+                            </div>
+                            <div style={{paddingRight: "10px", display: "inline"}}>
+                                <TextField value={this.state.routeVal} onChange={(e) => {
+                                    if (!e.target.value.includes('.')) {
+                                        this.setState({
+                                            routeVal: e.target.value
+                                        })
+                                    }
+                                }}label="File Name Here:" />
+                                <Button style={{marginTop: "10px"}}variant="contained" color="primary" onClick={this.saveCurrentXML}>Save</Button>
+                            </div>
+                            <Button style={{marginTop: "10px"}} variant="contained" color="primary"
+                                    onClick={()=>this.setState({modal: false})}>Cancel</Button>
+                        </div>
+                    </div>}</Modal>
                     <div className={cx('grid-container-custom-tl')}>
                         <div className={cx('task-list')}>
                             {this.state.taskList.map((entry) => {
@@ -457,6 +507,7 @@ export class CustomLibrary extends React.Component {
                                     </div>
 
                                     <Button variant="contained" color={"primary"} style={{display: "inline"}}
+                                            onClick={this.modal}>
                                             onClick={() => {
                                                 console.log("")
                                             }}>

@@ -22,7 +22,7 @@ export default class DropdownCustom extends React.Component {
             <>
                 {
                     this.props.menuActive ?
-                        <ul className="menu" style={{top: this.props.yPos, left: this.props.xPos, position: "absolute"}}>
+                        <ul className="menu" style={{top: this.props.yPos, left: this.props.xPos, position: "absolute", zIndex: 100}}>
                             {
                                 this.state.outputMap.map((content) => {
                                     return content

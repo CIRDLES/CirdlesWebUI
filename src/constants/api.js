@@ -4,7 +4,7 @@ export const AMBAPO_ENDPOINT = BASE_URL + "/ambapo";
 export const SQUID_ENDPOINT = BASE_URL + "/prawn";
 export const TOPSOIL_ENDPOINT = BASE_URL + "/topsoil";
 export const MARS_ENDPOINT = BASE_URL + "/mars";
-export const SQUIDINK_ENDPOINT = "https://cirdles.cs.cofc.edu/sservlet";
+export const SQUIDINK_ENDPOINT = "http://localhost:8080/squid_servlet-1.0.0";
 export const PORTEDSQUID_ENDPOINT = BASE_URL + "/portedsquid";
 
 // Sesar APIs
@@ -14,10 +14,10 @@ export const PORTEDSQUID_ENDPOINT = BASE_URL + "/portedsquid";
 export const SESAR_BASE_URL = "https://app.geosamples.org";
 
 export const SESAR_LOGIN =
-  SESAR_BASE_URL + "/webservices/credentials_service_v2.php";
+    SESAR_BASE_URL + "/webservices/credentials_service_v2.php";
 
 export const SESAR_SAMPLE_PROFILE =
-  SESAR_BASE_URL + "/webservices/display.php?igsn=";
+    SESAR_BASE_URL + "/webservices/display.php?igsn=";
 // added oct 2020 to show sample profile with bar code
 export const SESAR_SAMPLE_DISPLAY = SESAR_BASE_URL + "/sample/igsn/";
 export const SESAR_USER_SAMPLES = SESAR_BASE_URL + "/samples/user_code/";
@@ -28,6 +28,6 @@ export const POST_HEADERS = {
 };
 
 // Filebrowser
-export const FILEBROWSER_URL = "https://cirdles.cs.cofc.edu/filebrowser"
+export const FILEBROWSER_URL = "http://localhost:8081"
 
 export const SQUIDINK_ENABLED = false;

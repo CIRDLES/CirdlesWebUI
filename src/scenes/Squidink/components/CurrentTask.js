@@ -15,6 +15,8 @@ import ButtonGroup from "@material-ui/core/ButtonGroup";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import {requestSender} from "../util/constants";
+import {FILEBROWSER_URL} from "constants/api";
+import Modal from "@material-ui/core/Modal";
 
 let cx = classNames.bind(style);
 
@@ -41,12 +43,17 @@ export class CurrentTask extends React.Component {
             Uncor206Styling: true,
             Uncor208Styling: true,
             THUStyling: true,
-            ParEleStyling: true
+            ParEleStyling: true,
+            modal: false,
+            routeVal: "",
 
         };
         //If a component requires 'this.' context, it's easiest to bind it, i.e.
         this.pullStrings = this.pullStrings.bind(this)
         this.componentDidMount = this.componentDidMount.bind(this)
+        this.saveCurrentXML = this.saveCurrentXML.bind(this)
+        this.modal = this.modal.bind(this)
+        this.closeBrowseAction = this.closeBrowseAction.bind(this)
 
     }
     componentDidMount() {
@@ -77,6 +84,23 @@ export class CurrentTask extends React.Component {
                 this.setState({audit: body, mount: true})
             })
         })
+    }
+    saveCurrentXML(fileRoute) {
+
+        //Pulls Filebrowser route from WrapperComponent, trims off everything from /files/ and before to get the raw path
+        let presentRoute = localStorage.getItem("fborigin")
+        //If present route has a legitimate value, concat with filename, otherwise just leave filename raw
+        let finalRoute = presentRoute ? presentRoute + this.state.routeVal + ".xml" : this.state.routeVal + ".xml"
+        requestSender('/savexml', localStorage.getItem('user') + ":" + finalRoute + ":current").then(() => {
+            this.closeBrowseAction();
+        })
+
+    }
+    async modal() {
+        this.setState({modal: true})
+    }
+    async closeBrowseAction() {
+        this.setState({modal: false})
     }
     flipPrimary = () => {
         if(this.state.primaryRadio == "238") {
@@ -121,16 +145,44 @@ export class CurrentTask extends React.Component {
             //All functions are self-contained to the wrapper with the exception of the history.push to reroute the user, which requires a reference to the React-Router
             //Because WrapperComponent is not instantiated from the router but from its child, we have to pass in the history as a prop
             <WrapperComponent stateNum={1}history={this.props.history}>
+                <Modal open={this.state.modal} onClose={this.modal}>{
+                    <div style={{position: 'absolute', width: '600px', height: "70%", top: '50%', left: '50%', transform: 'translate(-50%, -50%)', border: '2px solid #000', backgroundColor: 'white', padding: '4px'}} className={'paper'}>
+                        <div style={{height: "90%", width: "100%"}}>
+                            <div>
+                                <iframe id='iframeee'
+                                        style={{
+                                            display: 'flex',
+                                            flexGrow: '1',
+                                            overflow: 'auto',
+                                            height: '100%',
+                                            width: `100%`
+                                        }}
+                                        src={FILEBROWSER_URL}></iframe>
+                            </div>
+                            <div style={{paddingRight: "10px", display: "inline"}}>
+                                <TextField value={this.state.routeVal} onChange={(e) => {
+                                    if (!e.target.value.includes('.')) {
+                                        this.setState({
+                                            routeVal: e.target.value
+                                        })
+                                    }
+                                }}label="File Name Here:" />
+                                <Button style={{marginTop: "10px"}}variant="contained" color="primary" onClick={this.saveCurrentXML}>Save</Button>
+                            </div>
+                            <Button style={{marginTop: "10px"}} variant="contained" color="primary"
+                                    onClick={()=>this.setState({modal: false})}>Cancel</Button>
+                        </div>
+                    </div>}</Modal>
                 <div className={cx('grid-container-custom-t')}>
                     <div className={cx('task-name-label')}>
                         <h3>Task Name:</h3>
                     </div>
                     <div className={cx('task-name-text')}>
                         <TextField defaultValue={this.state.taskName}
-                                   label="Task name"style={{width: '80%'}} onChange={(e) => {
+                                   label="Task name"style={{width: '70%'}} onChange={(e) => {
                                       this.setState({taskName: e.target.value}, this.saveStrings)
                         }}/>
-                        <h5 className={cx('geochron-label')} style={{display: "inline", paddingTop: "10px", paddingLeft: "30px"}}>Geochron Mode</h5>
+                        <h5 className={cx('geochron-label')} style={{display: "inline", paddingTop: "10px", paddingLeft: "30px", fontSize: "2.5vmin"}}>Geochron Mode</h5>
                     </div>
                     <div className={cx('description-label')}>
                         <h3>Description:</h3>
@@ -266,7 +318,7 @@ export class CurrentTask extends React.Component {
                             </Button>
                         </div>
                         <Button variant="contained" color={"primary"} style={{display: "inline"}}
-                                onClick={() => {console.log("")}}>
+                                onClick={this.modal}>
                             Save Current Task as a Squid Task '.xml' file
                         </Button>
                     </div>

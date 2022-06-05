@@ -46,6 +46,11 @@ class WrapperComponent extends React.Component{
             let apiCheck = e.data.toString().split(':');
             console.log(apiCheck)
             if (FILEBROWSER_URL.includes(e.origin)) {
+                if (apiCheck[0] == "origin") {
+                    let path = e.data.toString().match(/\/files\/[[a-zA-Z/.0-9\-_]*/g)
+                    localStorage.setItem("fborigin", path[0].substring('/files/'.length))
+                }
+                else if (e.data.toString().length != 0 && apiCheck[0] != "api" && apiCheck[0] != "selected") {
                 if (e.data.toString().length != 0 && apiCheck[0] != "api" && apiCheck[0] != "selected") {
                     this.setState({loading: true})
                     axios.post(SQUIDINK_ENDPOINT + '/OpenServlet/O', localStorage.getItem("user")
@@ -84,6 +89,7 @@ class WrapperComponent extends React.Component{
                     placeString += apiCheck[1]
                     if(!apiCheck[apiCheck.length - 1].includes(".")) {
                         localStorage.setItem("selected", placeString)
+                        localStorage.setItem("finroute", apiCheck[apiCheck.length - 1])
                         this.setState({
                             curSelected: placeString
                         })
@@ -99,7 +105,7 @@ class WrapperComponent extends React.Component{
                     })
                 }
             }
-        }
+        }}
         catch(e) {
             console.log(e)
             localStorage.setItem("user", "")
@@ -263,7 +269,7 @@ class WrapperComponent extends React.Component{
                                             src={FILEBROWSER_URL}></iframe>
                                 </div>
                                 <div style={{paddingRight: "10px", display: "inline"}}>
-                                    <Button variant="contained" color="primary" onClick={this.openTaskFolder}>Save</Button>
+                                    <Button variant="contained" color="primary" onClick={this.openTaskFolder}>Select</Button>
                                 </div>
                                 <Button variant="contained" color="primary"
                                         onClick={()=>this.setState({browseModal: false})}>Cancel</Button>
@@ -288,10 +294,10 @@ class WrapperComponent extends React.Component{
                             </ResizePanel>
                             : null}
                         <div className={cx('content')}
-                             style={{display: 'flex', overflow: 'scroll !important'}}>
+                             style={{display: 'flex', overflow: 'scroll'}}>
                             <div className={cx('header-custom', 'panel-custom')}
                                  style={{position: 'fixed', top: '40', zIndex: 10}}>
-                                <div className="rownav" style={{display: 'flex'}}>
+                                <div className="rownav" style={{display: 'flex', flexWrap: "wrap"}}>
                                     <DropdownCustom stateNum={this.profilePathIsNull().includes("NO_NAME") ? 2 : this.props.stateNum} dropdownName="Filebrowser"
                                                     onClickOveride={this.hidediv}></DropdownCustom>
                                     <DropdownCustom stateNum={this.profilePathIsNull().includes("NO_NAME") ? 2 : this.props.stateNum}dropdownName="Project"
