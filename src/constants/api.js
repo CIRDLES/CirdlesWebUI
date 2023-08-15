@@ -1,10 +1,10 @@
 export const MARS_VERSION = "v2.0.0"; // 17 Nov 2020
-export const BASE_URL = "https://cirdles.cs.cofc.edu/Services";
+export const BASE_URL = "https://cirdles.cofc.edu/Services";
 export const AMBAPO_ENDPOINT = BASE_URL + "/ambapo";
 export const SQUID_ENDPOINT = BASE_URL + "/prawn";
 export const TOPSOIL_ENDPOINT = BASE_URL + "/topsoil";
 export const MARS_ENDPOINT = BASE_URL + "/mars";
-export const SQUIDINK_ENDPOINT = "https://cirdles.cs.cofc.edu/sservlet";
+export const SQUIDINK_ENDPOINT = "https://cirdles.cofc.edu/sservlet";
 export const PORTEDSQUID_ENDPOINT = BASE_URL + "/portedsquid";
 
 // Sesar APIs
@@ -28,6 +28,6 @@ export const POST_HEADERS = {
 };
 
 // Filebrowser
-export const FILEBROWSER_URL = "https://cirdles.cs.cofc.edu/filebrowser"
+export const FILEBROWSER_URL = "https://cirdles.cofc.edu/filebrowser"
 
 export const SQUIDINK_ENABLED = false;
