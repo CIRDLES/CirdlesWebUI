@@ -8,10 +8,12 @@ function toXML(samples, usercode) {
     "samples",
     null
   );
+
+  // updated per https://geosamples.github.io/sesar-doc/web_services/sample_registration.html
   doc.documentElement.setAttributeNS(
     "http://www.w3.org/2001/XMLSchema-instance",
     "xsi:schemaLocation",
-    SESAR_BASE_URL + "/samplev2.xsd"
+    SESAR_BASE_URL + "/3.0/sample.xsd "
   );
 
   for (let i = 0; i < samples.length; i++) {
